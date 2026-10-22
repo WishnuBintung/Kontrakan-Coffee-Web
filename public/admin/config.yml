@@ -1,0 +1,98 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true                 # untuk edit lokal via `npx decap-server`
+publish_mode: editorial_workflow    # PRD §2 no.8: draft -> review/pratinjau -> publish
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+collections:
+  - name: menu
+    label: Menu
+    folder: content/menu
+    create: true
+    slug: "{{slug}}"
+    identifier_field: nama
+    summary: "{{nama}} — Rp{{harga}}"
+    fields:
+      - { label: Nama, name: nama, widget: string }
+      - label: Kategori
+        name: kategori
+        widget: relation
+        collection: kategori
+        search_fields: [nama]
+        value_field: "{{slug}}"
+        display_fields: [nama]
+      - { label: "Harga (Rp)", name: harga, widget: number, value_type: int, min: 0 }
+      - { label: Foto, name: foto, widget: image }
+      - { label: Ukuran, name: ukuran, widget: list, required: false }
+      - { label: "Rasa / Varian", name: rasa, widget: list, required: false }
+      - { label: Menu Rekomendasi, name: rekomendasi, widget: boolean, default: false }
+      - { label: Tampilkan, name: aktif, widget: boolean, default: true }
+      - { label: Deskripsi, name: body, widget: markdown }
+
+  - name: kategori
+    label: Kategori
+    folder: content/kategori
+    extension: yml
+    format: yml
+    create: true
+    slug: "{{slug}}"
+    identifier_field: nama
+    fields:
+      - { label: Nama, name: nama, widget: string }
+      - { label: Urutan, name: urutan, widget: number, value_type: int }
+
+  - name: galeri
+    label: Galeri
+    folder: content/galeri
+    create: true
+    slug: "{{slug}}"
+    identifier_field: judul
+    fields:
+      - { label: Judul, name: judul, widget: string }
+      - { label: Gambar, name: gambar, widget: image }
+      - { label: Sudut Favorit, name: sudut_favorit, widget: boolean, default: false }
+      - { label: Urutan, name: urutan, widget: number, value_type: int }
+
+  - name: promo
+    label: Promo & Kegiatan
+    folder: content/promo
+    create: true
+    slug: "{{slug}}"
+    identifier_field: judul
+    fields:
+      - { label: Judul, name: judul, widget: string }
+      - { label: Tipe, name: tipe, widget: select, options: [promo, kegiatan] }
+      - { label: Deskripsi, name: deskripsi, widget: text }
+      - { label: Tanggal Mulai, name: tanggal_mulai, widget: datetime, time_format: false, format: "YYYY-MM-DD" }
+      - { label: Tanggal Selesai, name: tanggal_selesai, widget: datetime, time_format: false, format: "YYYY-MM-DD" }
+      - { label: Gambar, name: gambar, widget: image, required: false }
+      - { label: Tampilkan, name: aktif, widget: boolean, default: true }
+
+  - name: pengaturan
+    label: Info Toko
+    files:
+      - name: info_toko
+        label: Info Toko
+        file: content/info-toko.json
+        fields:
+          - { label: Nama Toko, name: nama_toko, widget: string }
+          - { label: Alamat, name: alamat, widget: text }
+          - { label: Link Google Maps, name: link_peta, widget: string }
+          - label: WhatsApp (format 62xxx)
+            name: whatsapp
+            widget: string
+            pattern: ["^62[0-9]{8,13}$", "Awali dengan 62, tanpa + / spasi"]
+          - { label: Instagram (URL), name: instagram, widget: string }
+          - label: Jam Buka
+            name: jam_buka
+            widget: list
+            fields:
+              - { label: Hari, name: hari, widget: select, options: [Senin, Selasa, Rabu, Kamis, Jumat, Sabtu, Minggu] }
+              - { label: Buka, name: buka, widget: string, hint: "contoh 08:00" }
+              - { label: Tutup, name: tutup, widget: string, hint: "contoh 22:00" }
+              - { label: Libur, name: libur, widget: boolean, default: false }
+
