@@ -309,6 +309,10 @@ export function getInfoToko(): InfoToko {
       link_peta: data.link_peta || fallback.link_peta,
       embed_peta: data.embed_peta || fallback.embed_peta,
       instagram: data.instagram || fallback.instagram,
+      whatsapp:
+        typeof data.whatsapp === "string" && data.whatsapp.trim()
+          ? data.whatsapp.replace(/\D/g, "")
+          : undefined,
       jam_buka: Array.isArray(data.jam_buka) ? data.jam_buka : [],
     };
   } catch (err) {
@@ -410,3 +414,6 @@ export function getStoreStatus(
     };
   }
 }
+
+
+export const getStatusToko = getStoreStatus;

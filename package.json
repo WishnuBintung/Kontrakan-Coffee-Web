@@ -7,10 +7,12 @@
     "frontend"
   ],
   "scripts": {
-    "dev": "npm run dev:backend & npm run dev:frontend",
+    "dev": "npm run dev:frontend",
+    "dev:all": "npm run dev:backend & npm run dev:frontend",
     "dev:backend": "npm run dev --workspace=backend",
     "dev:frontend": "npm run dev --workspace=frontend",
-    "build": "npm run build:backend && npm run build:frontend",
+    "build": "npm run build:frontend",
+    "build:all": "npm run build:backend && npm run build:frontend",
     "build:backend": "npm run build --workspace=backend",
     "build:frontend": "npm run build --workspace=frontend",
     "lint:frontend": "npm run lint --workspace=frontend",

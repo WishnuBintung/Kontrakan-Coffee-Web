@@ -87,6 +87,7 @@ collections:
           - { label: Link Google Maps, name: link_peta, widget: string, hint: "URL Google Maps untuk tombol Buka Peta" }
           - { label: Link Embed Google Maps (iframe), name: embed_peta, widget: string, required: false, hint: "URL embed untuk iframe peta" }
           - { label: Tautan Akun Instagram, name: instagram, widget: string, hint: "Contoh: https://instagram.com/kopisenja.yk" }
+          - { label: Nomor WhatsApp (kontak), name: whatsapp, widget: string, required: false, hint: "Format internasional tanpa +, contoh: 6281234567890. Hanya untuk tanya-tanya, bukan pemesanan." }
           - label: Jam Buka Mingguan
             name: jam_buka
             widget: list

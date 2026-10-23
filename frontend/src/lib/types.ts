@@ -58,6 +58,8 @@ export type InfoToko = {
   link_peta: string;
   embed_peta?: string;
   instagram: string;
+  /** Nomor WhatsApp format internasional tanpa "+" (mis. 6281234567890). Opsional — hanya kanal kontak. */
+  whatsapp?: string;
   jam_buka: JamBuka[];
 };
 
