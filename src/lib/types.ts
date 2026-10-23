@@ -1,4 +1,5 @@
 // src/lib/types.ts
+
 export type Kategori = {
   id: string;
   nama: string;
@@ -18,6 +19,10 @@ export type MenuItem = {
   aktif: boolean;
 };
 
+export type MenuWithKategori = MenuItem & {
+  kategoriNama: string;
+};
+
 export type GaleriFoto = {
   id: string;
   judul: string;
@@ -26,8 +31,17 @@ export type GaleriFoto = {
   urutan: number;
 };
 
+export type Hari =
+  | "Senin"
+  | "Selasa"
+  | "Rabu"
+  | "Kamis"
+  | "Jumat"
+  | "Sabtu"
+  | "Minggu";
+
 export type JamBuka = {
-  hari: string;
+  hari: Hari | string;
   buka: string;
   tutup: string;
   libur: boolean;
@@ -40,6 +54,14 @@ export type InfoToko = {
   whatsapp: string;
   instagram: string;
   jam_buka: JamBuka[];
+};
+
+export type StatusToko = {
+  isOpen: boolean;
+  pesanStatus: string;
+  jamHariIni?: JamBuka;
+  hariIni: string;
+  sekarangJam: string;
 };
 
 export type Promo = {
