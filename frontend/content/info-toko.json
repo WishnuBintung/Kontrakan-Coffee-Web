@@ -1,0 +1,17 @@
+{
+  "nama_toko": "Kopi Senja",
+  "alamat": "Jl. Kopi Bersama No. 45, Sleman, D.I. Yogyakarta",
+  "link_peta": "https://maps.google.com/?q=Kopi+Senja",
+  "whatsapp": "6281234567890",
+  "instagram": "https://instagram.com/kopisenja",
+  "jam_buka": [
+    { "hari": "Senin", "buka": "09:00", "tutup": "23:00", "libur": false },
+    { "hari": "Selasa", "buka": "09:00", "tutup": "23:00", "libur": false },
+    { "hari": "Rabu", "buka": "09:00", "tutup": "23:00", "libur": false },
+    { "hari": "Kamis", "buka": "09:00", "tutup": "23:00", "libur": false },
+    { "hari": "Jumat", "buka": "13:00", "tutup": "23:30", "libur": false },
+    { "hari": "Sabtu", "buka": "09:00", "tutup": "24:00", "libur": false },
+    { "hari": "Minggu", "buka": "09:00", "tutup": "23:00", "libur": false }
+  ]
+}
+
