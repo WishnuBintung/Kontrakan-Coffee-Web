@@ -1,9 +1,9 @@
 {
   "nama_toko": "Kopi Senja",
-  "alamat": "Jl. Kopi Bersama No. 45, Sleman, D.I. Yogyakarta",
-  "link_peta": "https://maps.google.com/?q=Kopi+Senja",
-  "whatsapp": "6281234567890",
-  "instagram": "https://instagram.com/kopisenja",
+  "alamat": "Jl. Seturan Raya No. 45, Caturtunggal, Depok, Sleman, D.I. Yogyakarta 55281",
+  "link_peta": "https://maps.google.com/?q=Kopi+Senja+Yogyakarta",
+  "embed_peta": "https://maps.google.com/maps?q=Kopi+Senja+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
+  "instagram": "https://instagram.com/kopisenja.yk",
   "jam_buka": [
     { "hari": "Senin", "buka": "09:00", "tutup": "23:00", "libur": false },
     { "hari": "Selasa", "buka": "09:00", "tutup": "23:00", "libur": false },
@@ -14,4 +14,3 @@
     { "hari": "Minggu", "buka": "09:00", "tutup": "23:00", "libur": false }
   ]
 }
-

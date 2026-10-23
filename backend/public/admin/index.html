@@ -5,8 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Admin CMS — Kopi Senja</title>
-    <!-- Netlify Identity Widget -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <!-- Netlify Identity Widget (Hanya dimuat di production/non-localhost) -->
+    <script>
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        var s = document.createElement("script");
+        s.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
+        document.head.appendChild(s);
+      } else {
+        // Bersihkan cache Netlify Identity lama di browser saat berjalan di localhost
+        try {
+          localStorage.removeItem("netlifySiteURL");
+          localStorage.removeItem("gotrue.user");
+        } catch (e) {}
+      }
+    </script>
     <style>
       /* Styling header admin */
       body {

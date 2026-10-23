@@ -11,6 +11,7 @@ import {
   getMenuWithKategori,
   getPromo,
   getRecommendedMenu,
+  getRelatedMenu,
   getStoreStatus,
 } from "../lib/content.js";
 
@@ -21,16 +22,16 @@ apiRouter.get("/", (_req, res) => {
   res.json({
     name: "Kopi Senja — REST API",
     status: "online",
-    version: "1.0.0",
+    version: "1.1.0",
     endpoints: {
       health: "/api/health",
       kategori: "/api/kategori",
-      menu: "/api/menu",
+      menu: "/api/menu (params: ?q=, ?kategori=, ?rekomendasi=, ?sort=)",
       menuRekomendasi: "/api/menu/rekomendasi",
       menuDetail: "/api/menu/:slug",
       menuSlugs: "/api/menu/slugs",
-      galeri: "/api/galeri",
-      promo: "/api/promo",
+      galeri: "/api/galeri (params: ?favorit=true)",
+      promo: "/api/promo (params: ?tipe=promo|kegiatan, ?aktif_saja=true)",
       infoToko: "/api/info-toko",
       statusToko: "/api/status-toko",
     },
@@ -42,7 +43,7 @@ apiRouter.get("/health", (_req, res) => {
   res.json({
     status: "ok",
     service: "kopi-senja-backend",
-    version: "1.0.0",
+    version: "1.1.0",
     timestamp: new Date().toISOString(),
   });
 });
@@ -51,7 +52,7 @@ apiRouter.get("/health", (_req, res) => {
 apiRouter.get("/kategori", (_req, res) => {
   try {
     const data = getKategori();
-    res.json({ success: true, data });
+    res.json({ success: true, count: data.length, data });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal error";
     res.status(500).json({ success: false, error: message });
@@ -62,7 +63,7 @@ apiRouter.get("/kategori", (_req, res) => {
 apiRouter.get("/menu/rekomendasi", (_req, res) => {
   try {
     const data = getRecommendedMenu();
-    res.json({ success: true, data });
+    res.json({ success: true, count: data.length, data });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal error";
     res.status(500).json({ success: false, error: message });
@@ -73,19 +74,6 @@ apiRouter.get("/menu/rekomendasi", (_req, res) => {
 apiRouter.get("/menu/slugs", (_req, res) => {
   try {
     const data = getAllMenuSlugs();
-    res.json({ success: true, data });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Internal error";
-    res.status(500).json({ success: false, error: message });
-  }
-});
-
-// Daftar Menu (dengan filter ?kategori=...)
-apiRouter.get("/menu", (req, res) => {
-  try {
-    const kategori = typeof req.query.kategori === "string" ? req.query.kategori : undefined;
-    const withKategori = req.query.with_kategori === "true";
-    const data = withKategori ? getMenuWithKategori() : getMenu(kategori);
     res.json({ success: true, count: data.length, data });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal error";
@@ -93,7 +81,40 @@ apiRouter.get("/menu", (req, res) => {
   }
 });
 
-// Detail Menu by Slug
+// Daftar Menu (mendukung query ?q=, ?kategori=, ?rekomendasi=, ?sort=)
+apiRouter.get("/menu", (req, res) => {
+  try {
+    const kategori = typeof req.query.kategori === "string" ? req.query.kategori : undefined;
+    const query = typeof req.query.q === "string" ? req.query.q : undefined;
+    const rekomendasi =
+      req.query.rekomendasi === "true"
+        ? true
+        : req.query.rekomendasi === "false"
+        ? false
+        : undefined;
+    const sort = typeof req.query.sort === "string" ? req.query.sort : undefined;
+    const withKategori = req.query.with_kategori === "true";
+
+    if (withKategori) {
+      const data = getMenuWithKategori();
+      res.json({ success: true, count: data.length, data });
+      return;
+    }
+
+    const data = getMenu({ kategori, query, rekomendasi, sort });
+    res.json({
+      success: true,
+      count: data.length,
+      filters: { kategori, query, rekomendasi, sort },
+      data,
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal error";
+    res.status(500).json({ success: false, error: message });
+  }
+});
+
+// Detail Menu by Slug (+ Related Menu)
 apiRouter.get("/menu/:slug", (req, res) => {
   try {
     const { slug } = req.params;
@@ -102,11 +123,15 @@ apiRouter.get("/menu/:slug", (req, res) => {
       res.status(404).json({ success: false, error: `Menu "${slug}" tidak ditemukan` });
       return;
     }
+
+    const relatedMenu = getRelatedMenu(item.id, item.kategori, 3);
+
     res.json({
       success: true,
       data: {
         ...item,
         hargaFormatted: formatRupiah(item.harga),
+        relatedMenu,
       },
     });
   } catch (err: unknown) {
@@ -127,11 +152,16 @@ apiRouter.get("/galeri", (req, res) => {
   }
 });
 
-// Promo & Kegiatan (?aktif_saja=true)
+// Promo & Kegiatan (?tipe=promo|kegiatan, ?aktif_saja=true)
 apiRouter.get("/promo", (req, res) => {
   try {
+    const tipe =
+      req.query.tipe === "kegiatan" || req.query.tipe === "promo"
+        ? (req.query.tipe as "promo" | "kegiatan")
+        : undefined;
     const activeOnly = req.query.aktif_saja === "true";
-    const data = activeOnly ? getActivePromo() : getPromo();
+
+    const data = activeOnly ? getActivePromo(new Date(), tipe) : getPromo(tipe);
     res.json({ success: true, count: data.length, data });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal error";
@@ -139,7 +169,7 @@ apiRouter.get("/promo", (req, res) => {
   }
 });
 
-// Info Toko & Jam Buka
+// Info Toko & Jam Buka (tanpa WhatsApp sesuai permintaan)
 apiRouter.get("/info-toko", (_req, res) => {
   try {
     const data = getInfoToko();
@@ -161,4 +191,3 @@ apiRouter.get("/status-toko", (_req, res) => {
     res.status(500).json({ success: false, error: message });
   }
 });
-

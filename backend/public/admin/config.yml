@@ -85,12 +85,8 @@ collections:
           - { label: Nama Coffee Shop, name: nama_toko, widget: string }
           - { label: Alamat Lengkap, name: alamat, widget: text }
           - { label: Link Google Maps, name: link_peta, widget: string, hint: "URL Google Maps untuk tombol Buka Peta" }
-          - label: Nomor WhatsApp
-            name: whatsapp
-            widget: string
-            hint: "Awali dengan 62 tanpa spasi atau +, contoh: 6281234567890"
-            pattern: ["^62[0-9]{8,13}$", "Awali dengan 62 (contoh: 6281234567890)"]
-          - { label: Tautan Akun Instagram, name: instagram, widget: string, hint: "Contoh: https://instagram.com/kopisenja" }
+          - { label: Link Embed Google Maps (iframe), name: embed_peta, widget: string, required: false, hint: "URL embed untuk iframe peta" }
+          - { label: Tautan Akun Instagram, name: instagram, widget: string, hint: "Contoh: https://instagram.com/kopisenja.yk" }
           - label: Jam Buka Mingguan
             name: jam_buka
             widget: list

@@ -20,9 +20,11 @@ app.use((req, _res, next) => {
 });
 // Mount REST API
 app.use("/api", apiRouter);
-// Serve Decap CMS static admin & public uploads
+// Serve Decap CMS static admin & public images
 const adminDir = path.join(__dirname, "../public/admin");
+const imagesDir = path.join(__dirname, "../public/images");
 app.use("/admin", express.static(adminDir));
+app.use("/images", express.static(imagesDir));
 // Fallback route
 app.get("/", (_req, res) => {
     res.json({

@@ -14,7 +14,12 @@ import type {
   StatusToko,
 } from "./types";
 
-const CONTENT_DIR = path.join(process.cwd(), "content");
+const CONTENT_DIR = fs.existsSync(path.join(process.cwd(), "content"))
+  ? path.join(process.cwd(), "content")
+  : fs.existsSync(path.join(process.cwd(), "frontend", "content"))
+  ? path.join(process.cwd(), "frontend", "content")
+  : path.join(process.cwd(), "backend", "content");
+
 const DEFAULT_PLACEHOLDER = "/images/placeholder-coffee.svg";
 
 function readDirSafe(subDir: string): string[] {
@@ -27,9 +32,6 @@ function readDirSafe(subDir: string): string[] {
   }
 }
 
-/**
- * Format angka menjadi format Rupiah Indonesia (misal: 18000 -> "Rp 18.000")
- */
 export function formatRupiah(nominal: number): string {
   if (typeof nominal !== "number" || isNaN(nominal)) {
     return "Rp 0";
@@ -37,9 +39,6 @@ export function formatRupiah(nominal: number): string {
   return `Rp ${nominal.toLocaleString("id-ID")}`;
 }
 
-/**
- * Mendapatkan daftar kategori yang diurutkan berdasarkan `urutan`
- */
 export function getKategori(): Kategori[] {
   const dir = path.join(CONTENT_DIR, "kategori");
   return readDirSafe("kategori")
@@ -63,12 +62,16 @@ export function getKategori(): Kategori[] {
     .sort((a, b) => a.urutan - b.urutan);
 }
 
-/**
- * Mendapatkan semua menu aktif
- */
-export function getMenu(): MenuItem[] {
+export type GetMenuOptions = {
+  kategori?: string;
+  query?: string;
+  rekomendasi?: boolean;
+  sort?: "harga_asc" | "harga_desc" | "nama_asc" | "nama_desc" | string;
+};
+
+export function getMenu(options?: string | GetMenuOptions): MenuItem[] {
   const dir = path.join(CONTENT_DIR, "menu");
-  return readDirSafe("menu")
+  let items = readDirSafe("menu")
     .filter((f) => f.endsWith(".md"))
     .map((f) => {
       try {
@@ -93,11 +96,55 @@ export function getMenu(): MenuItem[] {
       }
     })
     .filter((m): m is MenuItem => m !== null && m.aktif !== false);
+
+  if (!options) return items;
+
+  if (typeof options === "string") {
+    return items.filter(
+      (item) => item.kategori.toLowerCase() === options.toLowerCase()
+    );
+  }
+
+  if (options.kategori) {
+    items = items.filter(
+      (item) => item.kategori.toLowerCase() === options.kategori?.toLowerCase()
+    );
+  }
+
+  if (typeof options.rekomendasi === "boolean") {
+    items = items.filter((item) => item.rekomendasi === options.rekomendasi);
+  }
+
+  if (options.query && options.query.trim()) {
+    const q = options.query.trim().toLowerCase();
+    items = items.filter(
+      (item) =>
+        item.nama.toLowerCase().includes(q) ||
+        item.deskripsi.toLowerCase().includes(q) ||
+        item.kategori.toLowerCase().includes(q)
+    );
+  }
+
+  if (options.sort) {
+    switch (options.sort) {
+      case "harga_asc":
+        items.sort((a, b) => a.harga - b.harga);
+        break;
+      case "harga_desc":
+        items.sort((a, b) => b.harga - a.harga);
+        break;
+      case "nama_asc":
+        items.sort((a, b) => a.nama.localeCompare(b.nama));
+        break;
+      case "nama_desc":
+        items.sort((a, b) => b.nama.localeCompare(a.nama));
+        break;
+    }
+  }
+
+  return items;
 }
 
-/**
- * Mengambil menu berdasarkan slug/id unik
- */
 export function getMenuBySlug(slug: string): MenuItem | null {
   const filePath = path.join(CONTENT_DIR, "menu", `${slug}.md`);
   if (!fs.existsSync(filePath)) return null;
@@ -123,18 +170,23 @@ export function getMenuBySlug(slug: string): MenuItem | null {
   }
 }
 
-/**
- * Mengambil daftar slug menu untuk kebutuhan generateStaticParams() di Next.js
- */
+export function getRelatedMenu(
+  currentSlug: string,
+  kategori: string,
+  limit = 3
+): MenuItem[] {
+  const sameCategory = getMenu({ kategori });
+  return sameCategory
+    .filter((item) => item.id !== currentSlug)
+    .slice(0, limit);
+}
+
 export function getAllMenuSlugs(): string[] {
   return readDirSafe("menu")
     .filter((f) => f.endsWith(".md"))
     .map((f) => f.replace(/\.md$/, ""));
 }
 
-/**
- * Mengambil menu lengkap dengan nama kategori yang tertera
- */
 export function getMenuWithKategori(): MenuWithKategori[] {
   const categories = getKategori();
   const categoryMap = new Map<string, string>();
@@ -148,16 +200,10 @@ export function getMenuWithKategori(): MenuWithKategori[] {
   }));
 }
 
-/**
- * Mengambil menu rekomendasi / andalan (Fase 3 PRD)
- */
 export function getRecommendedMenu(): MenuItem[] {
-  return getMenu().filter((item) => item.rekomendasi);
+  return getMenu({ rekomendasi: true });
 }
 
-/**
- * Mengambil galeri foto dengan opsi filter khusus sudut favorit
- */
 export function getGaleri(onlyFavorites = false): GaleriFoto[] {
   const dir = path.join(CONTENT_DIR, "galeri");
   const items = readDirSafe("galeri")
@@ -188,12 +234,9 @@ export function getGaleri(onlyFavorites = false): GaleriFoto[] {
   return items;
 }
 
-/**
- * Mengambil semua promo aktif
- */
-export function getPromo(): Promo[] {
+export function getPromo(tipeFilter?: "promo" | "kegiatan"): Promo[] {
   const dir = path.join(CONTENT_DIR, "promo");
-  return readDirSafe("promo")
+  const items = readDirSafe("promo")
     .filter((f) => f.endsWith(".md"))
     .map((f) => {
       try {
@@ -216,14 +259,18 @@ export function getPromo(): Promo[] {
       }
     })
     .filter((p): p is Promo => p !== null && p.aktif !== false);
+
+  if (tipeFilter) {
+    return items.filter((p) => p.tipe === tipeFilter);
+  }
+  return items;
 }
 
-/**
- * Mengambil promo aktif yang berlaku pada tanggal tertentu (default: hari ini)
- */
-export function getActivePromo(referenceDate: Date = new Date()): Promo[] {
-  const allPromos = getPromo();
-  // Format tanggal YYYY-MM-DD
+export function getActivePromo(
+  referenceDate: Date = new Date(),
+  tipeFilter?: "promo" | "kegiatan"
+): Promo[] {
+  const allPromos = getPromo(tipeFilter);
   const todayStr = referenceDate.toISOString().slice(0, 10);
 
   return allPromos.filter((promo) => {
@@ -237,17 +284,15 @@ export function getActivePromo(referenceDate: Date = new Date()): Promo[] {
   });
 }
 
-/**
- * Mengambil profil & informasi toko dari content/info-toko.json
- */
 export function getInfoToko(): InfoToko {
   const filePath = path.join(CONTENT_DIR, "info-toko.json");
   const fallback: InfoToko = {
     nama_toko: "Kopi Senja",
-    alamat: "Jl. Senja Kopi No. 12",
-    link_peta: "https://maps.google.com",
-    whatsapp: "6281234567890",
-    instagram: "https://instagram.com/kopisenja",
+    alamat: "Jl. Seturan Raya No. 45, Sleman, D.I. Yogyakarta 55281",
+    link_peta: "https://maps.google.com/?q=Kopi+Senja+Yogyakarta",
+    embed_peta:
+      "https://maps.google.com/maps?q=Kopi+Senja+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
+    instagram: "https://instagram.com/kopisenja.yk",
     jam_buka: [],
   };
 
@@ -262,7 +307,7 @@ export function getInfoToko(): InfoToko {
       nama_toko: data.nama_toko || fallback.nama_toko,
       alamat: data.alamat || fallback.alamat,
       link_peta: data.link_peta || fallback.link_peta,
-      whatsapp: data.whatsapp || fallback.whatsapp,
+      embed_peta: data.embed_peta || fallback.embed_peta,
       instagram: data.instagram || fallback.instagram,
       jam_buka: Array.isArray(data.jam_buka) ? data.jam_buka : [],
     };
@@ -282,9 +327,6 @@ const HARI_MAP: Record<number, Hari> = {
   6: "Sabtu",
 };
 
-/**
- * Menghitung status buka/tutup toko saat ini berdasarkan data JamBuka (WIB / GMT+7)
- */
 export function getStoreStatus(
   info?: InfoToko,
   referenceDate: Date = new Date()
@@ -292,7 +334,6 @@ export function getStoreStatus(
   const toko = info || getInfoToko();
   const jamBukaList = toko.jam_buka || [];
 
-  // Konversi waktu ke zona WIB (UTC+7)
   const utc = referenceDate.getTime() + referenceDate.getTimezoneOffset() * 60000;
   const wibDate = new Date(utc + 7 * 3600000);
 
@@ -307,7 +348,6 @@ export function getStoreStatus(
   );
 
   if (!scheduleHariIni || scheduleHariIni.libur) {
-    // Cari hari buka berikutnya
     let nextOpenDay = "";
     for (let i = 1; i <= 7; i++) {
       const nextIdx = (dayIndex + i) % 7;
@@ -331,7 +371,6 @@ export function getStoreStatus(
   }
 
   const { buka, tutup } = scheduleHariIni;
-  // Periksa apakah jam tutup melewati tengah malam (misal 24:00 atau 01:00)
   const tutupNormalized = tutup === "24:00" ? "23:59" : tutup;
 
   if (waktuSekarang >= buka && waktuSekarang <= tutupNormalized) {
@@ -351,7 +390,6 @@ export function getStoreStatus(
       sekarangJam: waktuSekarang,
     };
   } else {
-    // Waktu sudah lewat jam tutup, cari hari berikutnya
     const nextIdx = (dayIndex + 1) % 7;
     const nextHari = HARI_MAP[nextIdx];
     const nextSchedule = jamBukaList.find(

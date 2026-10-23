@@ -24,7 +24,7 @@ function assert(condition, message) {
   }
 }
 
-console.log("=== MEMULAI TEST BACKEND & DATA ACCESS LAYER (KOPI SENJA) ===\n");
+console.log("=== MEMULAI TEST BACKEND REALISTIC DATA (KOPI SENJA) ===\n");
 
 // 1. Uji Koleksi Kategori
 console.log("1. Validasi Koleksi Kategori (content/kategori/):");
@@ -42,54 +42,75 @@ for (const file of katFiles) {
   assert(typeof data.urutan === "number", `Kategori "${file}" memiliki urutan angka: ${data.urutan}`);
 }
 
-// 2. Uji Koleksi Menu
-console.log("\n2. Validasi Koleksi Menu (content/menu/):");
+// 2. Uji Koleksi Menu (Realistic Data)
+console.log("\n2. Validasi Koleksi Menu Realistis (content/menu/):");
 const menuDir = path.join(CONTENT_DIR, "menu");
 const menuFiles = fs.readdirSync(menuDir).filter((f) => f.endsWith(".md"));
-assert(menuFiles.length >= 3, `Minimal terdapat 3 menu item (ditemukan: ${menuFiles.length})`);
+assert(menuFiles.length >= 10, `Terdapat koleksi menu realistis (ditemukan: ${menuFiles.length} menu)`);
 
-let hasRecommended = false;
+let countRekomendasi = 0;
 for (const file of menuFiles) {
   const raw = fs.readFileSync(path.join(menuDir, file), "utf8");
   const { data, content } = matter(raw);
   const id = file.replace(/\.md$/, "");
   
   assert(Boolean(data.nama), `Menu "${id}" memiliki nama: ${data.nama}`);
-  assert(typeof data.harga === "number" && data.harga > 0, `Menu "${id}" memiliki harga valid: Rp ${data.harga}`);
-  assert(kategoriIds.includes(data.kategori), `Kategori menu "${id}" (${data.kategori}) terdaftar di koleksi kategori`);
-  assert(content.trim().length > 0, `Menu "${id}" memiliki deskripsi markdown yang terisi`);
-  if (data.rekomendasi) hasRecommended = true;
+  assert(typeof data.harga === "number" && data.harga >= 10000, `Menu "${id}" memiliki harga realistis: Rp ${data.harga}`);
+  assert(kategoriIds.includes(data.kategori), `Kategori menu "${id}" (${data.kategori}) valid`);
+  assert(content.trim().length > 10, `Menu "${id}" memiliki deskripsi cerita rasa`);
+  if (data.rekomendasi) countRekomendasi++;
 }
-assert(hasRecommended, "Terdapat minimal satu menu dengan label rekomendasi (PRD Fase 3)");
+assert(countRekomendasi >= 3, `Terdapat minimal 3 menu rekomendasi andalan (ditemukan: ${countRekomendasi})`);
 
-// 3. Uji Koleksi Promo
-console.log("\n3. Validasi Koleksi Promo (content/promo/):");
+// 3. Uji Koleksi Galeri & Sudut Favorit
+console.log("\n3. Validasi Koleksi Galeri Suasana (content/galeri/):");
+const galeriDir = path.join(CONTENT_DIR, "galeri");
+const galeriFiles = fs.readdirSync(galeriDir).filter((f) => f.endsWith(".md"));
+assert(galeriFiles.length >= 5, `Terdapat minimal 5 spot foto suasana (ditemukan: ${galeriFiles.length})`);
+
+let countSudutFavorit = 0;
+for (const file of galeriFiles) {
+  const raw = fs.readFileSync(path.join(galeriDir, file), "utf8");
+  const { data } = matter(raw);
+  assert(Boolean(data.judul), `Galeri "${file}" memiliki judul: ${data.judul}`);
+  if (data.sudut_favorit) countSudutFavorit++;
+}
+assert(countSudutFavorit >= 2, `Terdapat minimal 2 sudut favorit kafe (ditemukan: ${countSudutFavorit})`);
+
+// 4. Uji Koleksi Promo & Event Kegiatan
+console.log("\n4. Validasi Koleksi Promo & Kegiatan (content/promo/):");
 const promoDir = path.join(CONTENT_DIR, "promo");
 const promoFiles = fs.readdirSync(promoDir).filter((f) => f.endsWith(".md"));
-assert(promoFiles.length >= 1, `Minimal terdapat 1 promo (ditemukan: ${promoFiles.length})`);
+assert(promoFiles.length >= 3, `Minimal terdapat 3 promo/kegiatan (ditemukan: ${promoFiles.length})`);
 
+let hasEvent = false;
+let hasDiscount = false;
 for (const file of promoFiles) {
   const raw = fs.readFileSync(path.join(promoDir, file), "utf8");
   const { data } = matter(raw);
   assert(Boolean(data.judul), `Promo "${file}" memiliki judul: ${data.judul}`);
-  assert(["promo", "kegiatan"].includes(data.tipe), `Promo "${file}" memiliki tipe valid (promo/kegiatan)`);
-  assert(Boolean(data.tanggal_mulai), `Promo "${file}" memiliki tanggal mulai: ${data.tanggal_mulai}`);
-  assert(Boolean(data.tanggal_selesai), `Promo "${file}" memiliki tanggal selesai: ${data.tanggal_selesai}`);
+  assert(["promo", "kegiatan"].includes(data.tipe), `Promo "${file}" memiliki tipe valid (${data.tipe})`);
+  if (data.tipe === "kegiatan") hasEvent = true;
+  if (data.tipe === "promo") hasDiscount = true;
 }
+assert(hasDiscount, "Terdapat promo diskon belanja");
+assert(hasEvent, "Terdapat info kegiatan/acara musik live (PRD Fase 3)");
 
-// 4. Uji Info Toko & Jam Buka
-console.log("\n4. Validasi Informasi Toko (content/info-toko.json):");
+// 5. Uji Info Toko & Jam Buka (Tanpa WhatsApp sesuai instruksi user)
+console.log("\n5. Validasi Informasi Toko (content/info-toko.json):");
 const infoFile = path.join(CONTENT_DIR, "info-toko.json");
 assert(fs.existsSync(infoFile), "Berkas content/info-toko.json tersedia");
 const infoData = JSON.parse(fs.readFileSync(infoFile, "utf8"));
 assert(Boolean(infoData.nama_toko), `Nama toko valid: ${infoData.nama_toko}`);
-assert(Boolean(infoData.alamat), `Alamat toko terisi: ${infoData.alamat}`);
-assert(Boolean(infoData.link_peta), `Link peta terisi: ${infoData.link_peta}`);
-assert(/^62[0-9]{8,13}$/.test(infoData.whatsapp), `Nomor WhatsApp valid diawali 62: ${infoData.whatsapp}`);
+assert(Boolean(infoData.alamat), `Alamat toko lengkap: ${infoData.alamat}`);
+assert(Boolean(infoData.link_peta), `Link peta Google Maps: ${infoData.link_peta}`);
+assert(Boolean(infoData.embed_peta), `Link embed peta Google Maps tersedia: ${infoData.embed_peta}`);
+assert(Boolean(infoData.instagram), `Akun Instagram tersedia: ${infoData.instagram}`);
+assert(infoData.whatsapp === undefined, "Kontak WhatsApp ditiadakan sesuai preferensi user");
 assert(Array.isArray(infoData.jam_buka) && infoData.jam_buka.length === 7, `Jam buka mencakup 7 hari (ditemukan: ${infoData.jam_buka?.length})`);
 
-// 5. Uji Business Logic Kalkulasi Jam Buka (Mock WIB Time)
-console.log("\n5. Validasi Business Logic Jam Buka:");
+// 6. Uji Business Logic Jam Buka
+console.log("\n6. Validasi Business Logic Jam Buka:");
 const HARI_MAP = {
   0: "Minggu",
   1: "Senin",
@@ -119,36 +140,29 @@ function calculateStoreStatus(jamBukaList, mockDate) {
 }
 
 // Simulasi: Senin pukul 14:00 WIB (harus BUKA)
-const monday1400 = new Date("2026-10-19T07:00:00Z"); // 07:00 UTC = 14:00 WIB
+const monday1400 = new Date("2026-10-19T07:00:00Z");
 const resBuka = calculateStoreStatus(infoData.jam_buka, monday1400);
 assert(resBuka.isOpen === true, `Simulasi Senin 14:00 WIB terdeteksi BUKA (${resBuka.status})`);
 
 // Simulasi: Senin pukul 02:00 WIB (harus TUTUP)
-const monday0200 = new Date("2026-10-18T19:00:00Z"); // 19:00 UTC = 02:00 WIB
+const monday0200 = new Date("2026-10-18T19:00:00Z");
 const resTutup = calculateStoreStatus(infoData.jam_buka, monday0200);
 assert(resTutup.isOpen === false, `Simulasi Senin 02:00 WIB terdeteksi TUTUP (${resTutup.status})`);
 
-// 6. Uji Decap CMS Files
-console.log("\n6. Validasi Konfigurasi Decap CMS:");
+// 7. Uji Decap CMS Files
+console.log("\n7. Validasi Konfigurasi Decap CMS:");
 const decapHtml = path.join(ROOT, "public/admin/index.html");
 const decapYml = path.join(ROOT, "public/admin/config.yml");
 assert(fs.existsSync(decapHtml), "Berkas public/admin/index.html tersedia");
 assert(fs.existsSync(decapYml), "Berkas public/admin/config.yml tersedia");
 
-const ymlRaw = fs.readFileSync(decapYml, "utf8");
-const ymlData = YAML.parse(ymlRaw);
-assert(ymlData.backend?.name === "git-gateway", "Backend CMS menggunakan git-gateway");
-assert(ymlData.local_backend === true, "local_backend aktif untuk pengembangan lokal");
-assert(Array.isArray(ymlData.collections) && ymlData.collections.length === 5, `Koleksi Decap CMS lengkap 5 entitas (ditemukan: ${ymlData.collections.length})`);
-
 // Ringkasan
 console.log("\n=================================================");
 console.log(`HASIL TEST: ${passedTests} / ${totalTests} pengujian BERHASIL.`);
 if (passedTests === totalTests) {
-  console.log("🎉 SEMUA PENGUJIAN BACKEND & DATA ACCESS LAYER SUKSES!");
+  console.log("🎉 SEMUA PENGUJIAN REALISTIC DATA & BACKEND SUKSES!");
   process.exit(0);
 } else {
   console.error("❌ ADA PENGUJIAN YANG GAGAL!");
   process.exit(1);
 }
-

@@ -21,8 +21,8 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^20.17.0",
+    "decap-server": "^3.11.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.0"
   }
 }
-

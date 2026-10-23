@@ -7,12 +7,14 @@ import {
   getMenuBySlug,
   getPromo,
   getRecommendedMenu,
+  getRelatedMenu,
   getStoreStatus,
 } from "./content";
 import type {
   GaleriFoto,
   InfoToko,
   Kategori,
+  MenuDetailResponse,
   MenuItem,
   Promo,
   StatusToko,
@@ -21,9 +23,6 @@ import type {
 const BACKEND_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-/**
- * Helper fetch dengan fallback ke data loader lokal jika backend server tidak merespons
- */
 async function safeFetch<T>(endpoint: string, fallbackFn: () => T): Promise<T> {
   try {
     const res = await fetch(`${BACKEND_API_URL}${endpoint}`, {
@@ -38,72 +37,84 @@ async function safeFetch<T>(endpoint: string, fallbackFn: () => T): Promise<T> {
     const json = await res.json();
     return json.data as T;
   } catch {
-    // Backend server sedang offline (misal saat build offline), gunakan fallback loader lokal
     return fallbackFn();
   }
 }
 
-/**
- * Mengambil daftar kategori menu
- */
 export async function fetchKategori(): Promise<Kategori[]> {
   return safeFetch("/kategori", () => getKategori());
 }
 
-/**
- * Mengambil daftar menu aktif, opsional filter kategori
- */
-export async function fetchMenu(kategori?: string): Promise<MenuItem[]> {
-  const query = kategori ? `?kategori=${encodeURIComponent(kategori)}` : "";
-  return safeFetch(`/menu${query}`, () => {
-    const all = getMenu();
-    return kategori
-      ? all.filter((m) => m.kategori.toLowerCase() === kategori.toLowerCase())
-      : all;
+export type FetchMenuParams = {
+  kategori?: string;
+  query?: string;
+  rekomendasi?: boolean;
+  sort?: string;
+};
+
+export async function fetchMenu(params?: string | FetchMenuParams): Promise<MenuItem[]> {
+  const queryParams = new URLSearchParams();
+
+  if (typeof params === "string") {
+    queryParams.set("kategori", params);
+  } else if (params) {
+    if (params.kategori) queryParams.set("kategori", params.kategori);
+    if (params.query) queryParams.set("q", params.query);
+    if (params.rekomendasi !== undefined)
+      queryParams.set("rekomendasi", String(params.rekomendasi));
+    if (params.sort) queryParams.set("sort", params.sort);
+  }
+
+  const qs = queryParams.toString() ? `?${queryParams.toString()}` : "";
+
+  return safeFetch(`/menu${qs}`, () => {
+    if (typeof params === "string") {
+      return getMenu({ kategori: params });
+    }
+    return getMenu(params);
   });
 }
 
-/**
- * Mengambil menu rekomendasi / andalan
- */
 export async function fetchRecommendedMenu(): Promise<MenuItem[]> {
   return safeFetch("/menu/rekomendasi", () => getRecommendedMenu());
 }
 
-/**
- * Mengambil detail 1 menu berdasarkan slug
- */
-export async function fetchMenuBySlug(slug: string): Promise<MenuItem | null> {
-  return safeFetch(`/menu/${slug}`, () => getMenuBySlug(slug));
+export async function fetchMenuBySlug(slug: string): Promise<MenuDetailResponse | null> {
+  return safeFetch(`/menu/${slug}`, () => {
+    const item = getMenuBySlug(slug);
+    if (!item) return null;
+    const related = getRelatedMenu(item.id, item.kategori, 3);
+    return {
+      ...item,
+      hargaFormatted: `Rp ${item.harga.toLocaleString("id-ID")}`,
+      relatedMenu: related,
+    };
+  });
 }
 
-/**
- * Mengambil daftar galeri foto, opsional filter sudut favorit
- */
 export async function fetchGaleri(onlyFavorites = false): Promise<GaleriFoto[]> {
   const query = onlyFavorites ? "?favorit=true" : "";
   return safeFetch(`/galeri${query}`, () => getGaleri(onlyFavorites));
 }
 
-/**
- * Mengambil promo aktif
- */
-export async function fetchPromo(activeOnly = true): Promise<Promo[]> {
-  const query = activeOnly ? "?aktif_saja=true" : "";
-  return safeFetch(`/promo${query}`, () => (activeOnly ? getActivePromo() : getPromo()));
+export async function fetchPromo(
+  activeOnly = true,
+  tipe?: "promo" | "kegiatan"
+): Promise<Promo[]> {
+  const params = new URLSearchParams();
+  if (activeOnly) params.set("aktif_saja", "true");
+  if (tipe) params.set("tipe", tipe);
+  const qs = params.toString() ? `?${params.toString()}` : "";
+
+  return safeFetch(`/promo${qs}`, () =>
+    activeOnly ? getActivePromo(new Date(), tipe) : getPromo(tipe)
+  );
 }
 
-/**
- * Mengambil informasi toko & kontak
- */
 export async function fetchInfoToko(): Promise<InfoToko> {
   return safeFetch("/info-toko", () => getInfoToko());
 }
 
-/**
- * Mengambil kalkulasi status buka/tutup toko saat ini (WIB)
- */
 export async function fetchStatusToko(): Promise<StatusToko> {
   return safeFetch("/status-toko", () => getStoreStatus());
 }
-

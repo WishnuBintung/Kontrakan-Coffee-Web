@@ -59,11 +59,11 @@ export function getKategori() {
         .sort((a, b) => a.urutan - b.urutan);
 }
 /**
- * Mendapatkan semua menu aktif
+ * Mendapatkan semua menu aktif dengan opsi pencarian, filter kategori, rekomendasi, dan pengurutan
  */
-export function getMenu(kategoriFilter) {
+export function getMenu(options) {
     const dir = path.join(CONTENT_DIR, "menu");
-    const items = readDirSafe("menu")
+    let items = readDirSafe("menu")
         .filter((f) => f.endsWith(".md"))
         .map((f) => {
         try {
@@ -89,8 +89,43 @@ export function getMenu(kategoriFilter) {
         }
     })
         .filter((m) => m !== null && m.aktif !== false);
-    if (kategoriFilter) {
-        return items.filter((item) => item.kategori.toLowerCase() === kategoriFilter.toLowerCase());
+    if (!options)
+        return items;
+    // Jika dipanggil dengan string kategori langsung: getMenu("kopi")
+    if (typeof options === "string") {
+        return items.filter((item) => item.kategori.toLowerCase() === options.toLowerCase());
+    }
+    // Filter Kategori
+    if (options.kategori) {
+        items = items.filter((item) => item.kategori.toLowerCase() === options.kategori?.toLowerCase());
+    }
+    // Filter Rekomendasi
+    if (typeof options.rekomendasi === "boolean") {
+        items = items.filter((item) => item.rekomendasi === options.rekomendasi);
+    }
+    // Pencarian Teks (Cari Menu - PRD Fase 1)
+    if (options.query && options.query.trim()) {
+        const q = options.query.trim().toLowerCase();
+        items = items.filter((item) => item.nama.toLowerCase().includes(q) ||
+            item.deskripsi.toLowerCase().includes(q) ||
+            item.kategori.toLowerCase().includes(q));
+    }
+    // Pengurutan (Sorting)
+    if (options.sort) {
+        switch (options.sort) {
+            case "harga_asc":
+                items.sort((a, b) => a.harga - b.harga);
+                break;
+            case "harga_desc":
+                items.sort((a, b) => b.harga - a.harga);
+                break;
+            case "nama_asc":
+                items.sort((a, b) => a.nama.localeCompare(b.nama));
+                break;
+            case "nama_desc":
+                items.sort((a, b) => b.nama.localeCompare(a.nama));
+                break;
+        }
     }
     return items;
 }
@@ -123,7 +158,16 @@ export function getMenuBySlug(slug) {
     }
 }
 /**
- * Mengambil daftar slug menu
+ * Mengambil menu terkait (related items) berdasarkan kategori yang sama
+ */
+export function getRelatedMenu(currentSlug, kategori, limit = 3) {
+    const sameCategory = getMenu({ kategori });
+    return sameCategory
+        .filter((item) => item.id !== currentSlug)
+        .slice(0, limit);
+}
+/**
+ * Mengambil daftar slug menu untuk static generation Next.js
  */
 export function getAllMenuSlugs() {
     return readDirSafe("menu")
@@ -148,7 +192,7 @@ export function getMenuWithKategori() {
  * Mengambil menu rekomendasi / andalan (Fase 3 PRD)
  */
 export function getRecommendedMenu() {
-    return getMenu().filter((item) => item.rekomendasi);
+    return getMenu({ rekomendasi: true });
 }
 /**
  * Mengambil galeri foto dengan opsi filter khusus sudut favorit
@@ -160,7 +204,7 @@ export function getGaleri(onlyFavorites = false) {
         .map((f) => {
         try {
             const raw = fs.readFileSync(path.join(dir, f), "utf8");
-            const { data } = matter(raw);
+            const { data, content } = matter(raw);
             const id = f.replace(/\.md$/, "");
             return {
                 id,
@@ -168,6 +212,7 @@ export function getGaleri(onlyFavorites = false) {
                 gambar: data.gambar || DEFAULT_PLACEHOLDER,
                 sudut_favorit: Boolean(data.sudut_favorit),
                 urutan: typeof data.urutan === "number" ? data.urutan : 99,
+                deskripsi: content ? content.trim() : undefined,
             };
         }
         catch (err) {
@@ -183,11 +228,11 @@ export function getGaleri(onlyFavorites = false) {
     return items;
 }
 /**
- * Mengambil semua promo aktif
+ * Mengambil semua promo atau filter per tipe (promo / kegiatan)
  */
-export function getPromo() {
+export function getPromo(tipeFilter) {
     const dir = path.join(CONTENT_DIR, "promo");
-    return readDirSafe("promo")
+    const items = readDirSafe("promo")
         .filter((f) => f.endsWith(".md"))
         .map((f) => {
         try {
@@ -211,12 +256,16 @@ export function getPromo() {
         }
     })
         .filter((p) => p !== null && p.aktif !== false);
+    if (tipeFilter) {
+        return items.filter((p) => p.tipe === tipeFilter);
+    }
+    return items;
 }
 /**
  * Mengambil promo aktif yang berlaku pada tanggal tertentu (default: hari ini)
  */
-export function getActivePromo(referenceDate = new Date()) {
-    const allPromos = getPromo();
+export function getActivePromo(referenceDate = new Date(), tipeFilter) {
+    const allPromos = getPromo(tipeFilter);
     const todayStr = referenceDate.toISOString().slice(0, 10);
     return allPromos.filter((promo) => {
         if (!promo.aktif)
@@ -237,10 +286,10 @@ export function getInfoToko() {
     const filePath = path.join(CONTENT_DIR, "info-toko.json");
     const fallback = {
         nama_toko: "Kopi Senja",
-        alamat: "Jl. Senja Kopi No. 12",
-        link_peta: "https://maps.google.com",
-        whatsapp: "6281234567890",
-        instagram: "https://instagram.com/kopisenja",
+        alamat: "Jl. Seturan Raya No. 45, Sleman, D.I. Yogyakarta 55281",
+        link_peta: "https://maps.google.com/?q=Kopi+Senja+Yogyakarta",
+        embed_peta: "https://maps.google.com/maps?q=Kopi+Senja+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
+        instagram: "https://instagram.com/kopisenja.yk",
         jam_buka: [],
     };
     if (!fs.existsSync(filePath)) {
@@ -253,7 +302,7 @@ export function getInfoToko() {
             nama_toko: data.nama_toko || fallback.nama_toko,
             alamat: data.alamat || fallback.alamat,
             link_peta: data.link_peta || fallback.link_peta,
-            whatsapp: data.whatsapp || fallback.whatsapp,
+            embed_peta: data.embed_peta || fallback.embed_peta,
             instagram: data.instagram || fallback.instagram,
             jam_buka: Array.isArray(data.jam_buka) ? data.jam_buka : [],
         };

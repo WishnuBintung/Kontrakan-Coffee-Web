@@ -73,12 +73,19 @@ export function getKategori(): Kategori[] {
     .sort((a, b) => a.urutan - b.urutan);
 }
 
+export type GetMenuOptions = {
+  kategori?: string;
+  query?: string;
+  rekomendasi?: boolean;
+  sort?: "harga_asc" | "harga_desc" | "nama_asc" | "nama_desc" | string;
+};
+
 /**
- * Mendapatkan semua menu aktif
+ * Mendapatkan semua menu aktif dengan opsi pencarian, filter kategori, rekomendasi, dan pengurutan
  */
-export function getMenu(kategoriFilter?: string): MenuItem[] {
+export function getMenu(options?: string | GetMenuOptions): MenuItem[] {
   const dir = path.join(CONTENT_DIR, "menu");
-  const items = readDirSafe("menu")
+  let items = readDirSafe("menu")
     .filter((f) => f.endsWith(".md"))
     .map((f) => {
       try {
@@ -104,11 +111,56 @@ export function getMenu(kategoriFilter?: string): MenuItem[] {
     })
     .filter((m): m is MenuItem => m !== null && m.aktif !== false);
 
-  if (kategoriFilter) {
+  if (!options) return items;
+
+  // Jika dipanggil dengan string kategori langsung: getMenu("kopi")
+  if (typeof options === "string") {
     return items.filter(
-      (item) => item.kategori.toLowerCase() === kategoriFilter.toLowerCase()
+      (item) => item.kategori.toLowerCase() === options.toLowerCase()
     );
   }
+
+  // Filter Kategori
+  if (options.kategori) {
+    items = items.filter(
+      (item) => item.kategori.toLowerCase() === options.kategori?.toLowerCase()
+    );
+  }
+
+  // Filter Rekomendasi
+  if (typeof options.rekomendasi === "boolean") {
+    items = items.filter((item) => item.rekomendasi === options.rekomendasi);
+  }
+
+  // Pencarian Teks (Cari Menu - PRD Fase 1)
+  if (options.query && options.query.trim()) {
+    const q = options.query.trim().toLowerCase();
+    items = items.filter(
+      (item) =>
+        item.nama.toLowerCase().includes(q) ||
+        item.deskripsi.toLowerCase().includes(q) ||
+        item.kategori.toLowerCase().includes(q)
+    );
+  }
+
+  // Pengurutan (Sorting)
+  if (options.sort) {
+    switch (options.sort) {
+      case "harga_asc":
+        items.sort((a, b) => a.harga - b.harga);
+        break;
+      case "harga_desc":
+        items.sort((a, b) => b.harga - a.harga);
+        break;
+      case "nama_asc":
+        items.sort((a, b) => a.nama.localeCompare(b.nama));
+        break;
+      case "nama_desc":
+        items.sort((a, b) => b.nama.localeCompare(a.nama));
+        break;
+    }
+  }
+
   return items;
 }
 
@@ -141,7 +193,21 @@ export function getMenuBySlug(slug: string): MenuItem | null {
 }
 
 /**
- * Mengambil daftar slug menu
+ * Mengambil menu terkait (related items) berdasarkan kategori yang sama
+ */
+export function getRelatedMenu(
+  currentSlug: string,
+  kategori: string,
+  limit = 3
+): MenuItem[] {
+  const sameCategory = getMenu({ kategori });
+  return sameCategory
+    .filter((item) => item.id !== currentSlug)
+    .slice(0, limit);
+}
+
+/**
+ * Mengambil daftar slug menu untuk static generation Next.js
  */
 export function getAllMenuSlugs(): string[] {
   return readDirSafe("menu")
@@ -169,7 +235,7 @@ export function getMenuWithKategori(): MenuWithKategori[] {
  * Mengambil menu rekomendasi / andalan (Fase 3 PRD)
  */
 export function getRecommendedMenu(): MenuItem[] {
-  return getMenu().filter((item) => item.rekomendasi);
+  return getMenu({ rekomendasi: true });
 }
 
 /**
@@ -182,7 +248,7 @@ export function getGaleri(onlyFavorites = false): GaleriFoto[] {
     .map((f) => {
       try {
         const raw = fs.readFileSync(path.join(dir, f), "utf8");
-        const { data } = matter(raw);
+        const { data, content } = matter(raw);
         const id = f.replace(/\.md$/, "");
         return {
           id,
@@ -190,6 +256,7 @@ export function getGaleri(onlyFavorites = false): GaleriFoto[] {
           gambar: data.gambar || DEFAULT_PLACEHOLDER,
           sudut_favorit: Boolean(data.sudut_favorit),
           urutan: typeof data.urutan === "number" ? data.urutan : 99,
+          deskripsi: content ? content.trim() : undefined,
         } as GaleriFoto;
       } catch (err) {
         console.error(`Gagal membaca file galeri: ${f}`, err);
@@ -206,11 +273,11 @@ export function getGaleri(onlyFavorites = false): GaleriFoto[] {
 }
 
 /**
- * Mengambil semua promo aktif
+ * Mengambil semua promo atau filter per tipe (promo / kegiatan)
  */
-export function getPromo(): Promo[] {
+export function getPromo(tipeFilter?: "promo" | "kegiatan"): Promo[] {
   const dir = path.join(CONTENT_DIR, "promo");
-  return readDirSafe("promo")
+  const items = readDirSafe("promo")
     .filter((f) => f.endsWith(".md"))
     .map((f) => {
       try {
@@ -233,13 +300,21 @@ export function getPromo(): Promo[] {
       }
     })
     .filter((p): p is Promo => p !== null && p.aktif !== false);
+
+  if (tipeFilter) {
+    return items.filter((p) => p.tipe === tipeFilter);
+  }
+  return items;
 }
 
 /**
  * Mengambil promo aktif yang berlaku pada tanggal tertentu (default: hari ini)
  */
-export function getActivePromo(referenceDate: Date = new Date()): Promo[] {
-  const allPromos = getPromo();
+export function getActivePromo(
+  referenceDate: Date = new Date(),
+  tipeFilter?: "promo" | "kegiatan"
+): Promo[] {
+  const allPromos = getPromo(tipeFilter);
   const todayStr = referenceDate.toISOString().slice(0, 10);
 
   return allPromos.filter((promo) => {
@@ -260,10 +335,11 @@ export function getInfoToko(): InfoToko {
   const filePath = path.join(CONTENT_DIR, "info-toko.json");
   const fallback: InfoToko = {
     nama_toko: "Kopi Senja",
-    alamat: "Jl. Senja Kopi No. 12",
-    link_peta: "https://maps.google.com",
-    whatsapp: "6281234567890",
-    instagram: "https://instagram.com/kopisenja",
+    alamat: "Jl. Seturan Raya No. 45, Sleman, D.I. Yogyakarta 55281",
+    link_peta: "https://maps.google.com/?q=Kopi+Senja+Yogyakarta",
+    embed_peta:
+      "https://maps.google.com/maps?q=Kopi+Senja+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
+    instagram: "https://instagram.com/kopisenja.yk",
     jam_buka: [],
   };
 
@@ -278,7 +354,7 @@ export function getInfoToko(): InfoToko {
       nama_toko: data.nama_toko || fallback.nama_toko,
       alamat: data.alamat || fallback.alamat,
       link_peta: data.link_peta || fallback.link_peta,
-      whatsapp: data.whatsapp || fallback.whatsapp,
+      embed_peta: data.embed_peta || fallback.embed_peta,
       instagram: data.instagram || fallback.instagram,
       jam_buka: Array.isArray(data.jam_buka) ? data.jam_buka : [],
     };

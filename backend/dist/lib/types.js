@@ -1,2 +1,2 @@
-// src/lib/types.ts
+// backend/src/lib/types.ts
 export {};

@@ -1,4 +1,4 @@
-// src/lib/types.ts
+// backend/src/lib/types.ts
 
 export type Kategori = {
   id: string;
@@ -21,6 +21,11 @@ export type MenuItem = {
 
 export type MenuWithKategori = MenuItem & {
   kategoriNama: string;
+};
+
+export type MenuDetailResponse = MenuItem & {
+  hargaFormatted: string;
+  relatedMenu: MenuItem[];
 };
 
 export type GaleriFoto = {
@@ -51,7 +56,7 @@ export type InfoToko = {
   nama_toko: string;
   alamat: string;
   link_peta: string;
-  whatsapp: string;
+  embed_peta?: string;
   instagram: string;
   jam_buka: JamBuka[];
 };
