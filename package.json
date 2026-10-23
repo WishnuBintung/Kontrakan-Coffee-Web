@@ -1,46 +1,23 @@
 {
-  "name": "kontrakan-coffee",
-  "version": "0.1.0",
+  "name": "kontrakan-coffee-root",
+  "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint",
-    "cms": "decap-server",
-    "test:backend": "node scripts/test-backend.mjs"
-  },
-  "dependencies": {
-    "@base-ui/react": "^1.9.0",
-    "@hugeicons/core-free-icons": "^4.3.5",
-    "@hugeicons/react": "^1.1.10",
-    "class-variance-authority": "^0.7.1",
-    "cn": "^0.5.0",
-    "gray-matter": "^4.0.3",
-    "lucide-react": "^1.61.0",
-    "motion": "^14.6.0",
-    "next": "^16.4.2",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "shadcn": "^1.0.0",
-    "tw-animate-css": "^1.4.0",
-    "yaml": "^2.9.1"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.35",
-    "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.9.10",
-    "prettier-plugin-tailwindcss": "^0.8.1",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "dev": "npm run dev:backend & npm run dev:frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "lint:frontend": "npm run lint --workspace=frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "test": "npm run test:backend"
   },
   "engines": {
-    "node": ">=20.9 <23"
+    "node": ">=20.9 <25"
   }
 }
