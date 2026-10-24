@@ -4,7 +4,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import YAML from "yaml";
 
-const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
+const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"));
 const BACKEND_ROOT = path.resolve(SCRIPT_DIR, "..");
 const CONTENT_DIR = fs.existsSync(path.join(BACKEND_ROOT, "content"))
   ? path.join(BACKEND_ROOT, "content")

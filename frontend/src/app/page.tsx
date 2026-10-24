@@ -6,6 +6,7 @@ import {
   getGaleri,
   formatRupiah,
 } from "@/lib/content";
+import { toHeroFlavors } from "@/lib/hero-flavors";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { Footer } from "@/components/Footer";
@@ -32,6 +33,7 @@ export default function Home() {
   const galeriList = getGaleri();
 
   const promoUtama = activePromos.length > 0 ? activePromos[0] : undefined;
+  const heroFlavors = toHeroFlavors(menuList);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-amber-500/20 selection:text-amber-900 dark:selection:text-amber-200">
@@ -40,7 +42,11 @@ export default function Home() {
 
       <main className="flex-1">
         {/* 2. Hero Section (Dua Sisi: Headline & Interactive 3D Cup) */}
-        <HeroSection infoToko={infoToko} promoTerbaru={promoUtama} />
+        <HeroSection
+          infoToko={infoToko}
+          promoTerbaru={promoUtama}
+          flavors={heroFlavors}
+        />
 
         {/* 3. Banner Promo Aktif (Bila Ada - PRD Fase 3) */}
         {promoUtama && (

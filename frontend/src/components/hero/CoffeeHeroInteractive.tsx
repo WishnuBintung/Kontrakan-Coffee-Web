@@ -3,41 +3,60 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ArrowLeft, ArrowRight, Award, MapPin, Plus, Wifi } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowDown,
+  Coffee,
+  Flame,
+  MapPin,
+  Snowflake,
+  Sparkles,
+  Wifi,
+  Zap,
+} from "lucide-react";
 import type { HeroFlavor } from "@/lib/hero-flavors";
-import type { InfoToko } from "@/lib/types";
+import type { InfoToko, Promo } from "@/lib/types";
 import { computeLiveStatus, formatRupiahClient, type LiveStatus } from "@/lib/store";
 import { ease, lerp, mixHex, tween, type TweenHandle } from "@/lib/tween";
-import { CUP_CIRCUMFERENCE, CUP_LABEL_TILE, IcedCup, Particle } from "./HeroArt";
+import {
+  CUP_CIRCUMFERENCE,
+  CUP_LABEL_TILE,
+  IcedCup,
+  HotCup,
+  Particle,
+  TastingMeter,
+} from "./HeroArt";
 
 /* ------------------------------------------------------------------ */
-/* Layout objek melayang — diadaptasi 1:1 dari konsep (b1–b9, l1–l4),  */
-/* ukuran diskalakan agar proporsional untuk biji kopi.                */
+/* Layout partikel melayang (biji kopi, daun matcha, es, kakao)       */
 /* ------------------------------------------------------------------ */
 type Slot = { top: number; left: number; size: number; opacity?: number; mobileHidden?: boolean };
 
 const FG_SLOTS: Slot[] = [
-  { top: 25, left: 30, size: 132, mobileHidden: true },
-  { top: 60, left: 42, size: 64 },
-  { top: 30, left: 62, size: 150, mobileHidden: true },
-  { top: 15, left: 48, size: 84 },
-  { top: 75, left: 20, size: 72 },
-  { top: 45, left: 75, size: 108, mobileHidden: true },
+  { top: 22, left: 28, size: 120, mobileHidden: true },
+  { top: 62, left: 38, size: 68 },
+  { top: 28, left: 68, size: 130, mobileHidden: true },
+  { top: 16, left: 52, size: 80 },
+  { top: 76, left: 18, size: 74 },
+  { top: 48, left: 78, size: 100, mobileHidden: true },
 ];
+
 const BG_SLOTS: Slot[] = [
-  { top: 15, left: 40, size: 52, opacity: 0.7 },
-  { top: 50, left: 55, size: 46, opacity: 0.6 },
-  { top: 80, left: 35, size: 48, opacity: 0.7 },
+  { top: 18, left: 42, size: 56, opacity: 0.7 },
+  { top: 52, left: 58, size: 48, opacity: 0.6 },
+  { top: 82, left: 32, size: 52, opacity: 0.7 },
 ];
+
 const FAR_SLOTS: Slot[] = [
-  { top: 10, left: 15, size: 40 },
-  { top: 40, left: 80, size: 90, opacity: 0.4 },
-  { top: 70, left: 75, size: 56 },
-  { top: 85, left: 20, size: 80, opacity: 0.3 },
+  { top: 12, left: 16, size: 42 },
+  { top: 42, left: 82, size: 84, opacity: 0.4 },
+  { top: 72, left: 72, size: 58 },
+  { top: 86, left: 22, size: 76, opacity: 0.35 },
 ];
+
 const FLOAT_DUR = [5, 7, 6, 8, 5.5, 6.5, 9, 11, 10];
 
-/** Efek melayang per-objek (amplitudo 15px / 6deg, durasi berbeda per index — sesuai konsep). */
 function floatOffset(i: number, time: number) {
   const dur = FLOAT_DUR[i % FLOAT_DUR.length];
   const phase = (time + i * 0.7) * ((Math.PI * 2) / dur);
@@ -50,7 +69,6 @@ type BeanState = {
   baseY: number;
   rx: number;
   ry: number;
-  // nilai yang terakhir dirender (dipakai saat transisi)
   tx: number;
   ty: number;
   rot: number;
@@ -60,39 +78,52 @@ type BeanState = {
 
 const FALLBACK_FLAVOR: HeroFlavor = {
   id: "es-kopi-susu",
-  nama: "Es Kopi Susu",
+  nama: "Es Kopi Susu Senja",
   harga: 18000,
   kategori: "kopi",
-  deskripsi: "Espresso, susu segar, dan gula aren pilihan.",
+  deskripsi: "Espresso, susu segar, dan gula aren pilihan dengan rasa seimbang dan creamy.",
   theme: {
     bg: { inner: "#a0582a", mid: "#55290f", outer: "#170a04" },
     liquid: { top: "#ecd2ab", bottom: "#6b3a1e" },
     particle: "bean",
     tagline: ["Manis", "Aren"],
     shortName: "Es Kopi Susu",
+    strawColor: "#fdba74",
+    glaze: {
+      base: "#452414",
+      rim: "#d4a373",
+      accent: "#f4a261",
+      latteArt: "heart",
+    },
   },
+  tastingNotes: ["Double Shot Espresso", "Gula Aren Organik", "Fresh Milk Gurih"],
+  profile: { sweetness: 4, boldness: 4, acidity: 2, aroma: 5 },
+  supportsHot: true,
 };
 
 type Props = {
-  flavors: HeroFlavor[];
+  flavors?: HeroFlavor[];
   infoToko: InfoToko;
+  promoTerbaru?: Promo;
 };
 
-export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props) {
-  const flavors = flavorsProp.length > 0 ? flavorsProp : [FALLBACK_FLAVOR];
+export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko, promoTerbaru }: Props) {
+  const flavors = flavorsProp && flavorsProp.length > 0 ? flavorsProp : [FALLBACK_FLAVOR];
   const reduceMotion = useReducedMotion();
 
-  // selectedIndex → state UI kartu (langsung), activeIndex → visual (ditukar di puncak spin)
+  // State menu rekomendasi terpilih
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isSwitching, setIsSwitching] = useState(false);
+  const [servingMode, setServingMode] = useState<"iced" | "hot">("iced");
+  const [tapReaction, setTapReaction] = useState<string | null>(null);
   const [status, setStatus] = useState<LiveStatus | null>(null);
 
-  const active = flavors[activeIndex];
-  const selected = flavors[selectedIndex];
+  const active = flavors[activeIndex] ?? FALLBACK_FLAVOR;
+  const selected = flavors[selectedIndex] ?? FALLBACK_FLAVOR;
 
-  // CSS variable awal (stabil agar React tidak menimpa nilai imperatif)
-  const [initialBg] = useState(() => flavors[0].theme.bg);
+  // CSS variable awal
+  const [initialBg] = useState(() => (flavors[0] ?? FALLBACK_FLAVOR).theme.bg);
 
   /* ---------------------------- refs ---------------------------- */
   const sectionRef = useRef<HTMLElement>(null);
@@ -111,7 +142,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
   const beans = useRef<BeanState[]>([]);
   if (beans.current.length === 0) {
     beans.current = Array.from({ length: beanCount }, (_, i) => ({
-      angle: (i * 137.5) % 360, // deterministik (aman untuk hydration)
+      angle: (i * 137.5) % 360,
       baseX: 0,
       baseY: 0,
       rx: 0,
@@ -129,7 +160,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
   const spin = useRef(0);
   const blur = useRef(0);
   const switching = useRef(false);
-  const currentBg = useRef({ ...flavors[0].theme.bg });
+  const currentBg = useRef({ ...initialBg });
   const tweens = useRef<TweenHandle[]>([]);
 
   /* ----------------------- status buka (WIB) ---------------------- */
@@ -149,8 +180,6 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
     el.style.setProperty("--hero-outer", bg.outer);
     currentBg.current = { ...bg };
   }, []);
-
-  const floatAt = floatOffset;
 
   /* ------------------- pointer: tilt + repulsion ------------------ */
   useEffect(() => {
@@ -182,7 +211,6 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
     const section = sectionRef.current;
     if (!section) return;
 
-    // Reduced motion: posisikan statis, tanpa loop
     if (reduceMotion) {
       beanRefs.current.forEach((el, i) => {
         if (el) el.style.transform = `rotate(${beans.current[i].angle}deg)`;
@@ -200,44 +228,44 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
       s.x += (m.x - s.x) * 0.05;
       s.y += (m.y - s.y) * 0.05;
 
-      // 1. Tilt gelas mengikuti kursor + spin transisi
+      // 1. Tilt gelas / cangkir mengikuti kursor + spin
       const theta = s.x * 40 + spin.current;
       const off = (theta / 360) * CUP_CIRCUMFERENCE;
       const tx = -(((off % CUP_LABEL_TILE) + CUP_LABEL_TILE) % CUP_LABEL_TILE);
       labelRef.current?.setAttribute("transform", `translate(${tx} 0)`);
       if (cupTiltRef.current) {
-        cupTiltRef.current.style.transform = `perspective(1200px) rotateX(${-s.y * 20}deg) rotateY(${s.x * 14}deg) rotateZ(${8 + s.x * 6}deg)`;
+        cupTiltRef.current.style.transform = `perspective(1200px) rotateX(${-s.y * 18}deg) rotateY(${s.x * 16}deg) rotateZ(${6 + s.x * 5}deg)`;
         cupTiltRef.current.style.filter = blur.current > 0.05 ? `blur(${blur.current}px)` : "none";
       }
 
-      // 2. Parallax layer
-      if (fgRef.current) fgRef.current.style.transform = `translate3d(${s.x * 60}px, ${s.y * 60}px, 0)`;
-      if (bgRef.current) bgRef.current.style.transform = `translate3d(${s.x * -30}px, ${s.y * -30}px, 0)`;
-      if (farRef.current) farRef.current.style.transform = `translate3d(${s.x * -15}px, ${s.y * -15}px, 0)`;
+      // 2. Parallax layers
+      if (fgRef.current) fgRef.current.style.transform = `translate3d(${s.x * 50}px, ${s.y * 50}px, 0)`;
+      if (bgRef.current) bgRef.current.style.transform = `translate3d(${s.x * -25}px, ${s.y * -25}px, 0)`;
+      if (farRef.current) farRef.current.style.transform = `translate3d(${s.x * -12}px, ${s.y * -12}px, 0)`;
 
-      // 3. Biji kopi: repulsion + float (atau nilai tween saat transisi)
+      // 3. Partikel: gaya tolak kursor + float
       beanRefs.current.forEach((el, i) => {
         if (!el) return;
         const b = beans.current[i];
         if (!switching.current) {
           const r = el.getBoundingClientRect();
-          if (r.width === 0) return; // tersembunyi (mobile)
+          if (r.width === 0) return;
           const dx = m.px - (r.left + r.width / 2);
           const dy = m.py - (r.top + r.height / 2);
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
           let trx = 0;
           let tryy = 0;
           let speed = 1;
-          if (dist < 400) {
-            const force = (400 - dist) / 400;
-            trx = (dx / dist) * force * -80;
-            tryy = (dy / dist) * force * -80;
-            speed = 1 + force * 5;
+          if (dist < 380) {
+            const force = (380 - dist) / 380;
+            trx = (dx / dist) * force * -75;
+            tryy = (dy / dist) * force * -75;
+            speed = 1 + force * 4.5;
           }
           b.rx += (trx - b.rx) * 0.1;
           b.ry += (tryy - b.ry) * 0.1;
           b.angle += 0.2 * speed;
-          const f = floatAt(i, time);
+          const f = floatOffset(i, time);
           b.tx = b.rx + b.baseX;
           b.ty = b.ry + b.baseY + f.y;
           b.rot = b.angle + f.a;
@@ -248,12 +276,12 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         el.style.opacity = String(Math.max(0, Math.min(1, b.opacity)));
       });
 
-      // 4. Objek jauh: selalu melayang
+      // 4. Objek latar jauh
       farItemRefs.current.forEach((el, i) => {
         if (!el) return;
         const dur = 10 + i * 2;
         const phase = (time + i * 1.2) * ((Math.PI * 2) / dur);
-        el.style.transform = `translate(${Math.cos(phase * 0.5) * 15}px, ${Math.sin(phase) * 20}px) rotate(${Math.sin(phase * 0.3) * 15}deg)`;
+        el.style.transform = `translate(${Math.cos(phase * 0.5) * 15}px, ${Math.sin(phase) * 18}px) rotate(${Math.sin(phase * 0.3) * 12}deg)`;
       });
 
       raf = requestAnimationFrame(tick);
@@ -269,7 +297,6 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
       cancelAnimationFrame(raf);
     };
 
-    // Hemat baterai: loop hanya jalan saat hero terlihat
     const io = new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop()), {
       threshold: 0,
     });
@@ -284,7 +311,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
     };
   }, [reduceMotion]);
 
-  /* ------------------------ bubble generator ---------------------- */
+  /* ----------------- gelembung aroma latar belakang ---------------- */
   useEffect(() => {
     if (reduceMotion) return;
     const container = bubblesRef.current;
@@ -295,17 +322,17 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
     const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
     io.observe(section);
 
-    const interval = window.innerWidth < 768 ? 700 : 400;
+    const interval = typeof window !== "undefined" && window.innerWidth < 768 ? 800 : 450;
     const id = window.setInterval(() => {
       if (!visible || document.hidden) return;
       const bubble = document.createElement("span");
-      const size = Math.random() * 20 + 10;
+      const size = Math.random() * 18 + 8;
       const duration = Math.random() * 6 + 4;
       bubble.className = "hero-bubble";
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
       bubble.style.left = `${Math.random() * 100}%`;
-      bubble.style.setProperty("--bubble-opacity", String(Math.random() * 0.4 + 0.2));
+      bubble.style.setProperty("--bubble-opacity", String(Math.random() * 0.35 + 0.15));
       bubble.style.setProperty("--bubble-duration", `${duration}s`);
       container.appendChild(bubble);
       window.setTimeout(() => bubble.remove(), duration * 1000);
@@ -318,15 +345,19 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
     };
   }, [reduceMotion]);
 
-  // Bersihkan tween saat unmount
   useEffect(() => () => tweens.current.forEach((t) => t.cancel()), []);
 
-  /* --------------------- koreografi ganti menu -------------------- */
+  /* ------------------- koreografi ganti menu ---------------------- */
   const switchFlavor = useCallback(
     (nextIndex: number) => {
       if (switching.current || nextIndex === selectedIndex) return;
       const next = flavors[nextIndex];
       setSelectedIndex(nextIndex);
+
+      // Bila menu berikutnya tidak mendukung panas (mis. cold brew), kembalikan ke dingin
+      if (!next.supportsHot && servingMode === "hot") {
+        setServingMode("iced");
+      }
 
       if (reduceMotion) {
         setActiveIndex(nextIndex);
@@ -338,11 +369,11 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
       setIsSwitching(true);
       const run = (t: TweenHandle) => tweens.current.push(t);
 
-      // 1. Morph warna latar (1.5s power2.inOut)
+      // 1. Morph warna latar bertahap
       const fromBg = { ...currentBg.current };
       run(
         tween({
-          duration: 1.5,
+          duration: 1.4,
           ease: ease.power2InOut,
           onUpdate: (p) =>
             applyBg({
@@ -353,24 +384,24 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         })
       );
 
-      // 2. Gelas spin 360° + motion blur → tukar rasa di puncak → spin ke 720° (back.out)
+      // 2. Putaran 360 gelas di puncak transisi
       run(
         tween({
-          duration: 0.6,
+          duration: 0.55,
           ease: ease.power2In,
           onUpdate: (p) => {
             spin.current = 360 * p;
-            blur.current = 15 * p;
+            blur.current = 12 * p;
           },
           onComplete: () => {
             setActiveIndex(nextIndex);
             run(
               tween({
-                duration: 1.5,
+                duration: 1.3,
                 ease: ease.backOut(0.7),
                 onUpdate: (p) => {
                   spin.current = 360 + 360 * p;
-                  blur.current = Math.max(0, 15 * (1 - p));
+                  blur.current = Math.max(0, 12 * (1 - p));
                 },
                 onComplete: () => {
                   spin.current = 0;
@@ -382,7 +413,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         })
       );
 
-      // 3. Biji kopi implode → tukar objek → explode ke posisi acak baru
+      // 3. Partikel implode & explode
       let done = 0;
       const els = beanRefs.current;
       const total = els.filter(Boolean).length;
@@ -390,19 +421,19 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         if (!el) return;
         const b = beans.current[i];
         const layer = el.parentElement;
-        const lw = layer?.clientWidth ?? window.innerWidth;
-        const lh = layer?.clientHeight ?? window.innerHeight;
+        const lw = layer?.clientWidth ?? (typeof window !== "undefined" ? window.innerWidth : 1000);
+        const lh = layer?.clientHeight ?? (typeof window !== "undefined" ? window.innerHeight : 800);
         const cx = lw / 2 - el.offsetLeft - el.offsetWidth / 2;
         const cy = lh / 2 - el.offsetTop - el.offsetHeight / 2;
         const x0 = b.tx;
         const y0 = b.ty;
         const r0 = b.rot;
-        const nx = (Math.random() - 0.5) * 200;
-        const ny = (Math.random() - 0.5) * 200;
+        const nx = (Math.random() - 0.5) * 180;
+        const ny = (Math.random() - 0.5) * 180;
 
         run(
           tween({
-            duration: 0.5,
+            duration: 0.45,
             ease: ease.power2In,
             onUpdate: (p) => {
               b.tx = lerp(x0, cx, p);
@@ -414,9 +445,9 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
             onComplete: () => {
               run(
                 tween({
-                  delay: 0.3,
-                  duration: 0.9,
-                  ease: ease.backOut(1.5),
+                  delay: 0.25,
+                  duration: 0.85,
+                  ease: ease.backOut(1.4),
                   onUpdate: (p) => {
                     b.tx = lerp(cx, nx, p);
                     b.ty = lerp(cy, ny, p);
@@ -425,7 +456,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
                     b.opacity = p;
                   },
                   onComplete: () => {
-                    const f = floatAt(i, performance.now() / 1000);
+                    const f = floatOffset(i, performance.now() / 1000);
                     b.angle = r0 + 90 - f.a;
                     b.baseX = nx;
                     b.baseY = ny - f.y;
@@ -450,7 +481,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         setIsSwitching(false);
       }
     },
-    [applyBg, flavors, reduceMotion, selectedIndex]
+    [applyBg, flavors, reduceMotion, selectedIndex, servingMode]
   );
 
   const scrollCardIntoView = (i: number) => {
@@ -471,25 +502,29 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
     scrollCardIntoView(next);
   };
 
-  /* ----------------------------- render ---------------------------- */
+  // Reaksi interaktif saat cangkir diklik / diketuk
+  const handleCupTap = () => {
+    if (tapReaction) return;
+    const reactions = [
+      "✨ Double shot espresso berpadu sempurna!",
+      "🌿 Diracik segar oleh barista Senja!",
+      "🍯 Gula aren murni organik tercium harum!",
+      "☕ Nikmat diminum santai saat senja!",
+    ];
+    const chosen = reactions[Math.floor(Math.random() * reactions.length)];
+    setTapReaction(chosen);
+    window.setTimeout(() => setTapReaction(null), 2400);
+  };
+
   const particle = active.theme.particle;
   const minPrice = useMemo(() => Math.min(...flavors.map((f) => f.harga)), [flavors]);
-
-  const container = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
-  };
-  const item = {
-    hidden: { opacity: 0, y: 28 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.2, 0.8, 0.2, 1] as const } },
-  };
 
   return (
     <section
       id="beranda"
       ref={sectionRef}
-      aria-label="Kopi Senja — menu rekomendasi"
-      className="relative isolate overflow-hidden text-white min-h-[100svh]"
+      aria-label="Kopi Senja — Beranda & Menu Rekomendasi"
+      className="relative isolate overflow-hidden text-white min-h-[100svh] flex flex-col justify-between pt-24 pb-8 transition-colors duration-1000"
       style={
         {
           "--hero-inner": initialBg.inner,
@@ -500,10 +535,10 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         } as React.CSSProperties
       }
     >
-      {/* Bubbles */}
+      {/* Gelembung Uap Aroma */}
       <div ref={bubblesRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden" />
 
-      {/* Objek jauh (paling belakang) */}
+      {/* Partikel Lapis Jauh */}
       <div ref={farRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 will-change-transform">
         {FAR_SLOTS.map((s, i) => (
           <div
@@ -511,7 +546,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
             ref={(el) => {
               farItemRefs.current[i] = el;
             }}
-            className="absolute blur-[1.5px] drop-shadow-[0_5px_15px_rgba(0,0,0,0.25)]"
+            className="absolute blur-[1.5px] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
             style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size, opacity: s.opacity ?? 0.8 }}
           >
             <Particle kind={particle} className="h-full w-full" />
@@ -519,7 +554,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         ))}
       </div>
 
-      {/* Biji kopi belakang (di belakang gelas) */}
+      {/* Partikel Belakang Gelas */}
       <div ref={bgRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] will-change-transform">
         {BG_SLOTS.map((s, i) => (
           <div
@@ -527,7 +562,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
             ref={(el) => {
               beanRefs.current[FG_SLOTS.length + i] = el;
             }}
-            className="absolute drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]"
+            className="absolute drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
             style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
           >
             <div className="h-full w-full" style={{ opacity: s.opacity ?? 1 }}>
@@ -537,238 +572,330 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         ))}
       </div>
 
-      <div className="relative z-20 mx-auto flex min-h-[100svh] w-full max-w-[1600px] flex-col px-5 pb-10 pt-28 sm:px-8 lg:flex-row lg:items-stretch lg:justify-between lg:px-[4%] lg:pb-0 lg:pt-24">
-        {/* ---------------- Kolom kiri ---------------- */}
-        <motion.div
-          variants={container}
-          initial={reduceMotion ? false : "hidden"}
-          animate="show"
-          className="relative z-20 flex flex-col items-center gap-6 text-center lg:items-start lg:gap-7 lg:py-14 lg:text-left"
-        >
-          <motion.div
-            variants={item}
-            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-semibold backdrop-blur-md"
-          >
-            <span className="relative flex h-2 w-2">
+      {/* Container Utama Dua Sisi */}
+      <div className="relative z-20 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex-1 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-8 my-auto">
+        {/* ==================== SISI KIRI: Headline & Value Proposition ==================== */}
+        <div className="w-full lg:max-w-xl flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 pt-4 lg:pt-0">
+          {/* Status Buka Toko Real-Time WIB */}
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold backdrop-blur-md shadow-xs">
+            <span className="relative flex h-2.5 w-2.5">
               {status?.isOpen && (
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               )}
               <span
-                className={`relative inline-flex h-2 w-2 rounded-full ${
+                className={`relative inline-flex h-2.5 w-2.5 rounded-full ${
                   status ? (status.isOpen ? "bg-emerald-400" : "bg-rose-400") : "bg-white/60"
                 }`}
               />
             </span>
-            <span>{status ? status.label : "Coffee & Space · Sleman"}</span>
-          </motion.div>
+            <span className="text-white/90">
+              {status ? `${status.label} • Sleman, DIY` : "Coffee & Space • Sleman"}
+            </span>
+          </div>
 
-          <motion.h1
-            variants={item}
-            className="font-display text-[clamp(4.5rem,10vw,11rem)] font-normal leading-[0.8] text-white drop-shadow-[0_6px_30px_rgba(0,0,0,0.25)]"
-          >
-            <span className="block">Ngopi</span>
-            <span className="block text-senja-soft">Senja</span>
-          </motion.h1>
+          {/* Main Headline (Aturan Anti-Slop: <= 2 baris) */}
+          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12] drop-shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+            Secangkir Cerita, <br className="hidden sm:inline" />
+            di Setiap <span className="text-senja-soft underline decoration-amber-500/40 decoration-wavy underline-offset-8">Suasana Senja.</span>
+          </h1>
 
-          <motion.p variants={item} className="max-w-md text-base leading-relaxed text-white/80 sm:text-lg">
-            Tempat rehat, ngopi, dan nugas nyaman di Sleman — biji kopi nusantara, camilan hangat, dan harga
-            ramah mahasiswa.
-          </motion.p>
+          {/* Subheadline (Jelas, Jujur, Bersahabat Mahasiswa) */}
+          <p className="max-w-lg text-base sm:text-lg leading-relaxed text-white/85">
+            Tempat rehat, ngopi, dan nugas nyaman di Sleman. Menyajikan biji kopi nusantara pilihan, camilan hangat, WiFi kencang, dan colokan di tiap meja dengan harga ramah mahasiswa.
+          </p>
 
-          <motion.div variants={item} className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          {/* Tombol Aksi Utama (CTA Standar Web, Bukan Pemesanan) */}
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-2 w-full sm:w-auto">
             <Link
               href="#menu"
-              className="btn-shine group inline-flex min-h-12 items-center gap-5 rounded-full bg-black/50 py-1.5 pl-6 pr-1.5 font-bold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-black/70"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold px-7 py-3 text-sm shadow-lg hover:shadow-amber-500/25 transition-all duration-200 cursor-pointer active:scale-95"
             >
-              Lihat Menu
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-senja-soft text-on-senja transition-transform duration-300 group-hover:rotate-90">
-                <Plus className="h-5 w-5" strokeWidth={3} aria-hidden="true" />
-              </span>
+              <Coffee className="w-4 h-4 text-stone-950" />
+              <span>Lihat Menu & Harga</span>
+              <ArrowDown className="w-4 h-4 text-stone-950 ml-0.5 animate-bounce" />
             </Link>
+
             <a
               href={infoToko.link_peta}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 text-sm font-semibold backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/20"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 hover:bg-white/20 text-white font-medium px-6 py-3 text-sm backdrop-blur-md transition-all duration-200 cursor-pointer active:scale-95"
             >
-              <MapPin className="h-4 w-4" aria-hidden="true" />
-              Petunjuk Arah
+              <MapPin className="w-4 h-4 text-senja-soft" />
+              <span>Petunjuk Arah</span>
             </a>
-          </motion.div>
+          </div>
 
-          <motion.div variants={item} className="hidden items-center gap-4 lg:mt-auto lg:flex">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/15 bg-white/5">
-              <Award className="h-6 w-6 text-senja-soft" aria-hidden="true" />
+          {/* Banner Promo Ringkas (Bila Ada Promo Aktif) */}
+          {promoTerbaru && (
+            <div className="w-full max-w-lg p-3 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md flex items-center justify-between gap-3 text-left">
+              <div className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-full bg-amber-500 text-stone-950 flex items-center justify-center shrink-0 font-bold text-xs">
+                  %
+                </span>
+                <div className="text-xs">
+                  <p className="font-bold text-white line-clamp-1">{promoTerbaru.judul}</p>
+                  <p className="text-white/70 line-clamp-1 text-[11px]">{promoTerbaru.deskripsi}</p>
+                </div>
+              </div>
+              <a
+                href="#promo"
+                className="text-[11px] font-bold text-senja-soft hover:underline shrink-0"
+              >
+                Cek Promo →
+              </a>
             </div>
-            <div className="flex flex-col text-left">
-              <span className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/70">
-                Menu Rekomendasi
-              </span>
-              <span className="text-sm font-bold">
-                {flavors.length} andalan barista · mulai {formatRupiahClient(minPrice)}
-              </span>
-            </div>
-            <span className="mx-1 h-8 w-px bg-white/15" aria-hidden="true" />
-            <span className="inline-flex items-center gap-1.5 text-xs text-white/75">
-              <Wifi className="h-4 w-4" aria-hidden="true" /> WiFi & colokan
-            </span>
-          </motion.div>
-        </motion.div>
+          )}
 
-        {/* ---------------- Gelas tengah ---------------- */}
-        <div
-          className="pointer-events-none relative z-10 my-2 flex h-[340px] items-center justify-center sm:h-[420px] lg:absolute lg:inset-0 lg:my-0 lg:h-auto"
-          aria-hidden="true"
-        >
-          <div className="absolute h-[70%] w-[70%] max-w-[620px] rounded-full bg-[radial-gradient(circle,rgba(253,186,116,0.18)_0%,transparent_65%)]" />
-          <div className="hero-cup-stage">
-            <div ref={cupTiltRef} className="will-change-transform" style={{ transform: "rotateZ(8deg)" }}>
-              <IcedCup
-                theme={active.theme}
-                labelRef={labelRef}
-                className="h-[300px] w-auto drop-shadow-[0_40px_60px_rgba(0,0,0,0.45)] sm:h-[380px] lg:h-[min(62vh,560px)]"
-              />
+          {/* Nilai Tambah Pelajar & Mahasiswa */}
+          <div className="pt-4 border-t border-white/15 w-full grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-white/80">
+            <div className="flex items-center justify-center lg:justify-start gap-2">
+              <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-amber-300">
+                <Wifi className="w-3.5 h-3.5" />
+              </div>
+              <span>WiFi Cepat & Colokan</span>
+            </div>
+            <div className="flex items-center justify-center lg:justify-start gap-2">
+              <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-amber-300">
+                <Coffee className="w-3.5 h-3.5" />
+              </div>
+              <span>100% Kopi Nusantara</span>
+            </div>
+            <div className="flex items-center justify-center lg:justify-start gap-2">
+              <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-amber-300">
+                <Sparkles className="w-3.5 h-3.5" />
+              </div>
+              <span>Mulai {formatRupiahClient(minPrice)}</span>
             </div>
           </div>
         </div>
 
-        {/* ---------------- Kolom kanan ---------------- */}
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-          className="relative z-20 flex w-full flex-col items-center gap-6 lg:w-[460px] lg:items-end lg:justify-between lg:py-14 lg:text-right"
-        >
-          <div className="flex w-full flex-col items-center gap-4 lg:items-end">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Pilih menu andalan</p>
-
+        {/* ==================== SISI TENGAH & KANAN: Model 3D & Showcase Menu Rekomendasi ==================== */}
+        <div className="w-full lg:max-w-xl flex flex-col items-center justify-center relative">
+          {/* Stage Model Kopi Interaktif */}
+          <div className="relative w-full max-w-[420px] aspect-square flex items-center justify-center select-none py-4">
+            {/* Glow Ambient di Sekeliling Gelas */}
             <div
-              ref={carouselRef}
-              role="group"
-              aria-label="Menu rekomendasi"
-              aria-busy={isSwitching}
-              className="no-scrollbar relative flex w-full max-w-[460px] snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-3 pt-24"
+              className="absolute inset-4 rounded-full blur-3xl pointer-events-none transition-all duration-700 -z-10"
+              style={{
+                background: `radial-gradient(circle, ${active.theme.bg.inner} 0%, transparent 70%)`,
+                opacity: 0.6,
+              }}
+            />
+
+            {/* Objek Cangkir 3D Interaktif */}
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label={`Model cangkir 3D ${active.nama}. Ketuk untuk reaksi rasa.`}
+              onClick={handleCupTap}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCupTap();
+                }
+              }}
+              className="relative z-20 cursor-pointer active:scale-95 transition-transform duration-200 outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-3xl"
             >
-              {flavors.map((f, i) => {
-                const isActive = i === selectedIndex;
-                return (
-                  <button
-                    key={f.id}
-                    ref={(el) => {
-                      cardRefs.current[i] = el;
-                    }}
-                    type="button"
-                    aria-pressed={isActive}
-                    aria-label={`${f.nama}, ${formatRupiahClient(f.harga)}`}
-                    onClick={() => {
-                      switchFlavor(i);
-                      scrollCardIntoView(i);
-                    }}
-                    className={`group relative flex w-[140px] shrink-0 snap-center cursor-pointer flex-col items-center gap-4 rounded-[28px] border bg-white/5 px-3 pb-4 pt-16 text-center backdrop-blur-md transition-all duration-400 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:border-white/40 hover:bg-white/12 ${
-                      isActive ? "border-senja-soft bg-white/10" : "border-white/10"
-                    }`}
-                  >
-                    <IcedCup
-                      theme={f.theme}
-                      className={`absolute -top-20 left-1/2 h-[140px] w-auto -translate-x-1/2 drop-shadow-[0_20px_35px_rgba(0,0,0,0.5)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-translate-y-6 group-hover:-rotate-12 group-hover:scale-110 ${
-                        isActive ? "" : "brightness-75"
-                      }`}
-                    />
-                    <span className="mt-6 flex w-full flex-col text-xs">
-                      <span className="font-bold">{f.theme.shortName}</span>
-                      <span className="text-white/70">{formatRupiahClient(f.harga)}</span>
-                    </span>
-                    {isActive && (
-                      <motion.span
-                        layoutId="hero-card-dot"
-                        className="absolute bottom-1.5 h-1 w-6 rounded-full bg-senja-soft"
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {flavors.length > 1 && (
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => step(-1)}
-                  aria-label="Menu sebelumnya"
-                  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/5 transition-all duration-300 hover:-translate-x-0.5 hover:bg-white/15 active:scale-95"
-                >
-                  <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => step(1)}
-                  aria-label="Menu berikutnya"
-                  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/5 transition-all duration-300 hover:translate-x-0.5 hover:bg-white/15 active:scale-95"
-                >
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </button>
+              <div ref={cupTiltRef} className="will-change-transform flex items-center justify-center">
+                {servingMode === "iced" ? (
+                  <IcedCup
+                    theme={active.theme}
+                    labelRef={labelRef}
+                    className="h-[310px] sm:h-[360px] w-auto drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)]"
+                    title={active.nama}
+                  />
+                ) : (
+                  <HotCup
+                    theme={active.theme}
+                    className="h-[270px] sm:h-[310px] w-auto drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)]"
+                    title={`${active.nama} (Hangat)`}
+                  />
+                )}
               </div>
-            )}
 
-            {/* Info menu terpilih */}
-            <div className="min-h-[72px] max-w-xs" aria-live="polite">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={selected.id}
-                  initial={reduceMotion ? false : { opacity: 0, y: 10, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                  transition={{ duration: 0.35 }}
-                >
-                  <p className="text-sm font-bold">
-                    {selected.nama} <span className="font-semibold text-senja-soft">· {formatRupiahClient(selected.harga)}</span>
-                  </p>
-                  <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/70">{selected.deskripsi}</p>
-                </motion.div>
+              {/* Toast Reaksi Ketuk */}
+              <AnimatePresence>
+                {tapReaction && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                    transition={{ duration: 0.25 }}
+                    className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-stone-900/90 border border-amber-400/40 px-3.5 py-1 text-xs font-semibold text-amber-200 shadow-xl backdrop-blur-md pointer-events-none z-40"
+                  >
+                    {tapReaction}
+                  </motion.div>
+                )}
               </AnimatePresence>
             </div>
+
+            {/* Hint Interaksi Cangkir */}
+            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 pointer-events-none text-[10px] uppercase font-bold tracking-wider text-white/50 whitespace-nowrap">
+              Gerakkan kursor • Ketuk cangkir
+            </div>
           </div>
 
-          {/* Judul samping (berganti sesuai menu) */}
-          <div className="hidden lg:block" aria-hidden="true">
-            <AnimatePresence mode="wait">
-              <motion.h2
-                key={active.id}
-                className="font-display whitespace-nowrap text-right text-[clamp(4rem,8vw,9.5rem)] font-normal leading-[0.8]"
-                initial={reduceMotion ? false : "hidden"}
-                animate="show"
-                exit="exit"
-                variants={{
-                  hidden: {},
-                  show: { transition: { staggerChildren: 0.035 } },
-                  exit: { transition: { staggerChildren: 0.02, staggerDirection: -1 } },
-                }}
+          {/* Kotak Kontrol & Detail Menu Rekomendasi Terpilih */}
+          <div className="w-full max-w-lg mt-2 p-5 rounded-3xl bg-black/40 border border-white/15 backdrop-blur-xl shadow-2xl flex flex-col gap-4 text-left">
+            {/* Header Kontrol: Pilihan Menu & Mode Suhu */}
+            <div className="flex items-center justify-between gap-2 border-b border-white/15 pb-3">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-300">
+                  Menu Rekomendasi Barista
+                </span>
+                <h2 className="font-heading text-lg font-bold text-white leading-tight">
+                  {selected.nama}
+                </h2>
+              </div>
+
+              {/* Switcher Suhu Minuman: Dingin (Es) vs Hangat (Cangkir) */}
+              <div className="inline-flex p-1 rounded-full bg-white/10 border border-white/15 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setServingMode("iced")}
+                  aria-pressed={servingMode === "iced"}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    servingMode === "iced"
+                      ? "bg-amber-500 text-stone-950 shadow-xs"
+                      : "text-white/70 hover:text-white"
+                  }`}
+                >
+                  <Snowflake className="w-3.5 h-3.5" />
+                  <span>Dingin</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={!selected.supportsHot}
+                  onClick={() => setServingMode("hot")}
+                  aria-pressed={servingMode === "hot"}
+                  title={
+                    selected.supportsHot
+                      ? "Sajikan hangat"
+                      : "Menu ini khusus diseduh dingin 16 jam"
+                  }
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    !selected.supportsHot
+                      ? "opacity-40 cursor-not-allowed text-white/40"
+                      : servingMode === "hot"
+                      ? "bg-amber-500 text-stone-950 shadow-xs cursor-pointer"
+                      : "text-white/70 hover:text-white cursor-pointer"
+                  }`}
+                >
+                  <Flame className="w-3.5 h-3.5" />
+                  <span>Hangat</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Carousel Kartu Pilihan Menu (5 Menu Rekomendasi CMS) */}
+            <div className="relative">
+              <div
+                ref={carouselRef}
+                role="region"
+                aria-label="Daftar Menu Rekomendasi"
+                className="no-scrollbar flex items-center gap-2.5 overflow-x-auto py-1 scroll-smooth snap-x"
               >
-                {active.theme.tagline.map((line, li) => (
-                  <span key={li} className={`block ${li === 1 ? "text-senja-soft" : ""}`}>
-                    {Array.from(line).map((ch, ci) => (
-                      <motion.span
-                        key={ci}
-                        className="inline-block"
-                        variants={{
-                          hidden: { opacity: 0, y: "0.4em", rotate: 8 },
-                          show: { opacity: 1, y: 0, rotate: 0, transition: { duration: 0.5, ease: [0.2, 0.8, 0.2, 1] } },
-                          exit: { opacity: 0, y: "-0.3em", transition: { duration: 0.2 } },
-                        }}
-                      >
-                        {ch === " " ? "\u00A0" : ch}
-                      </motion.span>
-                    ))}
+                {flavors.map((item, idx) => {
+                  const isCurrent = idx === selectedIndex;
+                  return (
+                    <button
+                      key={item.id}
+                      ref={(el) => {
+                        cardRefs.current[idx] = el;
+                      }}
+                      type="button"
+                      aria-pressed={isCurrent}
+                      onClick={() => {
+                        switchFlavor(idx);
+                        scrollCardIntoView(idx);
+                      }}
+                      disabled={isSwitching}
+                      className={`relative flex items-center gap-2 px-3.5 py-2 rounded-2xl border text-xs font-semibold shrink-0 snap-start transition-all cursor-pointer ${
+                        isCurrent
+                          ? "bg-white/20 border-amber-400 text-white shadow-md scale-102"
+                          : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <span
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: item.theme.liquid.top }}
+                      />
+                      <span className="truncate max-w-[110px]">{item.theme.shortName}</span>
+                      <span className="text-[10px] opacity-80 font-mono">
+                        {formatRupiahClient(item.harga)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Tombol Geser Prev / Next */}
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-[11px] text-white/60">
+                  {selectedIndex + 1} dari {flavors.length} menu andalan
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => step(-1)}
+                    disabled={isSwitching}
+                    aria-label="Menu andalan sebelumnya"
+                    className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer active:scale-90 transition-all disabled:opacity-40"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => step(1)}
+                    disabled={isSwitching}
+                    aria-label="Menu andalan berikutnya"
+                    className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer active:scale-90 transition-all disabled:opacity-40"
+                  >
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Flavor Notes & Bar Sensori Rasa */}
+            <div className="space-y-3 pt-2 border-t border-white/10">
+              {/* Tasting Notes Chips */}
+              <div className="flex flex-wrap gap-1.5">
+                {selected.tastingNotes.map((note) => (
+                  <span
+                    key={note}
+                    className="text-[11px] bg-white/10 text-amber-200/90 border border-white/10 px-2.5 py-0.5 rounded-md font-medium"
+                  >
+                    {note}
                   </span>
                 ))}
-              </motion.h2>
-            </AnimatePresence>
+              </div>
+
+              {/* Bar Sensori Profil Rasa */}
+              <TastingMeter profile={selected.profile} />
+
+              {/* Harga & Deskripsi Singkat */}
+              <div className="pt-2 flex items-center justify-between gap-4">
+                <p className="text-xs text-white/75 line-clamp-2 leading-relaxed">
+                  {selected.deskripsi}
+                </p>
+                <div className="text-right shrink-0">
+                  <span className="block text-[10px] uppercase font-bold text-white/60 tracking-wider">
+                    Harga
+                  </span>
+                  <span className="font-heading text-lg font-extrabold text-amber-300">
+                    {formatRupiahClient(selected.harga)}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Biji kopi depan (di atas teks & gelas) */}
+      {/* Partikel Lapis Depan (Melayang di Atas) */}
       <div ref={fgRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-30 will-change-transform">
         {FG_SLOTS.map((s, i) => (
           <div
@@ -776,7 +903,7 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
             ref={(el) => {
               beanRefs.current[i] = el;
             }}
-            className={`absolute drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)] ${s.mobileHidden ? "hidden md:block" : ""}`}
+            className={`absolute drop-shadow-[0_10px_22px_rgba(0,0,0,0.35)] ${s.mobileHidden ? "hidden md:block" : ""}`}
             style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
           >
             <Particle kind={particle} className="h-full w-full" />
@@ -784,19 +911,17 @@ export function CoffeeHeroInteractive({ flavors: flavorsProp, infoToko }: Props)
         ))}
       </div>
 
-      {/* Scroll cue */}
-      <a
-        href="#menu"
-        aria-label="Gulir ke menu"
-        className="absolute bottom-5 left-1/2 z-30 hidden -translate-x-1/2 flex-col items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 transition-colors hover:text-white lg:flex"
-      >
-        Gulir
-        <motion.span
-          className="block h-8 w-px bg-gradient-to-b from-white/70 to-transparent"
-          animate={reduceMotion ? undefined : { scaleY: [0.3, 1, 0.3], originY: 0 }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </a>
+      {/* Petunjuk Gulir ke Bawah */}
+      <div className="relative z-20 mx-auto pt-6 text-center">
+        <a
+          href="#menu"
+          aria-label="Gulir ke daftar menu lengkap"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-white/70 hover:text-white transition-colors cursor-pointer"
+        >
+          <span>Gulir untuk melihat seluruh menu</span>
+          <ArrowDown className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+        </a>
+      </div>
     </section>
   );
 }
