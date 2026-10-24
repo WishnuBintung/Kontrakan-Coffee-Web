@@ -1,96 +1,136 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, MotionValue } from "motion/react";
 
 interface ScrollLinkedZoomHeaderProps {
   title?: string;
   secondaryLabel?: string;
+  headingScale?: MotionValue<number>;
+  headingZ?: MotionValue<number>;
+  titleY?: MotionValue<number>;
+  titleOpacity?: MotionValue<number>;
+  coffeeOpacity?: MotionValue<number>;
 }
 
 /**
  * Scroll-Linked Zoom Header
  * 
- * Spec:
+ * Spec (Panduan Mutlak):
  * - Container relative, overflow-hidden.
  * - Apply Framer Motion `useScroll` to capture Y-axis.
  * - Map scroll 0-30% of viewport to a scale of 1.0 to 0.89 on the main 12vw heading.
  * - Ensure `transform-style: preserve-3d` and `will-change: transform` are applied for GPU acceleration.
- * - Simulates physical depth into the screen as user scrolls down.
+ * - Animasi menghilang lebih lama untuk kedua title (coffee tetap hilang duluan).
+ * - Judul bebas capslock (tidak di-force uppercase).
+ * - Warna Teks Utama: Coklat Espresso #241611
  */
 export function ScrollLinkedZoomHeader({
-  title = "CINEMATIC",
-  secondaryLabel = "NOIR",
+  title = "Kontrakan",
+  secondaryLabel = "coffee",
+  headingScale: externalHeadingScale,
+  headingZ: externalHeadingZ,
+  titleY: externalTitleY,
+  titleOpacity: externalTitleOpacity,
+  coffeeOpacity: externalCoffeeOpacity,
 }: ScrollLinkedZoomHeaderProps) {
-  // Capture dynamic viewport height to precisely calculate 30% of viewport
-  const [viewportHeight, setViewportHeight] = useState(857);
+  const [viewportHeight, setViewportHeight] = useState(800);
 
   useEffect(() => {
-    setViewportHeight(window.innerHeight || 857);
-    const handleResize = () => setViewportHeight(window.innerHeight || 857);
+    setViewportHeight(window.innerHeight || 800);
+    const handleResize = () => setViewportHeight(window.innerHeight || 800);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Framer Motion useScroll to capture Y-axis
   const { scrollY } = useScroll();
 
   // Map scroll 0-30% of viewport to a scale of 1.0 to 0.89 on the main 12vw heading
-  const headingScale = useTransform(
+  const internalHeadingScale = useTransform(
     scrollY,
     [0, viewportHeight * 0.3],
     [1.0, 0.89],
     { clamp: true }
   );
 
-  // Optical receding effect into the screen (simulating physical depth)
-  const headingZ = useTransform(
+  // Optical receding effect along Z-axis (simulating depth into the screen)
+  const internalHeadingZ = useTransform(
     scrollY,
     [0, viewportHeight * 0.3],
     [0, -45],
     { clamp: true }
   );
 
-  // Secondary label (32px) fading out on scroll
-  const labelOpacity = useTransform(
+  // Subtle downward glide (smooth translation Y)
+  const internalTitleY = useTransform(
     scrollY,
-    [0, viewportHeight * 0.25],
-    [1.0, 0],
+    [0, viewportHeight * 0.45],
+    [0, 45],
     { clamp: true }
   );
 
+  // Kata "coffee": pudar lebih lama dan halus, tetapi tetap hilang duluan (hilang total di 28% viewport)
+  const internalCoffeeOpacity = useTransform(
+    scrollY,
+    [0, viewportHeight * 0.12, viewportHeight * 0.28],
+    [1.0, 0.65, 0.0],
+    { clamp: true }
+  );
+
+  // Title "Kontrakan": animasi menghilangnya lebih lama (bertahan penuh di awal, lalu pudar bertahap hingga 45% viewport)
+  const internalTitleOpacity = useTransform(
+    scrollY,
+    [0, viewportHeight * 0.12, viewportHeight * 0.45],
+    [1.0, 1.0, 0.0],
+    { clamp: true }
+  );
+
+  const effectiveScale = externalHeadingScale ?? internalHeadingScale;
+  const effectiveZ = externalHeadingZ ?? internalHeadingZ;
+  const effectiveY = externalTitleY ?? internalTitleY;
+  const effectiveTitleOpacity = externalTitleOpacity ?? internalTitleOpacity;
+  const effectiveCoffeeOpacity = externalCoffeeOpacity ?? internalCoffeeOpacity;
+
   return (
-    // Container relative, overflow-hidden
+    // Container relative, overflow-hidden dengan ruang vertikal yang cukup agar tidak terpotong
     <div
-      className="relative overflow-hidden w-full flex items-center justify-center py-4"
+      className="relative overflow-hidden w-full flex items-center justify-center py-8 md:py-12"
       style={{ perspective: "1000px" }}
     >
-      <div className="relative inline-flex items-center justify-center">
-        {/* Main 12vw heading with transform-style: preserve-3d and will-change: transform */}
+      {/* Wrapper motion yang menyatukan pergerakan descent Kontrakan dan coffee */}
+      <motion.div
+        style={{
+          y: effectiveY,
+          transformStyle: "preserve-3d",
+          willChange: "transform",
+        }}
+        className="relative inline-flex items-center justify-center"
+      >
+        {/* Main 12vw heading: transform-style: preserve-3d, will-change: transform, GPU accelerated, warna teks #241611 */}
         <motion.h1
           style={{
-            scale: headingScale,
-            z: headingZ,
+            scale: effectiveScale,
+            z: effectiveZ,
+            opacity: effectiveTitleOpacity,
             transformStyle: "preserve-3d",
-            willChange: "transform",
+            willChange: "transform, opacity",
           }}
-          className="font-serif font-black text-[12vw] leading-none text-[#e5e5e5] uppercase tracking-[-0.03em] select-none text-center"
+          className="font-sans font-black text-[12vw] leading-none text-[#241611] tracking-[-0.03em] select-none text-center"
         >
           {title}
         </motion.h1>
 
-        {/* Secondary label (32px) positioned absolute 'left-[calc(100%+1rem)]' relative to heading, fading out on scroll */}
+        {/* Secondary label: 32px font-thin italic, ikut meluncur turun tapi memudar dan hilang duluan, warna teks #735F53 */}
         <motion.span
           style={{
-            opacity: labelOpacity,
+            opacity: effectiveCoffeeOpacity,
             willChange: "opacity",
           }}
-          className="hidden sm:inline-block absolute left-[calc(100%+1rem)] top-1/2 -translate-y-1/2 text-[32px] font-thin italic text-[#e5e5e5]/80 whitespace-nowrap font-serif tracking-normal pointer-events-none select-none"
+          className="hidden sm:inline-block absolute left-[calc(100%+1rem)] top-1/2 -translate-y-1/2 text-[32px] font-thin italic text-[#735F53] whitespace-nowrap font-sans tracking-normal pointer-events-none select-none"
         >
           {secondaryLabel}
         </motion.span>
-      </div>
+      </motion.div>
     </div>
   );
 }
-

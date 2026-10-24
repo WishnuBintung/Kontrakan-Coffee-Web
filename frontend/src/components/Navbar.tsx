@@ -15,23 +15,23 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 px-6 py-8 pointer-events-none mix-blend-difference">
-        <nav className="w-full flex items-center justify-between text-white">
+      <header className="fixed top-0 left-0 w-full z-50 px-6 py-6 bg-[#FFFFFF]/85 backdrop-blur-md border-b border-[#E6DDCF] transition-all">
+        <nav className="max-w-7xl mx-auto w-full flex items-center justify-between text-[#241611]">
           {/* Brand Wordmark */}
           <a
             href="#"
-            className="text-[18px] font-medium tracking-tight uppercase pointer-events-auto transition-opacity duration-300 hover:opacity-70 font-sans"
+            className="text-[18px] font-bold tracking-tight uppercase hover:text-[#5C3317] transition-colors font-sans"
           >
-            CINEMATIC NOIR
+            KONTRAKAN COFFEE
           </a>
 
           {/* Desktop Navigation: Horizontal flex with 3rem gap (gap-12) */}
-          <div className="hidden md:flex items-center gap-12 pointer-events-auto">
+          <div className="hidden md:flex items-center gap-12">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="text-[18px] font-medium tracking-tight uppercase transition-opacity duration-300 hover:opacity-70 font-sans"
+                className="text-[17px] font-medium tracking-tight uppercase text-[#241611] hover:text-[#5C3317] transition-colors font-sans"
               >
                 {link.label}
               </a>
@@ -41,15 +41,15 @@ export function Navbar() {
           {/* Mobile: Single Lucide 'Menu' icon */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden pointer-events-auto focus:outline-none transition-opacity duration-300 hover:opacity-70"
+            className="md:hidden text-[#241611] hover:text-[#5C3317] focus:outline-none transition-colors"
             aria-label="Open Navigation Menu"
           >
-            <Menu className="w-6 h-6 stroke-[1.8]" />
+            <Menu className="w-6 h-6 stroke-[2]" />
           </button>
         </nav>
       </header>
 
-      {/* Mobile Drawer Overlay */}
+      {/* Mobile Drawer Overlay: Menggunakan Warna Sekunder Krem (#F5F0E6) untuk Panel Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -57,23 +57,23 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[60] bg-[#000000] text-[#e5e5e5] px-6 py-8 flex flex-col justify-between sharp-edges"
+            className="fixed inset-0 z-[60] bg-[#F5F0E6] text-[#241611] px-6 py-8 flex flex-col justify-between sharp-edges"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-[18px] font-medium tracking-tight uppercase font-sans">
-                CINEMATIC NOIR
+            <div className="flex items-center justify-between border-b border-[#E6DDCF] pb-6">
+              <span className="text-[18px] font-bold tracking-tight uppercase font-sans text-[#241611]">
+                KONTRAKAN COFFEE
               </span>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1 focus:outline-none hover:opacity-70"
+                className="p-1 text-[#241611] hover:text-[#5C3317] focus:outline-none transition-colors"
                 aria-label="Close Navigation Menu"
               >
-                <X className="w-7 h-7 stroke-[1.8]" />
+                <X className="w-7 h-7 stroke-[2]" />
               </button>
             </div>
 
             <div className="flex flex-col gap-8 my-auto">
-              <span className="font-mono text-[14px] uppercase tracking-widest text-[#888]">
+              <span className="font-mono text-[14px] uppercase tracking-widest text-[#735F53]">
                 [NAVIGATION // INDEX]
               </span>
               {navLinks.map((link, idx) => (
@@ -81,9 +81,9 @@ export function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="font-serif text-5xl font-black uppercase tracking-[-0.03em] hover:text-[#888] transition-colors"
+                  className="font-sans text-5xl font-black uppercase tracking-[-0.03em] text-[#241611] hover:text-[#5C3317] transition-colors"
                 >
-                  <span className="text-sm font-mono text-[#888] mr-3 font-normal">
+                  <span className="text-sm font-mono text-[#8E542C] mr-4 font-normal">
                     0{idx + 1}
                   </span>
                   {link.label}
@@ -91,9 +91,9 @@ export function Navbar() {
               ))}
             </div>
 
-            <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between text-sm font-mono text-[#888] gap-2">
-              <span>GALLERY & ARCHITECTURAL ATELIER</span>
-              <span>© 2026 CINEMATIC NOIR</span>
+            <div className="border-t border-[#E6DDCF] pt-6 flex flex-col sm:flex-row justify-between text-sm font-mono text-[#735F53] gap-2">
+              <span>SPATIAL ATELIER & ROASTERY</span>
+              <span>© 2026 KONTRAKAN COFFEE</span>
             </div>
           </motion.div>
         )}
