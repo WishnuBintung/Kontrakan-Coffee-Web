@@ -6,7 +6,7 @@ import type {
   GaleriFoto,
   Hari,
   InfoToko,
-  JamBuka,
+
   Kategori,
   MenuItem,
   MenuWithKategori,

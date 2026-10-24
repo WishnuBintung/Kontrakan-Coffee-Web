@@ -2,21 +2,21 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Kontrakan Coffee — Simple Moments, Great Coffee",
+  title: "Cinematic Noir — Gallery & Design System",
   description:
-    "Ruang santai di Seturan, Yogyakarta. Menikmati Salted Caramel Latte, Aerocano, Mont Blanc, dan manual brew di kala senja.",
+    "An immersive, gallery-like experience leveraging deep blacks, crisp off-whites, extreme typography pairings, and scroll-linked depth.",
   openGraph: {
-    title: "Kontrakan Coffee — Simple Moments, Great Coffee",
+    title: "Cinematic Noir — Gallery & Design System",
     description:
-      "Ruang santai di Seturan, Yogyakarta. Kopi berkualitas segar, suasana hangat, dan waktu melambat.",
-    locale: "id_ID",
+      "Deep blacks, crisp off-whites, extreme typography pairings, and scroll-linked depth.",
+    locale: "en_US",
     type: "website",
-    siteName: "Kontrakan Coffee",
+    siteName: "Cinematic Noir",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FFFFFF",
+  themeColor: "#000000",
   width: "device-width",
   initialScale: 1,
 };
@@ -27,21 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('js');`,
-          }}
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Reenie+Beanie&display=swap"
-        />
-      </head>
-      <body suppressHydrationWarning>{children}</body>
+    <html
+      lang="en"
+      className="bg-[#000000] text-[#e5e5e5] scroll-smooth"
+      suppressHydrationWarning
+    >
+      <body
+        className="bg-[#000000] text-[#e5e5e5] antialiased min-h-screen selection:bg-[#ef4444] selection:text-white"
+        suppressHydrationWarning
+      >
+        {/* Subtle noise grain overlay at 15% opacity using mix-blend-overlay */}
+        <div className="grain-overlay" aria-hidden="true" />
+        {children}
+      </body>
     </html>
   );
 }

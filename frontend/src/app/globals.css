@@ -1,55 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-/*
- * Kontrakan Coffee / Kopi Senja — Artisanal Roastery & Coffee Shop
- * Palette:
- * - Canvas Background: #FFFFFF (Clean, expansive canvas)
- * - Surface / Cards: #F5EFE6 (Warm Oat Milk / Latte Beige from social media)
- * - Surface Subtle: #FAF6F0
- * - Border Subtle: #E8DDD0
- * - Text Primary: #1F1A17 (Deep Espresso Dark, WCAG AAA contrast 16.2:1)
- * - Text Muted: #786C62
- * - Accent Action: #C87D32 (Caramel Amber & Citrus Crema from Mont Blanc & Salted Caramel)
- * - Accent Hover: #B46924
- * - Mocha Brand: #3E271D (Deep Roasted Brown from social media posters)
- */
+/* ------------------------------------------------------------------ */
+/* Cinematic Noir Font Aliasing & High-Contrast Typography Stack       */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'ZTNature';
+  src: local('ZTNature'), local('ZT Nature'), local('Fraunces'), local('Bodoni Moda');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ZTNature';
+  src: local('ZTNature Italic'), local('ZT Nature Italic'), local('Fraunces Italic'), local('Bodoni Moda Italic');
+  font-weight: 100 900;
+  font-style: italic;
+}
 
 @theme {
-  --color-canvas: #ffffff;
-  --color-surface: #f5efe6;
-  --color-surface-subtle: #faf6f0;
-  --color-surface-hover: #eaddcf;
-  --color-border: #e8ddd0;
-  --color-border-light: #f2ece4;
-  --color-espresso: #1f1a17;
-  --color-muted: #786c62;
-  --color-caramel: #c87d32;
-  --color-caramel-hover: #b46924;
-  --color-caramel-soft: #f7ecdf;
-  --color-mocha: #3e271d;
+  --font-serif: "ZTNature", "Fraunces", "Bodoni Moda", Didot, "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --font-sans: "Outfit", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-cursive: "Reenie Beanie", cursive, "Brush Script MT", handwriting;
+  --color-deep-black: #000000;
+  --color-zinc-black: #09090b;
+  --color-surface-gray: #18181b;
+  --color-pure-white: #ffffff;
+  --color-ghost-white: #fafafa;
+  --color-off-white: #e5e5e5;
+  --color-muted-gray: #888888;
+  --color-highlight-red: #ef4444;
 }
 
 :root {
-  --bg-canvas: #ffffff;
-  --bg-surface: #f5efe6;
-  --bg-surface-subtle: #faf6f0;
-  --border-subtle: #e8ddd0;
-  --text-primary: #1f1a17;
-  --text-muted: #786c62;
-  --color-accent: #c87d32;
-  --color-accent-hover: #b46924;
-  --color-mocha: #3e271d;
-
-  --font-sans: "Outfit", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-cursive: "Reenie Beanie", cursive, "Brush Script MT", handwriting;
-
-  --shadow-soft: 0 4px 20px -2px rgba(31, 26, 23, 0.05);
-  --shadow-float: 0 16px 36px -6px rgba(31, 26, 23, 0.09);
-  --shadow-cup: 0 20px 40px -10px rgba(62, 39, 29, 0.14);
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --bg-deep-black: #000000;
+  --bg-zinc-black: #09090b;
+  --bg-surface-gray: #18181b;
+  --bg-pure-white: #ffffff;
+  --bg-ghost-white: #fafafa;
+  --fg-off-white: #e5e5e5;
+  --fg-muted-gray: #888888;
+  --fg-deep-black: #000000;
+  --hl-red: #ef4444;
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 *,
@@ -59,19 +53,19 @@
 }
 
 html {
-  background-color: var(--bg-canvas);
-  color: var(--text-primary);
+  background-color: var(--bg-deep-black);
+  color: var(--fg-off-white);
   font-family: var(--font-sans);
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: var(--bg-canvas);
-  color: var(--text-primary);
+  background-color: var(--bg-deep-black);
+  color: var(--fg-off-white);
   font-family: var(--font-sans);
-  font-weight: 400;
-  line-height: 1.6;
+  font-weight: 300;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -79,193 +73,70 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Grain / Texture Overlay (0.32 opacity, feTurbulence baseFrequency 0.65) */
+/* Singular Red (#ef4444) Highlight for Selection                    */
+/* ------------------------------------------------------------------ */
+::selection {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+::-moz-selection {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Grain Overlay (15% opacity, mix-blend-overlay)                     */
 /* ------------------------------------------------------------------ */
 .grain-overlay {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 50;
+  z-index: 40;
   pointer-events: none;
   mix-blend-mode: overlay;
-  opacity: 0.32;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.15;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 /* ------------------------------------------------------------------ */
-/* Typography Classes                                                 */
+/* Hero Radial Gradient Background Spec                               */
 /* ------------------------------------------------------------------ */
-.font-sans {
-  font-family: var(--font-sans);
-}
-
-.font-cursive {
-  font-family: var(--font-cursive);
-}
-
-h1, h2, h3, h4 {
-  font-family: var(--font-sans);
-  letter-spacing: -0.025em;
-  color: var(--text-primary);
-  text-transform: none; /* Sentence case only */
-}
-
-.h-display {
-  font-size: clamp(2.8rem, 6.5vw, 4.75rem);
-  line-height: 1.08;
-  letter-spacing: -0.025em;
-}
-
-.h-section {
-  font-size: clamp(2rem, 4.5vw, 3.25rem);
-  line-height: 1.15;
-  letter-spacing: -0.025em;
+.hero-radial-tint {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(139, 69, 69, 0.4) 0%,
+    rgba(20, 20, 20, 0.8) 60%,
+    rgba(0, 0, 0, 0.95) 100%
+  );
 }
 
 /* ------------------------------------------------------------------ */
-/* Reveal-on-scroll (translateY: 30px to 0, opacity 0 to 1, 0.8s)     */
+/* Architectural Sharp Edges (No rounded corners except action circle)*/
 /* ------------------------------------------------------------------ */
-html.js [data-rev] {
-  opacity: 0;
-  transform: translate3d(0, 30px, 0);
-  transition:
-    opacity 0.8s var(--ease),
-    transform 0.8s var(--ease);
-  transition-delay: var(--d, 0ms);
-}
-
-html.js [data-rev].in {
-  opacity: 1;
-  transform: none;
+.sharp-edges {
+  border-radius: 0px !important;
 }
 
 /* ------------------------------------------------------------------ */
-/* Floating Warm Background Blobs (6s loop, translateY +/- 10px)      */
+/* Wavy Underline for Social Links                                    */
 /* ------------------------------------------------------------------ */
-@keyframes floatLoop1 {
-  0%, 100% {
-    transform: translate3d(0, -10px, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(0, 10px, 0) scale(1.04);
-  }
+.wavy-hover {
+  text-decoration: none;
+  text-underline-offset: 6px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes floatLoop2 {
-  0%, 100% {
-    transform: translate3d(0, 10px, 0) scale(1.04);
-  }
-  50% {
-    transform: translate3d(0, -10px, 0) scale(1);
-  }
-}
-
-.animate-float-1 {
-  animation: floatLoop1 6s ease-in-out infinite;
-}
-
-.animate-float-2 {
-  animation: floatLoop2 6s ease-in-out infinite;
+.wavy-hover:hover {
+  text-decoration: underline wavy #000000;
+  text-underline-offset: 6px;
 }
 
 /* ------------------------------------------------------------------ */
-/* Pulsing 'Brew / Seduh' Button Animation (Caramel #C87D32)          */
+/* Smooth GPU transform utilities                                     */
 /* ------------------------------------------------------------------ */
-@keyframes breatheCaramelPulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(200, 125, 50, 0.42);
-  }
-  50% {
-    transform: scale(1.06);
-    box-shadow: 0 0 0 16px rgba(200, 125, 50, 0);
-  }
-}
-
-.animate-breathe {
-  animation: breatheCaramelPulse 5s ease-in-out infinite;
-}
-
-/* ------------------------------------------------------------------ */
-/* Soft Shadows & Container Classes                                   */
-/* ------------------------------------------------------------------ */
-.shadow-soft {
-  box-shadow: 0 4px 20px -2px rgba(31, 26, 23, 0.05);
-}
-
-.shadow-float {
-  box-shadow: 0 16px 36px -6px rgba(31, 26, 23, 0.09);
-}
-
-.shadow-cup {
-  box-shadow: 0 20px 40px -10px rgba(62, 39, 29, 0.14);
-}
-
-.rounded-container {
-  border-radius: clamp(2rem, 4vw, 3rem);
-}
-
-/* ------------------------------------------------------------------ */
-/* Scrollbar-hide for Horizontal Scenario Scroll                      */
-/* ------------------------------------------------------------------ */
-.scroll-no-bar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scroll-no-bar::-webkit-scrollbar {
-  display: none;
-}
-
-/* ------------------------------------------------------------------ */
-/* Testimonial Physical Rotation (+1 / -1 deg)                        */
-/* ------------------------------------------------------------------ */
-.rotate-note-pos {
-  transform: rotate(1deg);
-}
-
-.rotate-note-neg {
-  transform: rotate(-1deg);
-}
-
-@media (hover: hover) {
-  .rotate-note-pos:hover,
-  .rotate-note-neg:hover {
-    transform: rotate(0deg) translateY(-4px);
-    transition: transform 0.4s var(--ease);
-  }
-}
-
-/* ------------------------------------------------------------------ */
-/* Interactive FAQ Accordion (duration-500ms ease-in-out)             */
-/* ------------------------------------------------------------------ */
-.faq-content {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 500ms ease-in-out;
-}
-
-.faq-content.open {
-  grid-template-rows: 1fr;
-}
-
-.faq-inner {
-  overflow: hidden;
-}
-
-/* ------------------------------------------------------------------ */
-/* Reduced Motion Support                                             */
-/* ------------------------------------------------------------------ */
-@media (prefers-reduced-motion: reduce) {
-  html.js [data-rev] {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-  .animate-float-1,
-  .animate-float-2,
-  .animate-breathe {
-    animation: none !important;
-  }
+.gpu-accel {
+  transform-style: preserve-3d;
+  will-change: transform;
 }
