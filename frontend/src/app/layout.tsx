@@ -1,23 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Kopi Senja — Coffee & Space di Sleman",
+  title: "Kontrakan Coffee — Simple Moments, Great Coffee",
   description:
-    "Landing page resmi Kopi Senja. Temukan menu kopi & camilan, galeri suasana, jam buka, dan lokasi kami.",
+    "Ruang santai di Seturan, Yogyakarta. Menikmati Salted Caramel Latte, Aerocano, Mont Blanc, dan manual brew di kala senja.",
   openGraph: {
-    title: "Kopi Senja — Coffee & Space di Sleman",
+    title: "Kontrakan Coffee — Simple Moments, Great Coffee",
     description:
-      "Menu kopi & camilan ramah mahasiswa, suasana hangat, WiFi & colokan di setiap meja.",
+      "Ruang santai di Seturan, Yogyakarta. Kopi berkualitas segar, suasana hangat, dan waktu melambat.",
     locale: "id_ID",
     type: "website",
-    siteName: "Kopi Senja",
+    siteName: "Kontrakan Coffee",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1c0f08",
+  themeColor: "#FFFFFF",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -28,19 +29,19 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js');`,
+          }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Galada&family=Nunito:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Reenie+Beanie&display=swap"
         />
       </head>
-      <body suppressHydrationWarning className="font-sans antialiased">
-        <Script id="identity-redirect" strategy="beforeInteractive">
-          {`if (/(invite|recovery|confirmation)_token=/.test(location.hash)) location.replace('/admin/' + location.hash);`}
-        </Script>
-        {children}
-      </body>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

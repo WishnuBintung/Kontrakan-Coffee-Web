@@ -1,293 +1,271 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
 
 /*
- * Kopi Senja — Design Tokens
- * Primitive → semantic (shadcn vars) → komponen (utility Tailwind).
- * Palet: espresso hangat + krim + aksen "senja" (peach/amber).
- * Font: Nunito (body), Fredoka (heading), Galada (display hero).
+ * Kontrakan Coffee / Kopi Senja — Artisanal Roastery & Coffee Shop
+ * Palette:
+ * - Canvas Background: #FFFFFF (Clean, expansive canvas)
+ * - Surface / Cards: #F5EFE6 (Warm Oat Milk / Latte Beige from social media)
+ * - Surface Subtle: #FAF6F0
+ * - Border Subtle: #E8DDD0
+ * - Text Primary: #1F1A17 (Deep Espresso Dark, WCAG AAA contrast 16.2:1)
+ * - Text Muted: #786C62
+ * - Accent Action: #C87D32 (Caramel Amber & Citrus Crema from Mont Blanc & Salted Caramel)
+ * - Accent Hover: #B46924
+ * - Mocha Brand: #3E271D (Deep Roasted Brown from social media posters)
  */
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-fredoka), var(--font-nunito), ui-sans-serif, sans-serif;
-  --font-display: var(--font-galada), "Brush Script MT", cursive;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Brand primitives */
-  --color-espresso: #1c0f08;
-  --color-roast: #3b2012;
-  --color-crema: #c8874f;
-  --color-cream: #fff8ee;
-  --color-latte: #f6e7d2;
-  --color-senja: #fdba74;
-  --color-senja-soft: #fed7aa;
-  --color-on-senja: #2a1206;
+@theme {
+  --color-canvas: #ffffff;
+  --color-surface: #f5efe6;
+  --color-surface-subtle: #faf6f0;
+  --color-surface-hover: #eaddcf;
+  --color-border: #e8ddd0;
+  --color-border-light: #f2ece4;
+  --color-espresso: #1f1a17;
+  --color-muted: #786c62;
+  --color-caramel: #c87d32;
+  --color-caramel-hover: #b46924;
+  --color-caramel-soft: #f7ecdf;
+  --color-mocha: #3e271d;
 
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-
-  /* Motion tokens */
-  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --font-sans: "Outfit", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-cursive: "Reenie Beanie", cursive, "Brush Script MT", handwriting;
 }
 
 :root {
-  --font-nunito: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-fredoka: "Fredoka", "Nunito", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-galada: "Galada", "Brush Script MT", cursive;
-  --background: #fff8ee;
-  --foreground: #2b1a10;
-  --card: #ffffff;
-  --card-foreground: #2b1a10;
-  --popover: #ffffff;
-  --popover-foreground: #2b1a10;
-  --primary: #7c3a12;
-  --primary-foreground: #fff8ee;
-  --secondary: #f6e7d2;
-  --secondary-foreground: #3b2012;
-  --muted: #f3e9dc;
-  --muted-foreground: #6b5444;
-  --accent: #fed7aa;
-  --accent-foreground: #3b1a08;
-  --destructive: #dc2626;
-  --border: #ead8c0;
-  --input: #e2cdb1;
-  --ring: #b45309;
-  --chart-1: #c8874f;
-  --chart-2: #7c3a12;
-  --chart-3: #b45309;
-  --chart-4: #3b2012;
-  --chart-5: #fdba74;
-  --radius: 0.75rem;
-  --sidebar: #fff8ee;
-  --sidebar-foreground: #2b1a10;
-  --sidebar-primary: #7c3a12;
-  --sidebar-primary-foreground: #fff8ee;
-  --sidebar-accent: #f6e7d2;
-  --sidebar-accent-foreground: #3b2012;
-  --sidebar-border: #ead8c0;
-  --sidebar-ring: #b45309;
+  --bg-canvas: #ffffff;
+  --bg-surface: #f5efe6;
+  --bg-surface-subtle: #faf6f0;
+  --border-subtle: #e8ddd0;
+  --text-primary: #1f1a17;
+  --text-muted: #786c62;
+  --color-accent: #c87d32;
+  --color-accent-hover: #b46924;
+  --color-mocha: #3e271d;
+
+  --font-sans: "Outfit", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-cursive: "Reenie Beanie", cursive, "Brush Script MT", handwriting;
+
+  --shadow-soft: 0 4px 20px -2px rgba(31, 26, 23, 0.05);
+  --shadow-float: 0 16px 36px -6px rgba(31, 26, 23, 0.09);
+  --shadow-cup: 0 20px 40px -10px rgba(62, 39, 29, 0.14);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dark {
-  --background: #1c0f08;
-  --foreground: #fff8ee;
-  --card: #2a170c;
-  --card-foreground: #fff8ee;
-  --popover: #2a170c;
-  --popover-foreground: #fff8ee;
-  --primary: #fdba74;
-  --primary-foreground: #2a1206;
-  --secondary: #3b2012;
-  --secondary-foreground: #fff8ee;
-  --muted: #3b2012;
-  --muted-foreground: #d9c3ad;
-  --accent: #3b2012;
-  --accent-foreground: #fff8ee;
-  --destructive: #f87171;
-  --border: rgb(255 255 255 / 12%);
-  --input: rgb(255 255 255 / 16%);
-  --ring: #fdba74;
-  --sidebar: #2a170c;
-  --sidebar-foreground: #fff8ee;
-  --sidebar-primary: #fdba74;
-  --sidebar-primary-foreground: #2a1206;
-  --sidebar-accent: #3b2012;
-  --sidebar-accent-foreground: #fff8ee;
-  --sidebar-border: rgb(255 255 255 / 12%);
-  --sidebar-ring: #fdba74;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  html {
-    @apply font-sans;
-    scroll-behavior: smooth;
-    scroll-padding-top: 6rem;
-  }
-  body {
-    @apply bg-background text-foreground;
-    -webkit-tap-highlight-color: transparent;
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: var(--font-heading);
-  }
-  :focus-visible {
-    outline: 2px solid var(--color-senja);
-    outline-offset: 3px;
-  }
-  ::selection {
-    background: var(--color-senja-soft);
-    color: var(--color-on-senja);
-  }
+html {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero — keyframes (diadaptasi dari konsep "Soda")                    */
+/* Grain / Texture Overlay (0.32 opacity, feTurbulence baseFrequency 0.65) */
 /* ------------------------------------------------------------------ */
-
-@keyframes hero-bubble-rise {
-  0% {
-    transform: translateY(0) translateX(0) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: var(--bubble-opacity, 0.4);
-  }
-  90% {
-    opacity: var(--bubble-opacity, 0.4);
-  }
-  100% {
-    transform: translateY(-110vh) translateX(30px) rotate(360deg);
-    opacity: 0;
-  }
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 50;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.32;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-@keyframes hero-fade-in {
-  to {
-    opacity: 1;
-  }
+/* ------------------------------------------------------------------ */
+/* Typography Classes                                                 */
+/* ------------------------------------------------------------------ */
+.font-sans {
+  font-family: var(--font-sans);
 }
 
-@keyframes hero-float {
-  0%,
-  100% {
-    transform: translateY(0);
+.font-cursive {
+  font-family: var(--font-cursive);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  text-transform: none; /* Sentence case only */
+}
+
+.h-display {
+  font-size: clamp(2.8rem, 6.5vw, 4.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.h-section {
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Reveal-on-scroll (translateY: 30px to 0, opacity 0 to 1, 0.8s)     */
+/* ------------------------------------------------------------------ */
+html.js [data-rev] {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+  transition:
+    opacity 0.8s var(--ease),
+    transform 0.8s var(--ease);
+  transition-delay: var(--d, 0ms);
+}
+
+html.js [data-rev].in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Floating Warm Background Blobs (6s loop, translateY +/- 10px)      */
+/* ------------------------------------------------------------------ */
+@keyframes floatLoop1 {
+  0%, 100% {
+    transform: translate3d(0, -10px, 0) scale(1);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translate3d(0, 10px, 0) scale(1.04);
   }
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
+@keyframes floatLoop2 {
+  0%, 100% {
+    transform: translate3d(0, 10px, 0) scale(1.04);
   }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes shine {
-  from {
-    transform: translateX(-120%) skewX(-20deg);
-  }
-  to {
-    transform: translateX(220%) skewX(-20deg);
+  50% {
+    transform: translate3d(0, -10px, 0) scale(1);
   }
 }
 
-.hero-bubble {
-  position: absolute;
-  bottom: -50px;
-  border-radius: 9999px;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 30% 30%,
-    rgb(255 255 255 / 0.9) 0%,
-    rgb(255 255 255 / 0.25) 35%,
-    rgb(255 255 255 / 0.05) 70%
-  );
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35);
-  animation: hero-bubble-rise var(--bubble-duration, 6s) linear forwards;
+.animate-float-1 {
+  animation: floatLoop1 6s ease-in-out infinite;
 }
 
-.hero-cup-stage {
-  opacity: 0;
-  animation:
-    hero-fade-in 1.5s ease-out 0.3s forwards,
-    hero-float 6s ease-in-out infinite;
+.animate-float-2 {
+  animation: floatLoop2 6s ease-in-out infinite;
 }
 
-.animate-marquee {
-  animation: marquee 28s linear infinite;
+/* ------------------------------------------------------------------ */
+/* Pulsing 'Brew / Seduh' Button Animation (Caramel #C87D32)          */
+/* ------------------------------------------------------------------ */
+@keyframes breatheCaramelPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(200, 125, 50, 0.42);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 16px rgba(200, 125, 50, 0);
+  }
 }
 
-.btn-shine {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.btn-shine::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  width: 40%;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
-  transform: translateX(-120%) skewX(-20deg);
-  pointer-events: none;
-  z-index: -1;
-}
-.btn-shine:hover::after {
-  animation: shine 0.9s var(--ease-out-soft);
+.animate-breathe {
+  animation: breatheCaramelPulse 5s ease-in-out infinite;
 }
 
-.no-scrollbar {
+/* ------------------------------------------------------------------ */
+/* Soft Shadows & Container Classes                                   */
+/* ------------------------------------------------------------------ */
+.shadow-soft {
+  box-shadow: 0 4px 20px -2px rgba(31, 26, 23, 0.05);
+}
+
+.shadow-float {
+  box-shadow: 0 16px 36px -6px rgba(31, 26, 23, 0.09);
+}
+
+.shadow-cup {
+  box-shadow: 0 20px 40px -10px rgba(62, 39, 29, 0.14);
+}
+
+.rounded-container {
+  border-radius: clamp(2rem, 4vw, 3rem);
+}
+
+/* ------------------------------------------------------------------ */
+/* Scrollbar-hide for Horizontal Scenario Scroll                      */
+/* ------------------------------------------------------------------ */
+.scroll-no-bar {
+  -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.no-scrollbar::-webkit-scrollbar {
+
+.scroll-no-bar::-webkit-scrollbar {
   display: none;
 }
 
+/* ------------------------------------------------------------------ */
+/* Testimonial Physical Rotation (+1 / -1 deg)                        */
+/* ------------------------------------------------------------------ */
+.rotate-note-pos {
+  transform: rotate(1deg);
+}
+
+.rotate-note-neg {
+  transform: rotate(-1deg);
+}
+
+@media (hover: hover) {
+  .rotate-note-pos:hover,
+  .rotate-note-neg:hover {
+    transform: rotate(0deg) translateY(-4px);
+    transition: transform 0.4s var(--ease);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Interactive FAQ Accordion (duration-500ms ease-in-out)             */
+/* ------------------------------------------------------------------ */
+.faq-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 500ms ease-in-out;
+}
+
+.faq-content.open {
+  grid-template-rows: 1fr;
+}
+
+.faq-inner {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced Motion Support                                             */
+/* ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  html.js [data-rev] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
-  .hero-cup-stage {
-    opacity: 1;
-    animation: none;
-  }
-  .animate-marquee,
-  .hero-bubble {
-    animation: none;
-  }
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+  .animate-float-1,
+  .animate-float-2,
+  .animate-breathe {
+    animation: none !important;
   }
 }

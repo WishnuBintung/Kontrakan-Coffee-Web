@@ -18,6 +18,7 @@ node_modules/
 .gemini/
 .claude/
 .cursor/
+skills-lock.json
 
 # Testing & Coverage
 coverage/
