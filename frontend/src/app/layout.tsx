@@ -5,11 +5,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Kontrakan Coffee — Spatial Atelier & Roastery",
   description:
-    "An artisanal spatial coffee atelier built on warm cream, deep espresso brown, and pure white canvas.",
+    "An artisanal spatial coffee atelier built on warm cream, dark olive green surfaces, deep charcoal typography, and glowing amber gold accents.",
   openGraph: {
     title: "Kontrakan Coffee — Spatial Atelier & Roastery",
     description:
-      "Warm cream, deep espresso brown, and pure white canvas with refined coffee aesthetics.",
+      "Warm cream, dark olive green surfaces, deep charcoal typography, and glowing amber gold accents.",
     locale: "en_US",
     type: "website",
     siteName: "Kontrakan Coffee",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FFFFFF",
+  themeColor: "#E8E3D9",
   width: "device-width",
   initialScale: 1,
 };
@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="bg-[#FFFFFF] text-[#241611] scroll-smooth"
+      className="bg-[#E8E3D9] text-[#1C1A18] scroll-smooth"
       suppressHydrationWarning
     >
       <head>
@@ -42,7 +42,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className="bg-[#FFFFFF] text-[#241611] antialiased min-h-screen selection:bg-[#5C3317] selection:text-white font-sans"
+        className="bg-[#E8E3D9] text-[#1C1A18] antialiased min-h-screen selection:bg-[#D99C5B] selection:text-[#1C1A18] font-sans"
         suppressHydrationWarning
       >
         {/* Subtle tactile noise grain overlay */}

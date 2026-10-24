@@ -72,38 +72,37 @@ export function HeroSection() {
   );
 
   return (
-    // Hero section berukuran full satu layar penuh di semua device (100dvh) dengan Kanvas Putih (#FFFFFF)
-    <section className="relative w-full h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between items-center text-center px-6 pt-28 pb-12 bg-[#FFFFFF] text-[#241611]">
-      {/* Layer 1 (Back): Background image with warm coffee ambient tint, scale linked to scroll (1.0 to 1.27) */}
+    // Hero section berukuran full satu layar penuh di semua device (100dvh) dengan Warna Dasar Krem Hangat (#E8E3D9) dan stacking context terisolasi (isolate)
+    <section className="relative w-full h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between items-center text-center px-6 pt-28 pb-12 bg-[#E8E3D9] text-[#1C1A18] isolate">
+      {/* Layer 1 (Back): Background image jernih tanpa efek blur/filter, scale linked to scroll (1.0 to 1.27) */}
       <motion.div
         style={{
           scale: bgScale,
           transformStyle: "preserve-3d",
           willChange: "transform",
         }}
-        className="absolute inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none"
+        className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none"
       >
+        {/* Coffee atelier background image - jernih tanpa efek blur atau filter apapun */}
         <img
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2160&auto=format&fit=crop"
-          alt="Architectural Spatial Background"
-          className="w-full h-full object-cover grayscale contrast-105 opacity-20"
-        />
-
-        {/* Ambient warm radial lighting overlay */}
-        <div
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(142, 84, 44, 0.08) 0%, rgba(245, 240, 230, 0.45) 60%, rgba(255, 255, 255, 0.98) 100%)",
+          src="/images/bg-hero.jpg"
+          alt="Kontrakan Coffee Atelier Atmosphere"
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.currentTarget;
+            if (!target.dataset.fallbackTried) {
+              target.dataset.fallbackTried = "1";
+              target.src = "./images/bg-hero.jpg";
+            }
           }}
         />
       </motion.div>
 
       {/* Spacer atas */}
-      <div className="h-6" aria-hidden="true" />
+      <div className="h-6 relative z-10" aria-hidden="true" />
 
       {/* Layer 2 (Mid) & Layer 3 (Overlay): Scroll-Linked Zoom Header Component */}
-      <div className="my-auto z-10 w-full flex items-center justify-center">
+      <div className="my-auto relative z-10 w-full flex items-center justify-center">
         <ScrollLinkedZoomHeader
           title="Kontrakan"
           secondaryLabel="coffee"
@@ -115,17 +114,17 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Bottom: Kalimat di bagian bawah hero dengan Coklat Espresso (#241611) */}
+      {/* Bottom: Kalimat di bagian bawah hero dengan Warna Teks (#1C1A18) */}
       <motion.div
         style={{
           opacity: bottomTextOpacity,
           willChange: "opacity",
         }}
-        className="z-10 max-w-2xl mx-auto px-4"
+        className="relative z-10 max-w-2xl mx-auto px-4"
       >
-        <p className="text-[17px] md:text-[20px] font-light tracking-tight text-[#241611]/85 leading-relaxed font-sans">
-          The Kontrakan Coffee design system combines pure white canvas, warm cream surface depth,
-          and a rich espresso typographic scale to create an immersive, architectural coffee atelier experience.
+        <p className="text-[17px] md:text-[20px] font-light tracking-tight text-[#1C1A18]/90 leading-relaxed font-sans font-medium">
+          The Kontrakan Coffee design system combines warm brick-reflected cream, dark olive green surfaces,
+          and glowing amber gold accents to create an immersive, architectural coffee atelier experience.
         </p>
       </motion.div>
     </section>

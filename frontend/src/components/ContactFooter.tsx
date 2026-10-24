@@ -16,14 +16,14 @@ export function ContactFooter() {
   return (
     <footer
       id="contact"
-      className="w-full bg-[#FFFFFF] text-[#241611] py-20 px-6 relative sharp-edges border-t border-[#E6DDCF]"
+      className="w-full bg-[#5B6653] text-[#E8E3D9] py-20 px-6 relative sharp-edges border-t border-[#4D5746]"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Top element: Full-width border-b text 'START A PROJECT' at 12vw, Black weight, uppercase, hover turns #5C3317 */}
-        <div className="border-b border-[#E6DDCF] pb-10 md:pb-16 mb-16 md:mb-20">
+        {/* Top element: Full-width border-b text 'START A PROJECT' at 12vw, Black weight, uppercase, hover turns #D99C5B */}
+        <div className="border-b border-[#4D5746] pb-10 md:pb-16 mb-16 md:mb-20">
           <a
             href={`mailto:${email}`}
-            className="block font-sans font-black text-[12vw] leading-none text-[#241611] uppercase tracking-[-0.03em] hover:text-[#5C3317] transition-colors select-none"
+            className="block font-sans font-black text-[12vw] leading-none text-[#E8E3D9] uppercase tracking-[-0.03em] hover:text-[#D99C5B] transition-colors select-none"
           >
             START A PROJECT
           </a>
@@ -33,7 +33,7 @@ export function ContactFooter() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
           {/* Column 1: Social links with wavy underline hover */}
           <div className="flex flex-col space-y-4">
-            <span className="font-mono text-[14px] text-[#735F53] uppercase tracking-widest block font-medium">
+            <span className="font-mono text-[14px] text-[#D99C5B] uppercase tracking-widest block font-semibold">
               [INDEX // SOCIAL]
             </span>
             <ul className="space-y-2">
@@ -48,7 +48,7 @@ export function ContactFooter() {
                     href={item.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[18px] font-medium tracking-tight text-[#241611] wavy-hover inline-block font-sans"
+                    className="text-[18px] font-medium tracking-tight text-[#E8E3D9] wavy-hover inline-block font-sans"
                   >
                     {item.label}
                   </a>
@@ -57,24 +57,24 @@ export function ContactFooter() {
             </ul>
           </div>
 
-          {/* Column 2: Contact email (3xl font) with Action button */}
+          {/* Column 2: Contact email (3xl font) with Amber Action button */}
           <div className="flex flex-col space-y-4">
-            <span className="font-mono text-[14px] text-[#735F53] uppercase tracking-widest block font-medium">
+            <span className="font-mono text-[14px] text-[#D99C5B] uppercase tracking-widest block font-semibold">
               [DIRECT // INQUIRIES]
             </span>
             <div className="flex flex-col items-start gap-2">
               <a
                 href={`mailto:${email}`}
-                className="text-2xl md:text-3xl font-medium tracking-tight text-[#241611] hover:text-[#5C3317] transition-colors break-words font-sans"
+                className="text-2xl md:text-3xl font-medium tracking-tight text-[#E8E3D9] hover:text-[#D99C5B] transition-colors break-words font-sans"
               >
                 {email}
               </a>
               <button
                 onClick={handleCopyEmail}
-                className={`font-mono text-[12px] uppercase tracking-wider px-3 py-1.5 sharp-edges transition-all inline-flex items-center gap-2 ${
+                className={`font-mono text-[12px] uppercase tracking-wider px-3.5 py-1.5 sharp-edges transition-all inline-flex items-center gap-2 font-medium ${
                   copied
-                    ? "bg-[#5C3317] text-white"
-                    : "bg-[#F5F0E6] text-[#241611] border border-[#E6DDCF] hover:bg-[#5C3317] hover:text-white"
+                    ? "bg-[#E8E3D9] text-[#1C1A18]"
+                    : "bg-[#D99C5B] text-[#1C1A18] hover:bg-[#C08343]"
                 }`}
                 aria-label="Copy email address"
               >
@@ -85,25 +85,25 @@ export function ContactFooter() {
                   </>
                 ) : (
                   <>
-                    <ArrowUpRight className="w-3.5 h-3.5 stroke-[2]" />
+                    <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
                     <span>CLICK TO COPY ADDRESS</span>
                   </>
                 )}
               </button>
             </div>
-            <p className="font-mono text-[14px] text-[#735F53] leading-relaxed pt-2">
+            <p className="font-mono text-[14px] text-[#E8E3D9]/70 leading-relaxed pt-2">
               Artisanal spatial coffee roastery, architectural collaborations & sensory consultations.
             </p>
           </div>
 
           {/* Column 3: Rights reserved text aligned bottom-right */}
           <div className="flex flex-col md:items-end justify-between h-full space-y-4 md:text-right">
-            <span className="font-mono text-[14px] text-[#735F53] uppercase tracking-widest block font-medium">
+            <span className="font-mono text-[14px] text-[#D99C5B] uppercase tracking-widest block font-semibold">
               [ARCHIVAL // NOTATION]
             </span>
-            <div className="font-mono text-[14px] text-[#735F53] leading-relaxed space-y-1">
+            <div className="font-mono text-[14px] text-[#E8E3D9]/70 leading-relaxed space-y-1">
               <p>© 2026 KONTRAKAN COFFEE ATELIER.</p>
-              <p>WARM MINIMALIST MONOCHROMATIC SYSTEM.</p>
+              <p>SPATIAL BOTANICAL & WARM MONOCHROME SYSTEM.</p>
               <p>ALL RIGHTS RESERVED.</p>
             </div>
           </div>

@@ -47,35 +47,35 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[#241611]/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-[#1C1A18]/70 backdrop-blur-sm"
           />
 
-          {/* Modal Container: Kanvas Putih #FFFFFF dengan elemen Krem #F5F0E6 */}
+          {/* Modal Container: Kanvas Krem Hangat #E8E3D9 dengan elemen Hijau Zaitun #5B6653 */}
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#FFFFFF] text-[#241611] border border-[#E6DDCF] shadow-2xl z-10 flex flex-col sharp-edges"
+            className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#E8E3D9] text-[#1C1A18] border border-[#D6CFC2] shadow-2xl z-10 flex flex-col sharp-edges"
           >
-            {/* Header bar: Surface Krem #F5F0E6 */}
-            <div className="flex items-center justify-between p-6 md:p-8 bg-[#F5F0E6] border-b border-[#E6DDCF]">
-              <span className="font-mono text-[14px] uppercase tracking-widest text-[#241611] font-medium">
+            {/* Header bar: Surface Hijau Zaitun #5B6653 */}
+            <div className="flex items-center justify-between p-6 md:p-8 bg-[#5B6653] text-[#E8E3D9] border-b border-[#4D5746]">
+              <span className="font-mono text-[14px] uppercase tracking-widest text-[#D99C5B] font-semibold">
                 {project.category}
               </span>
               <button
                 onClick={onClose}
-                className="p-1 text-[#241611] hover:text-[#5C3317] transition-colors focus:outline-none"
+                className="p-1 text-[#E8E3D9] hover:text-[#D99C5B] transition-colors focus:outline-none"
                 aria-label="Close project modal"
               >
                 <X className="w-6 h-6 stroke-[2]" />
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-6 md:p-10 space-y-8 bg-[#FFFFFF]">
+            {/* Modal Body: Kanvas Krem #E8E3D9 */}
+            <div className="p-6 md:p-10 space-y-8 bg-[#E8E3D9]">
               {/* Image Preview */}
-              <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#F5F0E6] border border-[#E6DDCF] sharp-edges">
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#5B6653] border border-[#D6CFC2] sharp-edges">
                 <img
                   src={project.image}
                   alt={project.title}
@@ -84,39 +84,39 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               </div>
 
               {/* Title & Year */}
-              <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 border-b border-[#E6DDCF] pb-6">
-                <h3 className="font-sans font-black text-4xl md:text-5xl uppercase tracking-[-0.03em] text-[#241611]">
+              <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 border-b border-[#D6CFC2] pb-6">
+                <h3 className="font-sans font-black text-4xl md:text-5xl uppercase tracking-[-0.03em] text-[#1C1A18]">
                   {project.title}
                 </h3>
-                <span className="font-mono text-[14px] text-[#735F53] tracking-widest uppercase">
+                <span className="font-mono text-[14px] text-[#666158] tracking-widest uppercase">
                   YEAR // {project.year}
                 </span>
               </div>
 
               {/* Description */}
-              <p className="text-[19px] font-light tracking-tight text-[#241611]/90 leading-relaxed font-sans max-w-2xl">
+              <p className="text-[19px] font-light tracking-tight text-[#1C1A18]/90 leading-relaxed font-sans max-w-2xl">
                 {project.description}
               </p>
 
               {/* Specs & Characteristics */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[#E6DDCF]">
-                <div className="bg-[#F5F0E6]/70 border border-[#E6DDCF] p-5">
-                  <span className="font-mono text-[12px] uppercase tracking-widest text-[#735F53] block mb-2 font-medium">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[#D6CFC2]">
+                <div className="bg-[#5B6653]/10 border border-[#D6CFC2] p-5">
+                  <span className="font-mono text-[12px] uppercase tracking-widest text-[#5B6653] block mb-2 font-bold">
                     SPECIFICATIONS
                   </span>
-                  <p className="font-mono text-[14px] text-[#241611]">
+                  <p className="font-mono text-[14px] text-[#1C1A18]">
                     {project.specs}
                   </p>
                 </div>
-                <div className="bg-[#F5F0E6]/70 border border-[#E6DDCF] p-5">
-                  <span className="font-mono text-[12px] uppercase tracking-widest text-[#735F53] block mb-2 font-medium">
+                <div className="bg-[#5B6653]/10 border border-[#D6CFC2] p-5">
+                  <span className="font-mono text-[12px] uppercase tracking-widest text-[#5B6653] block mb-2 font-bold">
                     KEY ELEMENTS
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {project.notes.map((note) => (
                       <span
                         key={note}
-                        className="px-2.5 py-1 text-[13px] font-mono bg-[#F5F0E6] border border-[#E6DDCF] text-[#241611]"
+                        className="px-2.5 py-1 text-[13px] font-mono bg-[#5B6653] border border-[#4D5746] text-[#E8E3D9]"
                       >
                         {note}
                       </span>
@@ -125,17 +125,17 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 </div>
               </div>
 
-              {/* Action Button: Roasted Coffee #5C3317 */}
-              <div className="pt-6 flex justify-between items-center border-t border-[#E6DDCF]">
+              {/* Action Button: Amber Gold #D99C5B */}
+              <div className="pt-6 flex justify-between items-center border-t border-[#D6CFC2]">
                 <a
                   href="#contact"
                   onClick={onClose}
-                  className="inline-flex items-center gap-3 px-7 py-3.5 bg-[#5C3317] text-white font-medium text-[16px] tracking-tight uppercase hover:bg-[#432410] transition-colors sharp-edges shadow-md"
+                  className="inline-flex items-center gap-3 px-7 py-3.5 bg-[#D99C5B] text-[#1C1A18] font-bold text-[16px] tracking-tight uppercase hover:bg-[#C08343] transition-colors sharp-edges shadow-md"
                 >
                   <span>Inquire About Project</span>
-                  <ArrowUpRight className="w-5 h-5 stroke-[2.2]" />
+                  <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
                 </a>
-                <span className="font-mono text-[12px] text-[#735F53] uppercase">
+                <span className="font-mono text-[12px] text-[#666158] uppercase">
                   ARCHIVE // FEATURED
                 </span>
               </div>

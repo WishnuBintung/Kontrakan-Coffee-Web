@@ -7,56 +7,58 @@
   --font-condensed: "Saira Extra Condensed", "Plus Jakarta Sans", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Primitive tokens: Coklat, Krem, dan Putih */
-  --color-canvas-white: #ffffff;
-  --color-cream-surface: #f5f0e6;
-  --color-cream-border: #e6ddcf;
-  --color-espresso-dark: #241611;
-  --color-coffee-roast: #5c3317;
-  --color-coffee-roast-hover: #432410;
-  --color-caramel-accent: #8e542c;
-  --color-mocha-muted: #735f53;
+  /* Primitive tokens from user specifications */
+  --color-warm-cream: #e8e3d9;
+  --color-dark-olive: #5b6653;
+  --color-deep-charcoal: #1c1a18;
+  --color-amber-gold: #d99c5b;
+  --color-amber-gold-hover: #c08343;
+  --color-muted-charcoal: #666158;
+  --color-cream-border: #d6cfc2;
+  --color-olive-border: #4d5746;
 
-  /* Semantic tokens */
-  --color-background: #ffffff;
-  --color-surface: #f5f0e6;
-  --color-foreground: #241611;
-  --color-secondary: #f5f0e6;
-  --color-border: #e6ddcf;
-  --color-primary: #5c3317;
-  --color-accent: #8e542c;
-  --color-muted: #735f53;
+  /* Semantic tokens: 60-30-10 distribution (.agents) */
+  --color-background: #e8e3d9;        /* Dominant: 60-70% */
+  --color-surface: #5b6653;           /* Secondary: 20-30% */
+  --color-foreground: #1c1a18;        /* Typography on cream */
+  --color-foreground-light: #e8e3d9;  /* Typography on olive */
+  --color-secondary: #5b6653;
+  --color-border: #d6cfc2;
+  --color-primary: #d99c5b;           /* Accent / Action: 5-10% (Minor) */
+  --color-accent: #d99c5b;
+  --color-muted: #666158;
 }
 
 :root {
   /* Three-Layer Token Architecture (.agents/skills/design-system) */
   /* Primitive */
-  --primitive-white: #ffffff;
-  --primitive-cream: #f5f0e6;
-  --primitive-border: #e6ddcf;
-  --primitive-espresso: #241611;
-  --primitive-roast: #5c3317;
-  --primitive-roast-hover: #432410;
-  --primitive-caramel: #8e542c;
-  --primitive-mocha: #735f53;
+  --primitive-cream: #e8e3d9;
+  --primitive-olive: #5b6653;
+  --primitive-charcoal: #1c1a18;
+  --primitive-amber: #d99c5b;
+  --primitive-amber-hover: #c08343;
+  --primitive-muted: #666158;
+  --primitive-border-cream: #d6cfc2;
+  --primitive-border-olive: #4d5746;
 
   /* Semantic */
-  --bg-canvas: var(--primitive-white);
-  --bg-surface: var(--primitive-cream);
-  --fg-text: var(--primitive-espresso);
-  --fg-muted: var(--primitive-mocha);
-  --action-primary: var(--primitive-roast);
-  --action-hover: var(--primitive-roast-hover);
-  --action-accent: var(--primitive-caramel);
-  --border-divider: var(--primitive-border);
+  --bg-canvas: var(--primitive-cream);
+  --bg-surface: var(--primitive-olive);
+  --fg-text: var(--primitive-charcoal);
+  --fg-text-on-surface: var(--primitive-cream);
+  --fg-muted: var(--primitive-muted);
+  --action-accent: var(--primitive-amber);
+  --action-hover: var(--primitive-amber-hover);
+  --border-divider: var(--primitive-border-cream);
   --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Component */
   --card-bg: var(--bg-surface);
-  --card-border: var(--border-divider);
+  --card-fg: var(--fg-text-on-surface);
+  --card-border: var(--primitive-border-olive);
   --menu-bg: var(--bg-surface);
-  --button-bg: var(--action-primary);
-  --button-fg: var(--primitive-white);
+  --button-bg: var(--action-accent);
+  --button-fg: var(--primitive-charcoal);
   --button-hover: var(--action-hover);
 }
 
@@ -113,20 +115,20 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Roasted Coffee (#5C3317) Highlight for Selection                   */
+/* Amber Gold (#D99C5B) Highlight for Selection                        */
 /* ------------------------------------------------------------------ */
 ::selection {
-  background-color: #5c3317 !important;
-  color: #ffffff !important;
+  background-color: #d99c5b !important;
+  color: #1c1a18 !important;
 }
 
 ::-moz-selection {
-  background-color: #5c3317 !important;
-  color: #ffffff !important;
+  background-color: #d99c5b !important;
+  color: #1c1a18 !important;
 }
 
 /* ------------------------------------------------------------------ */
-/* Tactile Noise Overlay (Subtle 3.5% warm grain)                     */
+/* Tactile Noise Overlay (Subtle warm 3.5% grain)                     */
 /* ------------------------------------------------------------------ */
 .grain-overlay {
   position: fixed;
@@ -141,14 +143,14 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero Warm Ambient Coffee Light Tint                                */
+/* Hero Warm Amber Ambient Lamp Glow Tint                             */
 /* ------------------------------------------------------------------ */
 .hero-radial-tint {
   background: radial-gradient(
     ellipse at center,
-    rgba(142, 84, 44, 0.08) 0%,
-    rgba(245, 240, 230, 0.45) 60%,
-    rgba(255, 255, 255, 0.98) 100%
+    rgba(217, 156, 91, 0.14) 0%,
+    rgba(91, 102, 83, 0.12) 50%,
+    rgba(232, 227, 217, 0.98) 100%
   );
 }
 
@@ -169,9 +171,9 @@ body {
 }
 
 .wavy-hover:hover {
-  text-decoration: underline wavy #5c3317;
+  text-decoration: underline wavy #d99c5b;
   text-underline-offset: 6px;
-  color: #5c3317;
+  color: #d99c5b;
 }
 
 /* ------------------------------------------------------------------ */
