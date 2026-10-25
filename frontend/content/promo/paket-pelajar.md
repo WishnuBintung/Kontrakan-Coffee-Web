@@ -6,4 +6,4 @@ tanggal_selesai: 2026-12-31
 gambar: /images/placeholder-coffee.svg
 aktif: true
 ---
-Dapatkan kombinasi 1 Es Kopi Susu Senja + 1 Porsi Cireng Rujak Salju hanya Rp 25.000 dengan menunjukkan kartu pelajar atau KTM aktif. Berlaku setiap Senin hingga Jumat.
+Dapatkan kombinasi 1 Es Kopi Susu Kontrakan + 1 Porsi Cireng Rujak Salju hanya Rp 25.000 dengan menunjukkan kartu pelajar atau KTM aktif. Berlaku setiap Senin hingga Jumat.

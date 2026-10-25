@@ -18,6 +18,8 @@ const CONTENT_DIR = fs.existsSync(path.join(process.cwd(), "content"))
   ? path.join(process.cwd(), "content")
   : fs.existsSync(path.join(process.cwd(), "frontend", "content"))
   ? path.join(process.cwd(), "frontend", "content")
+  : fs.existsSync(path.join(process.cwd(), "..", "backend", "content"))
+  ? path.join(process.cwd(), "..", "backend", "content")
   : path.join(process.cwd(), "backend", "content");
 
 const DEFAULT_PLACEHOLDER = "/images/placeholder-coffee.svg";
@@ -287,12 +289,12 @@ export function getActivePromo(
 export function getInfoToko(): InfoToko {
   const filePath = path.join(CONTENT_DIR, "info-toko.json");
   const fallback: InfoToko = {
-    nama_toko: "Kopi Senja",
+    nama_toko: "Kontrakan Coffee",
     alamat: "Jl. Seturan Raya No. 45, Sleman, D.I. Yogyakarta 55281",
-    link_peta: "https://maps.google.com/?q=Kopi+Senja+Yogyakarta",
+    link_peta: "https://maps.google.com/?q=Kontrakan+Coffee+Yogyakarta",
     embed_peta:
-      "https://maps.google.com/maps?q=Kopi+Senja+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
-    instagram: "https://instagram.com/kopisenja.yk",
+      "https://maps.google.com/maps?q=Kontrakan+Coffee+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
+    instagram: "https://instagram.com/kontrakancoffee",
     jam_buka: [],
   };
 

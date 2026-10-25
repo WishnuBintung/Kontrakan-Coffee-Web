@@ -1,4 +1,4 @@
-// backend/src/lib/types.ts
+// frontend/src/lib/types.ts
 
 export type Kategori = {
   id: string;

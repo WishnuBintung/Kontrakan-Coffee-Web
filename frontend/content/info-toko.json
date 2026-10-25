@@ -1,9 +1,9 @@
 {
-  "nama_toko": "Kopi Senja",
+  "nama_toko": "Kontrakan Coffee",
   "alamat": "Jl. Seturan Raya No. 45, Caturtunggal, Depok, Sleman, D.I. Yogyakarta 55281",
-  "link_peta": "https://maps.google.com/?q=Kopi+Senja+Yogyakarta",
-  "embed_peta": "https://maps.google.com/maps?q=Kopi+Senja+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
-  "instagram": "https://instagram.com/kopisenja.yk",
+  "link_peta": "https://maps.google.com/?q=Kontrakan+Coffee+Yogyakarta",
+  "embed_peta": "https://maps.google.com/maps?q=Kontrakan+Coffee+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
+  "instagram": "https://instagram.com/kontrakancoffee",
   "jam_buka": [
     { "hari": "Senin", "buka": "09:00", "tutup": "23:00", "libur": false },
     { "hari": "Selasa", "buka": "09:00", "tutup": "23:00", "libur": false },
