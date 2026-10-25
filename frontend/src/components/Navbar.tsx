@@ -63,6 +63,8 @@ export function Navbar() {
       displayItemNumbering={true}
       displaySocials={true}
       isFixed={true}
+      shrinkOnScroll={true}
+      scrollThreshold={100}
     />
   );
 }

@@ -67,6 +67,10 @@ export interface StaggeredMenuProps {
   onMenuOpen?: () => void;
   /** Callback when menu starts closing */
   onMenuClose?: () => void;
+  /** Whether the header shrinks on scroll past 100px */
+  shrinkOnScroll?: boolean;
+  /** Scroll distance threshold in pixels to trigger shrinking header */
+  scrollThreshold?: number;
 }
 
 export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
@@ -97,9 +101,13 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   closeOnClickAway = true,
   onMenuOpen,
   onMenuClose,
+  shrinkOnScroll = true,
+  scrollThreshold = 100,
 }) => {
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
+  // Shrinking Sticky Header: tracks scroll position past 100px threshold
+  const [isScrolled, setIsScrolled] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const preLayersRef = useRef<HTMLDivElement | null>(null);
   const preLayerElsRef = useRef<HTMLElement[]>([]);
@@ -383,6 +391,18 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [closeOnClickAway, open, toggleMenu]);
 
+  // Shrinking Sticky Header scroll listener: activates when user scrolls past 100px
+  useEffect(() => {
+    if (!shrinkOnScroll) return;
+    const handleScroll = () => {
+      const scrolled = window.scrollY > scrollThreshold;
+      setIsScrolled(scrolled);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [shrinkOnScroll, scrollThreshold]);
+
   return (
     <div
       className={cn(
@@ -423,8 +443,15 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           ))}
         </div>
 
-        {/* Global Navigation Bar / Header */}
-        <header className="fixed top-0 left-0 w-full z-[30] px-6 py-5 bg-[#5B6653]/95 backdrop-blur-md border-b border-[#4D5746] transition-all pointer-events-auto">
+        {/* Global Navigation Bar / Shrinking Sticky Header with Glassmorphism */}
+        <header
+          className={cn(
+            "fixed top-0 left-0 w-full z-[30] px-6 transition-all duration-300 ease-in-out pointer-events-auto flex items-center",
+            (shrinkOnScroll && isScrolled) || open
+              ? "h-16 py-3 bg-[#5B6653]/85 backdrop-blur-md border-b border-[#4D5746]/70 shadow-md shadow-black/10"
+              : "h-20 py-5 bg-transparent backdrop-blur-none border-b border-transparent shadow-none"
+          )}
+        >
           <nav className="max-w-7xl mx-auto w-full flex items-center justify-between text-[#E8E3D9]">
             {/* Logo / Brand Wordmark */}
             <div className="flex items-center">
