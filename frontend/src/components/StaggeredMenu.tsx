@@ -443,13 +443,14 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           ))}
         </div>
 
-        {/* Global Navigation Bar / Shrinking Sticky Header with Glassmorphism */}
+        {/* Global Navigation Bar / Shrinking Sticky Header */}
         <header
           className={cn(
             "fixed top-0 left-0 w-full z-[30] px-6 transition-all duration-300 ease-in-out pointer-events-auto flex items-center",
+            "bg-[#5B6653]/90 backdrop-blur-md border-b border-[#4D5746]",
             (shrinkOnScroll && isScrolled) || open
-              ? "h-16 py-3 bg-[#5B6653]/85 backdrop-blur-md border-b border-[#4D5746]/70 shadow-md shadow-black/10"
-              : "h-20 py-5 bg-transparent backdrop-blur-none border-b border-transparent shadow-none"
+              ? "h-16 py-3 shadow-md shadow-black/15"
+              : "h-20 py-5 shadow-none"
           )}
         >
           <nav className="max-w-7xl mx-auto w-full flex items-center justify-between text-[#E8E3D9]">
