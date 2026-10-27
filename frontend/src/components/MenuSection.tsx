@@ -14,8 +14,9 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { formatPriceRupiah, CafeMenuItem } from "@/lib/cafeData";
+import { CafeMenuItem } from "@/lib/cafeData";
 import { useMenuData } from "@/hooks/useCafeData";
+import { FloatingMenuCard } from "./FloatingMenuCard";
 import { MenuDetailModal } from "./MenuDetailModal";
 import { SplitWords } from "./EditorialMotion";
 
@@ -39,7 +40,7 @@ const CMS_CATEGORY_NAMES: Record<string, string> = {
 };
 
 /**
- * Format harga ringkas untuk list menu (misal: Rp 11.000 → 11k).
+ * Format harga ringkas untuk baris menu (misal: Rp 11.000 → 11k).
  */
 function formatBoardPrice(price: number): string {
   if (!price || isNaN(price)) return "0";
@@ -55,11 +56,14 @@ export function MenuSection() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("default");
 
-  // State modal detail
-  const [selectedItem, setSelectedItem] = useState<CafeMenuItem | null>(null);
-  const [triggerMode, setTriggerMode] = useState<"hover" | "click">("click");
+  // State card detail melayang (mengikuti kursor tanpa delay & tanpa backdrop gelap)
+  const [hoveredItem, setHoveredItem] = useState<CafeMenuItem | null>(null);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
-  // State ekspansi daftar (5.5 baris vs semua)
+  // State modal terkunci (saat pengguna klik/tap di mobile)
+  const [selectedItem, setSelectedItem] = useState<CafeMenuItem | null>(null);
+
+  // State ekspansi daftar (5.5 baris terpotong vs semua)
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { items: filteredItems, status, refetch } = useMenuData(
@@ -116,21 +120,58 @@ export function MenuSection() {
     return categorizedMenu.some((group) => group.items.length > 5);
   }, [categorizedMenu]);
 
-  // Interaksi Hover Desktop: Instan tanpa delay, selalu aktif saat kursor bergerak
-  const handleItemHover = (item: CafeMenuItem) => {
-    setTriggerMode("hover");
-    setSelectedItem(item);
-  };
+  // Kalkulasi posisi cerdas card melayang mengikuti kursor (Smart Collision Detection)
+  const CARD_WIDTH = 295;
+  const CARD_HEIGHT = 330;
+  const OFFSET = 18;
 
-  const handleMenuMouseLeave = () => {
-    if (triggerMode === "hover") {
-      setSelectedItem(null);
+  const updateCursorPosition = (clientX: number, clientY: number) => {
+    if (typeof window === "undefined") return;
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Logika Sisi Layar:
+    // Jika kursor berada di sisi kanan (clientX > viewportWidth / 2) atau card meluap ke kanan:
+    // Card muncul di sebelah KIRI kursor.
+    // Jika di sisi kiri, card muncul di sebelah KANAN kursor.
+    let x = clientX + OFFSET;
+    if (clientX > viewportWidth / 2 || x + CARD_WIDTH > viewportWidth - 14) {
+      x = clientX - CARD_WIDTH - OFFSET;
     }
+
+    // Batas batas aman horizontal layar
+    if (x < 14) x = 14;
+    if (x + CARD_WIDTH > viewportWidth - 14) {
+      x = viewportWidth - CARD_WIDTH - 14;
+    }
+
+    // Batas aman vertikal layar
+    let y = clientY - 70;
+    if (y < 14) {
+      y = 14;
+    } else if (y + CARD_HEIGHT > viewportHeight - 14) {
+      y = viewportHeight - CARD_HEIGHT - 14;
+    }
+
+    setCursorPos({ x, y });
   };
 
-  // Interaksi Klik (Desktop atau Tap di Mobile): Mengunci modal agar tetap terbuka
+  const handleItemMouseEnter = (item: CafeMenuItem, e: React.MouseEvent) => {
+    setHoveredItem(item);
+    updateCursorPosition(e.clientX, e.clientY);
+  };
+
+  const handleItemMouseMove = (e: React.MouseEvent) => {
+    updateCursorPosition(e.clientX, e.clientY);
+  };
+
+  const handleMenuContainerMouseLeave = () => {
+    setHoveredItem(null);
+  };
+
   const handleItemClick = (item: CafeMenuItem) => {
-    setTriggerMode("click");
+    setHoveredItem(null);
     setSelectedItem(item);
   };
 
@@ -313,7 +354,7 @@ export function MenuSection() {
               {/* DAFTAR MENU MURNI (Hanya List Menu, Tanpa Ornamen Poster/Dekorasi) */}
               {filteredItems.length > 0 ? (
                 <div
-                  onMouseLeave={handleMenuMouseLeave}
+                  onMouseLeave={handleMenuContainerMouseLeave}
                   className="relative rounded-[0.5rem] border border-coffee/15 bg-cream p-6 sm:p-10 shadow-[0_4px_20px_-4px_rgba(44,28,15,0.08)]"
                 >
                   {/* Kolom Kategori Menu dengan Logika Truncation (5.5 Baris Terpotong Transparan) */}
@@ -336,7 +377,8 @@ export function MenuSection() {
                           {group.items.map((item) => (
                             <li
                               key={item.id}
-                              onMouseEnter={() => handleItemHover(item)}
+                              onMouseEnter={(e) => handleItemMouseEnter(item, e)}
+                              onMouseMove={handleItemMouseMove}
                               onClick={() => handleItemClick(item)}
                               role="button"
                               tabIndex={0}
@@ -420,11 +462,18 @@ export function MenuSection() {
         </div>
       </section>
 
-      {/* Modal Detail Menu: Tampil instan saat kursor hover di desktop, terkunci saat ditekan */}
+      {/* Card Detail Melayang: Mengikuti kursor di desktop tanpa delay, tanpa backdrop gelap */}
+      <FloatingMenuCard
+        item={hoveredItem}
+        x={cursorPos.x}
+        y={cursorPos.y}
+      />
+
+      {/* Modal Detail Menu Terkunci: Dibuka saat pengguna klik/tap menu (misal di mobile) */}
       <MenuDetailModal
         item={selectedItem}
         onClose={() => setSelectedItem(null)}
-        triggerMode={triggerMode}
+        triggerMode="click"
       />
     </>
   );
