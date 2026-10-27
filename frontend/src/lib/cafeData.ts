@@ -63,8 +63,8 @@ export const CAFE_INFO: CafeInfo = {
   whatsapp: "6281234567890",
   whatsappDisplay: "+62 812-3456-7890",
   whatsappText: "Halo Kontrakan Coffee, saya ingin bertanya tentang menu dan reservasi meja.",
-  instagram: "https://instagram.com/kontrakancoffee",
-  instagramHandle: "@kontrakancoffee",
+  instagram: "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3",
+  instagramHandle: "@kontrakan.coffee",
   email: "atelier@kontrakancoffee.com",
   jamBuka: [
     { hari: "Senin", buka: "09:00", tutup: "23:00", libur: false, catatan: "Weekday Roastery Session" },

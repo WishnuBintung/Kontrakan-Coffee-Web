@@ -57,7 +57,7 @@ export function Navbar() {
         },
       ]}
       socialItems={[
-        { label: "Instagram", link: "https://instagram.com/kontrakancoffee" },
+        { label: "Instagram", link: "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3" },
         { label: "Twitter / X", link: "https://x.com" },
         { label: "Behance", link: "https://behance.net" },
         { label: "Are.na", link: "https://are.na" },
