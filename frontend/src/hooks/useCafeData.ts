@@ -1,7 +1,7 @@
 // frontend/src/hooks/useCafeData.ts
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   MENU_ITEMS,
   GALLERY_ITEMS,
@@ -18,7 +18,8 @@ import {
   getClientStatusToko,
   getClientInfoToko,
   getClientGaleri,
-  getClientPromo,
+    getClientPromo,
+  getClientPromoResult,
   ApiStatusToko,
 } from "@/lib/clientApi";
 
@@ -176,24 +177,68 @@ export function useGalleryData() {
   return gallery;
 }
 
+export type PromoStatus = "loading" | "success" | "empty" | "error";
+
+export type PromoDataHookResult = CafePromoItem[] & {
+  promos: CafePromoItem[];
+  status: PromoStatus;
+  error: string | null;
+  refetch: () => Promise<void>;
+};
+
 /**
- * Hook untuk mendapatkan data promo & kegiatan kafe dari backend
+ * Hook untuk mendapatkan data promo & kegiatan kafe dari backend:
+ * - Tidak menggunakan template statis jika data kosong (array === 0).
+ * - "empty": Promo memang tidak terdapat pada CMS (promo tidak tersedia).
+ * - "error": CMS tidak terhubung atau tidak tersambung (data tidak dapat ditemukan).
+ * - "success": Terdapat promo aktif.
  */
-export function usePromoData() {
-  const [promos, setPromos] = useState<CafePromoItem[]>(PROMO_ITEMS);
+export function usePromoData(): PromoDataHookResult {
+  const [state, setState] = useState<{
+    promos: CafePromoItem[];
+    status: PromoStatus;
+    error: string | null;
+  }>({
+    promos: [],
+    status: "loading",
+    error: null,
+  });
 
-  useEffect(() => {
-    let isMounted = true;
-    getClientPromo().then((data) => {
-      if (isMounted && data && data.length > 0) {
-        setPromos(data);
-      }
-    });
+  const fetchPromos = useCallback(async () => {
+    setState((prev) => ({ ...prev, status: "loading", error: null }));
+    const result = await getClientPromoResult();
 
-    return () => {
-      isMounted = false;
-    };
+    if (result.status === "success") {
+      setState({
+        promos: result.data,
+        status: "success",
+        error: null,
+      });
+    } else if (result.status === "empty") {
+      setState({
+        promos: [],
+        status: "empty",
+        error: null,
+      });
+    } else {
+      setState({
+        promos: [],
+        status: "error",
+        error: result.error || "Data tidak dapat ditemukan",
+      });
+    }
   }, []);
 
-  return promos;
+  useEffect(() => {
+    fetchPromos();
+  }, [fetchPromos]);
+
+  // Buat hybrid result: Array dari items yang juga memiliki properti status, promos, error, refetch
+  const hybrid = [...state.promos] as PromoDataHookResult;
+  hybrid.promos = state.promos;
+  hybrid.status = state.status;
+  hybrid.error = state.error;
+  hybrid.refetch = fetchPromos;
+
+  return hybrid;
 }
