@@ -30,7 +30,7 @@ export interface CafePromoItem {
   judul: string;
   deskripsi: string;
   tipe: "promo" | "kegiatan";
-  tanggal_mulai: string;
+  tanggal_mulai?: string;
   tanggal_selesai: string;
   gambar: string;
   aktif: boolean;

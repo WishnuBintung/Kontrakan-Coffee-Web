@@ -78,7 +78,7 @@ export type Promo = {
   id: string;
   judul: string;
   deskripsi: string;
-  tanggal_mulai: string;
+  tanggal_mulai?: string;
   tanggal_selesai: string;
   gambar?: string;
   tipe: "promo" | "kegiatan";

@@ -72,8 +72,7 @@ collections:
       - { label: Judul Promo / Kegiatan, name: judul, widget: string }
       - { label: Tipe, name: tipe, widget: select, options: [promo, kegiatan], default: promo }
       - { label: Keterangan Singkat, name: deskripsi, widget: text }
-      - { label: Tanggal Mulai, name: tanggal_mulai, widget: datetime, time_format: false, format: "YYYY-MM-DD" }
-      - { label: Tanggal Selesai, name: tanggal_selesai, widget: datetime, time_format: false, format: "YYYY-MM-DD" }
+      - { label: Tanggal Berakhir, name: tanggal_selesai, widget: datetime, time_format: false, format: "YYYY-MM-DD", hint: "Tanggal berakhirnya promo/kegiatan" }
       - { label: Banner Gambar, name: gambar, widget: image, required: false }
       - { label: Tampilkan, name: aktif, widget: boolean, default: true }
 

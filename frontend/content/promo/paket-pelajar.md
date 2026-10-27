@@ -1,7 +1,6 @@
 ---
 judul: Paket Nongkrong Pelajar & Mahasiswa Rp 25.000
 tipe: promo
-tanggal_mulai: 2026-01-01
 tanggal_selesai: 2026-12-31
 gambar: https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=1200&auto=format&fit=crop
 aktif: true
