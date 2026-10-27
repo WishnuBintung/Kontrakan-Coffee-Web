@@ -17,7 +17,7 @@ export function Navbar() {
       logo={
         <a
           href="#"
-          className="text-[18px] font-bold tracking-tight uppercase hover:text-[#D99C5B] transition-colors font-sans text-[#E8E3D9]"
+          className="text-[18px] font-bold tracking-tight uppercase hover:text-[#C7B8AE] transition-colors font-sans text-[#EEE6D7]"
         >
           KONTRAKAN COFFEE
         </a>
@@ -28,7 +28,7 @@ export function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className="text-[17px] font-medium tracking-tight uppercase text-[#E8E3D9] hover:text-[#D99C5B] transition-colors font-sans"
+              className="text-[17px] font-medium tracking-tight uppercase text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors font-sans"
             >
               {link.label}
             </a>
@@ -68,10 +68,10 @@ export function Navbar() {
         { label: "Behance", link: "https://behance.net" },
         { label: "Are.na", link: "https://are.na" },
       ]}
-      colors={["#1C1A18", "#D99C5B", "#5B6653"]}
-      accentColor="#D99C5B"
-      menuButtonColor="#E8E3D9"
-      openMenuButtonColor="#D99C5B"
+      colors={["#472F1D", "#C7B8AE", "#5F493C"]}
+      accentColor="#C7B8AE"
+      menuButtonColor="#EEE6D7"
+      openMenuButtonColor="#C7B8AE"
       displayItemNumbering={true}
       displaySocials={true}
       isFixed={true}

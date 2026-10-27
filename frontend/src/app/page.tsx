@@ -17,29 +17,29 @@ export default function Home() {
   useEditorialChoreography();
 
   return (
-    <main className="relative min-h-screen bg-[#E8E3D9] text-[#1C1A18] selection:bg-[#D99C5B] selection:text-[#1C1A18]">
+    <main className="relative min-h-screen bg-[#EEE6D7] text-[#472F1D] selection:bg-[#C7B8AE] selection:text-[#472F1D]">
       {/* Sticky/Fixed Navbar */}
       <Navbar />
 
-      {/* 1. HERO SECTION (Multiply-Blended Photographic Pin, Poster Didone Wordmark, Script Overline, 3 Base Straps) */}
+      {/* 1. HERO SECTION */}
       <HeroSection />
 
-      {/* 2. DESKRIPSI / KALIMAT PEMBUKA (Bottom-Up Coffee Image Reveal with Difference Headline that Fades on Scroll + 3-Column Statement Band) */}
+      {/* 2. DESKRIPSI / KALIMAT PEMBUKA */}
       <ManifestoSection />
 
-      {/* 3. LIST MENU & FILTER (Ruled Editorial Price Table Without Images + Category Filter, Search, Sort & Detail Modal) */}
+      {/* 3. LIST MENU & FILTER */}
       <MenuSection />
 
-      {/* 4. JAM BUKA (Live WIB Status Beacon & 7-Day Schedule) */}
+      {/* 4. JAM BUKA */}
       <HoursSection />
 
-      {/* 5. OUR GALLERY (Space & Atmosphere Filterable Grid + Fullscreen Lightbox) */}
+      {/* 5. OUR GALLERY */}
       <GallerySection />
 
-      {/* 6. ALAMAT LOKASI KAFE (Address, Copy Button, Contacts, Facilities & Google Maps Live Embed) */}
+      {/* 6. ALAMAT LOKASI KAFE */}
       <LocationSection />
 
-      {/* 7. DIV 'KONTRAKAN COFFEE' (Updated from Visit Kontrakan) + 3-COLUMN FOOTER */}
+      {/* 7. DIV 'KONTRAKAN COFFEE' + 3-COLUMN FOOTER */}
       <ContactFooter />
     </main>
   );

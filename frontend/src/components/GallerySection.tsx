@@ -59,28 +59,25 @@ export function GallerySection() {
     <>
       <section
         id="galeri"
-        className="w-full bg-[#E8E3D9] text-[#1C1A18] py-20 sm:py-28 px-4 sm:px-6 relative sharp-edges border-b border-[#D6CFC2]"
+        className="w-full bg-[#EEE6D7] text-[#472F1D] py-20 sm:py-28 px-4 sm:px-6 relative sharp-edges border-b border-[#C7B8AE]"
       >
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="font-mono text-[13px] sm:text-[14px] text-[#666158] uppercase tracking-widest font-semibold">
-                  [04 // SPACE &amp; ATMOSPHERE]
-                </span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] bg-[#D99C5B] text-[#1C1A18] font-bold uppercase tracking-wider sharp-edges">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] bg-[#C7B8AE] text-[#472F1D] font-bold uppercase tracking-wider sharp-edges">
                   <Sparkles className="w-3 h-3" />
                   <span>SUDUT FAVORIT</span>
                 </span>
               </div>
-              <h2 className="text-[10vw] sm:text-[7vw] md:text-[5vw] lg:text-[4.5vw] leading-none tracking-[-0.03em] uppercase font-sans text-[#1C1A18]">
+              <h2 className="text-[10vw] sm:text-[7vw] md:text-[5vw] lg:text-[4.5vw] leading-none tracking-[-0.03em] uppercase font-sans text-[#472F1D]">
                 <span className="font-black">OUR </span>
-                <span className="font-thin italic">GALLERY</span>
+                <span className="font-thin italic text-[#5F493C]">GALLERY</span>
               </h2>
             </div>
 
-            <p className="text-[15px] sm:text-[17px] text-[#666158] font-sans max-w-md leading-relaxed">
+            <p className="text-[15px] sm:text-[17px] text-[#5F493C] font-sans max-w-md leading-relaxed">
               Jelajahi suasana ruang, meja komunal kerja, bar seduhan manual, dan taman terbuka Kontrakan Coffee sebelum Anda berkunjung langsung.
             </p>
           </div>
@@ -95,8 +92,8 @@ export function GallerySection() {
                   onClick={() => setActiveCategory(cat.id)}
                   className={`whitespace-nowrap px-4 py-2.5 font-mono text-[12px] sm:text-[13px] uppercase tracking-wider transition-all sharp-edges shrink-0 border cursor-pointer ${
                     isActive
-                      ? "bg-[#5B6653] text-[#E8E3D9] border-[#5B6653] shadow-md"
-                      : "bg-transparent text-[#666158] border-[#D6CFC2] hover:border-[#5B6653] hover:text-[#1C1A18]"
+                      ? "bg-[#5F493C] text-[#EEE6D7] border-[#5F493C] shadow-md"
+                      : "bg-transparent text-[#5F493C] border-[#C7B8AE] hover:border-[#5F493C] hover:text-[#472F1D]"
                   }`}
                 >
                   {cat.label}
@@ -113,7 +110,7 @@ export function GallerySection() {
                 data-rev
                 style={{ "--d": `${idx * 60}ms` } as React.CSSProperties}
                 onClick={() => setSelectedPhoto(photo)}
-                className="group relative bg-[#5B6653] border border-[#4D5746] overflow-hidden cursor-pointer sharp-edges flex flex-col transition-all duration-300 hover:shadow-2xl hover:border-[#D99C5B]/70"
+                className="group relative bg-[#5F493C] border border-[#472F1D] overflow-hidden cursor-pointer sharp-edges flex flex-col transition-all duration-300 hover:shadow-2xl hover:border-[#C7B8AE]"
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -125,7 +122,7 @@ export function GallerySection() {
                 aria-label={`Lihat foto ${photo.judul} layar penuh`}
               >
                 {/* Photo container */}
-                <div className="relative aspect-[16/11] sm:aspect-[4/3] w-full overflow-hidden bg-[#4D5746]">
+                <div className="relative aspect-[16/11] sm:aspect-[4/3] w-full overflow-hidden bg-[#472F1D]">
                   <img
                     src={photo.gambar}
                     alt={photo.judul}
@@ -133,32 +130,32 @@ export function GallerySection() {
                   />
 
                   {/* Tag Overlay */}
-                  <div className="absolute top-3 left-3 bg-[#1C1A18]/80 backdrop-blur-sm text-[#D99C5B] font-mono text-[10px] sm:text-[11px] font-bold px-2.5 py-1 sharp-edges border border-[#D99C5B]/30 uppercase tracking-widest">
+                  <div className="absolute top-3 left-3 bg-[#472F1D]/85 backdrop-blur-sm text-[#C7B8AE] font-mono text-[10px] sm:text-[11px] font-bold px-2.5 py-1 sharp-edges border border-[#C7B8AE]/40 uppercase tracking-widest">
                     {photo.tag}
                   </div>
 
                   {photo.sudut_favorit && (
-                    <div className="absolute top-3 right-3 bg-[#D99C5B] text-[#1C1A18] font-mono text-[10px] font-bold px-2 py-0.5 sharp-edges shadow-md uppercase tracking-wider">
+                    <div className="absolute top-3 right-3 bg-[#C7B8AE] text-[#472F1D] font-mono text-[10px] font-bold px-2 py-0.5 sharp-edges shadow-md uppercase tracking-wider">
                       SPOT FAVORIT
                     </div>
                   )}
 
                   {/* Expand Icon Button */}
-                  <div className="absolute bottom-3 right-3 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1C1A18]/80 backdrop-blur-md text-[#E8E3D9] flex items-center justify-center border border-[#E8E3D9]/30 transition-transform duration-300 group-hover:scale-110 group-hover:bg-[#D99C5B] group-hover:text-[#1C1A18]">
+                  <div className="absolute bottom-3 right-3 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#472F1D]/85 backdrop-blur-md text-[#EEE6D7] flex items-center justify-center border border-[#EEE6D7]/30 transition-transform duration-300 group-hover:scale-110 group-hover:bg-[#C7B8AE] group-hover:text-[#472F1D]">
                     <Maximize2 className="w-4 h-4 stroke-[2.5]" />
                   </div>
                 </div>
 
                 {/* Caption Bar */}
-                <div className="p-5 sm:p-6 bg-[#5B6653] flex-1 flex flex-col justify-between border-t border-[#4D5746]">
+                <div className="p-5 sm:p-6 bg-[#5F493C] flex-1 flex flex-col justify-between border-t border-[#472F1D]">
                   <div>
-                    <span className="font-mono text-[11px] text-[#D99C5B] uppercase tracking-widest block mb-1 font-semibold">
-                      [0{idx + 1} // {photo.kategori.toUpperCase()}]
+                    <span className="font-mono text-[11px] text-[#C7B8AE] uppercase tracking-widest block mb-1 font-semibold">
+                      {photo.kategori.toUpperCase()}
                     </span>
-                    <h3 className="font-sans font-black text-xl sm:text-2xl text-[#E8E3D9] uppercase tracking-[-0.02em] group-hover:text-[#D99C5B] transition-colors duration-300">
+                    <h3 className="font-sans font-black text-xl sm:text-2xl text-[#EEE6D7] uppercase tracking-[-0.02em] group-hover:text-[#C7B8AE] transition-colors duration-300">
                       {photo.judul}
                     </h3>
-                    <p className="font-sans text-[13px] sm:text-[14px] text-[#E8E3D9]/80 mt-2 line-clamp-2 leading-relaxed">
+                    <p className="font-sans text-[13px] sm:text-[14px] text-[#EEE6D7]/80 mt-2 line-clamp-2 leading-relaxed">
                       {photo.deskripsi}
                     </p>
                   </div>
@@ -180,7 +177,7 @@ export function GallerySection() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setSelectedPhoto(null)}
-              className="fixed inset-0 bg-[#1C1A18]/90 backdrop-blur-md"
+              className="fixed inset-0 bg-[#472F1D]/90 backdrop-blur-md"
             />
 
             {/* Lightbox Dialog Container */}
@@ -189,23 +186,23 @@ export function GallerySection() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-5xl max-h-[95vh] overflow-y-auto bg-[#E8E3D9] text-[#1C1A18] border border-[#D6CFC2] shadow-2xl z-10 flex flex-col sharp-edges"
+              className="relative w-full max-w-5xl max-h-[95vh] overflow-y-auto bg-[#EEE6D7] text-[#472F1D] border border-[#C7B8AE] shadow-2xl z-10 flex flex-col sharp-edges"
             >
               {/* Lightbox Top Header */}
-              <div className="flex items-center justify-between p-4 sm:p-6 bg-[#5B6653] text-[#E8E3D9] border-b border-[#4D5746] sticky top-0 z-20">
+              <div className="flex items-center justify-between p-4 sm:p-6 bg-[#5F493C] text-[#EEE6D7] border-b border-[#472F1D] sticky top-0 z-20">
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-[12px] sm:text-[13px] uppercase tracking-widest text-[#D99C5B] font-semibold">
-                    [{selectedPhoto.tag} // FULLSCREEN]
+                  <span className="font-mono text-[12px] sm:text-[13px] uppercase tracking-widest text-[#C7B8AE] font-semibold">
+                    {selectedPhoto.tag}
                   </span>
                   {selectedPhoto.sudut_favorit && (
-                    <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono bg-[#D99C5B] text-[#1C1A18] font-bold uppercase tracking-wider sharp-edges">
+                    <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono bg-[#C7B8AE] text-[#472F1D] font-bold uppercase tracking-wider sharp-edges">
                       SPOT FAVORIT
                     </span>
                   )}
                 </div>
                 <button
                   onClick={() => setSelectedPhoto(null)}
-                  className="p-1.5 text-[#E8E3D9] hover:text-[#D99C5B] transition-colors focus:outline-none"
+                  className="p-1.5 text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors focus:outline-none"
                   aria-label="Tutup foto layar penuh"
                 >
                   <X className="w-6 h-6 stroke-[2]" />
@@ -213,7 +210,7 @@ export function GallerySection() {
               </div>
 
               {/* Image with Left/Right Navigation */}
-              <div className="relative w-full bg-[#1C1A18] flex items-center justify-center min-h-[300px] sm:min-h-[460px] md:min-h-[520px] max-h-[70vh] overflow-hidden">
+              <div className="relative w-full bg-[#472F1D] flex items-center justify-center min-h-[300px] sm:min-h-[460px] md:min-h-[520px] max-h-[70vh] overflow-hidden">
                 <img
                   src={selectedPhoto.gambar}
                   alt={selectedPhoto.judul}
@@ -226,7 +223,7 @@ export function GallerySection() {
                     e.stopPropagation();
                     handlePrevPhoto();
                   }}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-[#1C1A18]/80 text-[#E8E3D9] hover:bg-[#D99C5B] hover:text-[#1C1A18] flex items-center justify-center sharp-edges border border-[#E8E3D9]/20 transition-colors shadow-lg"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-[#472F1D]/85 text-[#EEE6D7] hover:bg-[#C7B8AE] hover:text-[#472F1D] flex items-center justify-center sharp-edges border border-[#EEE6D7]/20 transition-colors shadow-lg"
                   aria-label="Foto sebelumnya"
                 >
                   <ChevronLeft className="w-6 h-6" />
@@ -238,7 +235,7 @@ export function GallerySection() {
                     e.stopPropagation();
                     handleNextPhoto();
                   }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-[#1C1A18]/80 text-[#E8E3D9] hover:bg-[#D99C5B] hover:text-[#1C1A18] flex items-center justify-center sharp-edges border border-[#E8E3D9]/20 transition-colors shadow-lg"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-[#472F1D]/85 text-[#EEE6D7] hover:bg-[#C7B8AE] hover:text-[#472F1D] flex items-center justify-center sharp-edges border border-[#EEE6D7]/20 transition-colors shadow-lg"
                   aria-label="Foto selanjutnya"
                 >
                   <ChevronRight className="w-6 h-6" />
@@ -246,12 +243,12 @@ export function GallerySection() {
               </div>
 
               {/* Lightbox Caption & Info */}
-              <div className="p-5 sm:p-8 bg-[#E8E3D9] flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#D6CFC2]">
+              <div className="p-5 sm:p-8 bg-[#EEE6D7] flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#C7B8AE]">
                 <div>
-                  <h3 className="font-sans font-black text-2xl sm:text-3xl uppercase tracking-[-0.02em] text-[#1C1A18]">
+                  <h3 className="font-sans font-black text-2xl sm:text-3xl uppercase tracking-[-0.02em] text-[#472F1D]">
                     {selectedPhoto.judul}
                   </h3>
-                  <p className="font-sans text-[14px] sm:text-[16px] text-[#1C1A18]/85 mt-1 max-w-2xl leading-relaxed">
+                  <p className="font-sans text-[14px] sm:text-[16px] text-[#472F1D]/85 mt-1 max-w-2xl leading-relaxed">
                     {selectedPhoto.deskripsi}
                   </p>
                 </div>
@@ -260,7 +257,7 @@ export function GallerySection() {
                   <a
                     href="#lokasi"
                     onClick={() => setSelectedPhoto(null)}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#D99C5B] text-[#1C1A18] font-bold text-[14px] uppercase tracking-tight hover:bg-[#C08343] transition-colors sharp-edges shadow-md"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#C7B8AE] text-[#472F1D] font-bold text-[14px] uppercase tracking-tight hover:bg-[#472F1D] hover:text-[#EEE6D7] transition-colors sharp-edges shadow-md"
                   >
                     <span>Kunjungi Sudut Ini</span>
                   </a>

@@ -7,58 +7,55 @@
   --font-condensed: "Saira Extra Condensed", "Plus Jakarta Sans", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Primitive tokens from user specifications */
-  --color-warm-cream: #e8e3d9;
-  --color-dark-olive: #5b6653;
-  --color-deep-charcoal: #1c1a18;
-  --color-amber-gold: #d99c5b;
-  --color-amber-gold-hover: #c08343;
-  --color-muted-charcoal: #666158;
-  --color-cream-border: #d6cfc2;
-  --color-olive-border: #4d5746;
+  /* Layer 1: Primitive Tokens (4-Color Brand Palette) */
+  --color-oat-cream: #eee6d7;         /* Lightest: Primary Background & Light Text */
+  --color-latte-taupe: #c7b8ae;       /* Light-Medium: Accent, CTA, Badges & Soft Borders */
+  --color-roasted-mocha: #5f493c;     /* Medium-Dark: Secondary Surface, Cards & Muted Text */
+  --color-deep-espresso: #472f1d;     /* Darkest: Primary Text, Deep Containers & Dark Borders */
 
-  /* Semantic tokens: 60-30-10 distribution (.agents) */
-  --color-background: #e8e3d9;        /* Dominant: 60-70% */
-  --color-surface: #5b6653;           /* Secondary: 20-30% */
-  --color-foreground: #1c1a18;        /* Typography on cream */
-  --color-foreground-light: #e8e3d9;  /* Typography on olive */
-  --color-secondary: #5b6653;
-  --color-border: #d6cfc2;
-  --color-primary: #d99c5b;           /* Accent / Action: 5-10% (Minor) */
-  --color-accent: #d99c5b;
-  --color-muted: #666158;
+  /* Layer 2: Semantic Tokens (60-30-10 Distribution — .agents/skills/design-system & brand) */
+  --color-background: #eee6d7;        /* Dominant Canvas: 60-70% */
+  --color-surface: #5f493c;           /* Supporting Surface / Card: 20-30% */
+  --color-foreground: #472f1d;        /* Primary Typography on #EEE6D7 (WCAG AAA 10.07:1) */
+  --color-foreground-light: #eee6d7;  /* Typography on #5F493C & #472F1D */
+  --color-secondary: #5f493c;
+  --color-border: #c7b8ae;
+  --color-primary: #c7b8ae;           /* Accent / Interactive Action: 5-10% */
+  --color-accent: #c7b8ae;
+  --color-muted: #5f493c;
 }
 
 :root {
-  /* Three-Layer Token Architecture (.agents/skills/design-system) */
-  /* Primitive */
-  --primitive-cream: #e8e3d9;
-  --primitive-olive: #5b6653;
-  --primitive-charcoal: #1c1a18;
-  --primitive-amber: #d99c5b;
-  --primitive-amber-hover: #c08343;
-  --primitive-muted: #666158;
-  --primitive-border-cream: #d6cfc2;
-  --primitive-border-olive: #4d5746;
+  /* ================================================================== */
+  /* Three-Layer Token Architecture (.agents/skills/design-system)      */
+  /* ================================================================== */
 
-  /* Semantic */
+  /* Layer 1: Primitive Tokens */
+  --primitive-cream: #eee6d7;
+  --primitive-taupe: #c7b8ae;
+  --primitive-mocha: #5f493c;
+  --primitive-espresso: #472f1d;
+
+  /* Layer 2: Semantic Tokens */
   --bg-canvas: var(--primitive-cream);
-  --bg-surface: var(--primitive-olive);
-  --fg-text: var(--primitive-charcoal);
+  --bg-surface: var(--primitive-mocha);
+  --bg-deep: var(--primitive-espresso);
+  --fg-text: var(--primitive-espresso);
   --fg-text-on-surface: var(--primitive-cream);
-  --fg-muted: var(--primitive-muted);
-  --action-accent: var(--primitive-amber);
-  --action-hover: var(--primitive-amber-hover);
-  --border-divider: var(--primitive-border-cream);
+  --fg-muted: var(--primitive-mocha);
+  --action-accent: var(--primitive-taupe);
+  --action-hover: var(--primitive-espresso);
+  --border-divider: var(--primitive-taupe);
+  --border-surface: var(--primitive-espresso);
   --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Component */
+  /* Layer 3: Component Tokens */
   --card-bg: var(--bg-surface);
   --card-fg: var(--fg-text-on-surface);
-  --card-border: var(--primitive-border-olive);
+  --card-border: var(--border-surface);
   --menu-bg: var(--bg-surface);
   --button-bg: var(--action-accent);
-  --button-fg: var(--primitive-charcoal);
+  --button-fg: var(--primitive-espresso);
   --button-hover: var(--action-hover);
 }
 
@@ -115,16 +112,16 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Amber Gold (#D99C5B) Highlight for Selection                        */
+/* Latte Taupe (#C7B8AE) Highlight for Selection                      */
 /* ------------------------------------------------------------------ */
 ::selection {
-  background-color: #d99c5b !important;
-  color: #1c1a18 !important;
+  background-color: #c7b8ae !important;
+  color: #472f1d !important;
 }
 
 ::-moz-selection {
-  background-color: #d99c5b !important;
-  color: #1c1a18 !important;
+  background-color: #c7b8ae !important;
+  color: #472f1d !important;
 }
 
 /* ------------------------------------------------------------------ */
@@ -143,14 +140,14 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero Warm Amber Ambient Lamp Glow Tint                             */
+/* Hero Warm Ambient Glow Tint                                        */
 /* ------------------------------------------------------------------ */
 .hero-radial-tint {
   background: radial-gradient(
     ellipse at center,
-    rgba(217, 156, 91, 0.14) 0%,
-    rgba(91, 102, 83, 0.12) 50%,
-    rgba(232, 227, 217, 0.98) 100%
+    rgba(199, 184, 174, 0.22) 0%,
+    rgba(95, 73, 60, 0.12) 50%,
+    rgba(238, 230, 215, 0.98) 100%
   );
 }
 
@@ -171,9 +168,9 @@ body {
 }
 
 .wavy-hover:hover {
-  text-decoration: underline wavy #d99c5b;
+  text-decoration: underline wavy #c7b8ae;
   text-underline-offset: 6px;
-  color: #d99c5b;
+  color: #c7b8ae;
 }
 
 /* ------------------------------------------------------------------ */
@@ -261,7 +258,7 @@ body {
 
 .stage-reveal-headline {
   mix-blend-mode: difference;
-  color: #ffffff;
+  color: #eee6d7;
   opacity: calc(1 - clamp(0, (var(--p, 0) - 0.62) / 0.33, 1));
   transform: translate3d(0, calc(var(--p, 0) * -28px), 0);
   will-change: opacity, transform;
@@ -307,8 +304,8 @@ body {
   }
   .stage-reveal-headline {
     mix-blend-mode: normal !important;
-    color: #e8e3d9 !important;
-    background-color: rgba(28, 26, 24, 0.72);
+    color: #eee6d7 !important;
+    background-color: rgba(71, 47, 29, 0.85);
     padding: 1rem 1.5rem;
     opacity: 1 !important;
     transform: none !important;

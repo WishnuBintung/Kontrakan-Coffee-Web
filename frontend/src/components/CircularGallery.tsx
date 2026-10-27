@@ -59,12 +59,12 @@ function createFrameTemplateCanvas(
   const ctx = canvas.getContext("2d");
   if (!ctx) return canvas;
 
-  // 1. Dark Olive Surface (#5B6653)
-  ctx.fillStyle = "#5B6653";
+  // 1. Roasted Mocha Surface (#5F493C)
+  ctx.fillStyle = "#5F493C";
   ctx.fillRect(0, 0, width, height);
 
   // 2. Architectural Blueprint Grid
-  ctx.strokeStyle = "rgba(232, 227, 217, 0.08)";
+  ctx.strokeStyle = "rgba(238, 230, 215, 0.08)";
   ctx.lineWidth = 1;
   const gridSize = 28;
   for (let x = 0; x < width; x += gridSize) {
@@ -80,13 +80,13 @@ function createFrameTemplateCanvas(
     ctx.stroke();
   }
 
-  // 3. Inner Frame Border (#4D5746)
-  ctx.strokeStyle = "#4D5746";
+  // 3. Inner Frame Border (#472F1D)
+  ctx.strokeStyle = "#472F1D";
   ctx.lineWidth = 3;
   ctx.strokeRect(20, 20, width - 40, height - 40);
 
-  // 4. Amber Gold Corner Crosshairs (+)
-  ctx.fillStyle = "#D99C5B";
+  // 4. Latte Taupe Corner Crosshairs (+)
+  ctx.fillStyle = "#C7B8AE";
   ctx.font = 'bold 22px "Plus Jakarta Sans", monospace';
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -96,12 +96,12 @@ function createFrameTemplateCanvas(
   ctx.fillText("+", width - 34, height - 34);
 
   // 5. Header Frame Info
-  ctx.fillStyle = "#D99C5B";
+  ctx.fillStyle = "#C7B8AE";
   ctx.font = 'bold 15px "Plus Jakarta Sans", monospace';
   ctx.textAlign = "left";
-  ctx.fillText(`[FRAME // ${category.toUpperCase()}]`, 60, 50);
+  ctx.fillText(category.toUpperCase(), 60, 50);
 
-  ctx.fillStyle = "rgba(232, 227, 217, 0.7)";
+  ctx.fillStyle = "rgba(238, 230, 215, 0.7)";
   ctx.textAlign = "right";
   ctx.fillText(`SLOT 0${slotNum} • 16:10`, width - 60, 50);
 
@@ -109,17 +109,17 @@ function createFrameTemplateCanvas(
   const centerX = width / 2;
   const centerY = height / 2 - 20;
 
-  ctx.strokeStyle = "rgba(217, 156, 91, 0.6)";
+  ctx.strokeStyle = "rgba(199, 184, 174, 0.6)";
   ctx.lineWidth = 2;
   ctx.strokeRect(centerX - 36, centerY - 36, 72, 72);
 
   // Corner highlights on icon frame
-  ctx.fillStyle = "#D99C5B";
+  ctx.fillStyle = "#C7B8AE";
   ctx.fillRect(centerX - 40, centerY - 40, 8, 8);
   ctx.fillRect(centerX + 32, centerY + 32, 8, 8);
 
   // Coffee cup graphic
-  ctx.strokeStyle = "#D99C5B";
+  ctx.strokeStyle = "#C7B8AE";
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.arc(centerX - 4, centerY + 2, 16, 0, Math.PI, false);
@@ -133,32 +133,32 @@ function createFrameTemplateCanvas(
   ctx.stroke();
 
   // 7. Title & CMS Spec
-  ctx.fillStyle = "#E8E3D9";
+  ctx.fillStyle = "#EEE6D7";
   ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = "center";
   ctx.fillText(itemTitle.toUpperCase(), centerX, centerY + 65);
 
-  ctx.fillStyle = "#D99C5B";
+  ctx.fillStyle = "#C7B8AE";
   ctx.font = 'bold 13px "Plus Jakarta Sans", monospace';
-  ctx.fillText("[TEMPLATE FRAME // SIAP INTEGRASI CMS]", centerX, centerY + 96);
+  ctx.fillText("TEMPLATE FRAME • SIAP INTEGRASI CMS", centerX, centerY + 96);
 
-  ctx.fillStyle = "rgba(232, 227, 217, 0.65)";
+  ctx.fillStyle = "rgba(238, 230, 215, 0.65)";
   ctx.font = '12px "Plus Jakarta Sans", monospace';
   ctx.fillText("Format: JPG / WebP • Rasio 16:10 (Min. 1200×750px)", centerX, centerY + 120);
 
   // 8. Bottom Registration Bar
-  ctx.strokeStyle = "rgba(232, 227, 217, 0.15)";
+  ctx.strokeStyle = "rgba(238, 230, 215, 0.15)";
   ctx.beginPath();
   ctx.moveTo(40, height - 52);
   ctx.lineTo(width - 40, height - 52);
   ctx.stroke();
 
-  ctx.fillStyle = "rgba(232, 227, 217, 0.55)";
+  ctx.fillStyle = "rgba(238, 230, 215, 0.55)";
   ctx.font = '11px "Plus Jakarta Sans", monospace';
   ctx.textAlign = "left";
   ctx.fillText("KONTRAKAN COFFEE ATELIER", 60, height - 34);
 
-  ctx.fillStyle = "#D99C5B";
+  ctx.fillStyle = "#5F493C";
   ctx.textAlign = "right";
   ctx.fillText("CMS READY", width - 60, height - 34);
 
@@ -169,7 +169,7 @@ function createTextTexture(
   gl: GL,
   text: string,
   font: string = 'bold 26px "Plus Jakarta Sans", sans-serif',
-  color: string = "#1C1A18"
+  color: string = "#472F1D"
 ): { texture: Texture; width: number; height: number } {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
@@ -228,7 +228,7 @@ class Title {
     plane,
     renderer,
     text,
-    textColor = "#1C1A18",
+    textColor = "#472F1D",
     font = 'bold 26px "Plus Jakarta Sans", sans-serif',
   }: TitleProps) {
     autoBind(this);
@@ -643,7 +643,7 @@ class AppCore {
     {
       items,
       bend = 2.5,
-      textColor = "#1C1A18",
+      textColor = "#472F1D",
       borderRadius = 0.04,
       font = 'bold 26px "Plus Jakarta Sans", sans-serif',
       scrollSpeed = 2.2,
@@ -923,7 +923,7 @@ export const CircularGallery = forwardRef<CircularGalleryRef, CircularGalleryPro
     {
       items,
       bend = 2.4,
-      textColor = "#1C1A18",
+      textColor = "#472F1D",
       borderRadius = 0.04,
       font = 'bold 26px "Plus Jakarta Sans", sans-serif',
       scrollSpeed = 2.2,

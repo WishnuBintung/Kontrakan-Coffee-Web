@@ -106,7 +106,7 @@ export function ScrollLinkedZoomHeader({
         }}
         className="relative inline-flex items-center justify-center"
       >
-        {/* Main 12vw heading: transform-style: preserve-3d, will-change: transform, GPU accelerated, warna teks #1C1A18 */}
+        {/* Main 12vw heading: transform-style: preserve-3d, will-change: transform, GPU accelerated, warna teks #472F1D */}
         <motion.h1
           style={{
             scale: effectiveScale,
@@ -115,18 +115,18 @@ export function ScrollLinkedZoomHeader({
             transformStyle: "preserve-3d",
             willChange: "transform, opacity",
           }}
-          className="font-sans font-black text-[12vw] leading-none text-[#1C1A18] tracking-[-0.03em] select-none text-center"
+          className="font-sans font-black text-[12vw] leading-none text-[#472F1D] tracking-[-0.03em] select-none text-center"
         >
           {title}
         </motion.h1>
 
-        {/* Secondary label: 32px font-thin italic, ikut meluncur turun tapi memudar dan hilang duluan, warna aksen pendaran amber #D99C5B */}
+        {/* Secondary label: 32px font-thin italic, ikut meluncur turun tapi memudar dan hilang duluan */}
         <motion.span
           style={{
             opacity: effectiveCoffeeOpacity,
             willChange: "opacity",
           }}
-          className="hidden sm:inline-block absolute left-[calc(100%+1rem)] top-1/2 -translate-y-1/2 text-[32px] font-thin italic text-[#D99C5B] whitespace-nowrap font-sans tracking-normal pointer-events-none select-none"
+          className="hidden sm:inline-block absolute left-[calc(100%+1rem)] top-1/2 -translate-y-1/2 text-[32px] font-thin italic text-[#5F493C] whitespace-nowrap font-sans tracking-normal pointer-events-none select-none"
         >
           {secondaryLabel}
         </motion.span>

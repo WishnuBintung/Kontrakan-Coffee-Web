@@ -5,11 +5,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Kontrakan Coffee — Spatial Atelier & Roastery",
   description:
-    "An artisanal spatial coffee atelier built on warm cream, dark olive green surfaces, deep charcoal typography, and glowing amber gold accents.",
+    "An artisanal spatial coffee atelier built on warm oat cream (#EEE6D7), roasted mocha surfaces (#5F493C), deep espresso typography (#472F1D), and latte taupe accents (#C7B8AE).",
   openGraph: {
     title: "Kontrakan Coffee — Spatial Atelier & Roastery",
     description:
-      "Warm cream, dark olive green surfaces, deep charcoal typography, and glowing amber gold accents.",
+      "Warm oat cream, roasted mocha surfaces, deep espresso typography, and latte taupe accents.",
     locale: "en_US",
     type: "website",
     siteName: "Kontrakan Coffee",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#E8E3D9",
+  themeColor: "#EEE6D7",
   width: "device-width",
   initialScale: 1,
 };
@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="bg-[#E8E3D9] text-[#1C1A18] scroll-smooth"
+      className="bg-[#EEE6D7] text-[#472F1D] scroll-smooth"
       suppressHydrationWarning
     >
       <head>
@@ -42,7 +42,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className="bg-[#E8E3D9] text-[#1C1A18] antialiased min-h-screen selection:bg-[#D99C5B] selection:text-[#1C1A18] font-sans"
+        className="bg-[#EEE6D7] text-[#472F1D] antialiased min-h-screen selection:bg-[#C7B8AE] selection:text-[#472F1D] font-sans"
         suppressHydrationWarning
       >
         {/* Subtle tactile noise grain overlay */}

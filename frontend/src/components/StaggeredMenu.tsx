@@ -75,8 +75,8 @@ export interface StaggeredMenuProps {
 
 export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   position = "right",
-  // Kontrakan Coffee 3-layer architecture: Deep Charcoal -> Amber Gold shimmer -> Dark Olive surface
-  colors = ["#1C1A18", "#D99C5B", "#5B6653"],
+  // Kontrakan Coffee 3-layer architecture: Deep Espresso -> Latte Taupe shimmer -> Roasted Mocha surface
+  colors = ["#472F1D", "#C7B8AE", "#5F493C"],
   items = [
     { label: "Works", ariaLabel: "View selected architectural coffee works", link: "#works" },
     { label: "Manifesto", ariaLabel: "Read our spatial coffee manifesto", link: "#manifesto" },
@@ -93,10 +93,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   className,
   logo,
   desktopNav,
-  menuButtonColor = "#E8E3D9",
-  openMenuButtonColor = "#D99C5B",
+  menuButtonColor = "#EEE6D7",
+  openMenuButtonColor = "#C7B8AE",
   changeMenuColorOnOpen = true,
-  accentColor = "#D99C5B",
+  accentColor = "#C7B8AE",
   isFixed = true,
   closeOnClickAway = true,
   onMenuOpen,
@@ -415,7 +415,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       <div
         onClick={open ? toggleMenu : undefined}
         className={cn(
-          "fixed inset-0 bg-[#1C1A18]/50 backdrop-blur-[2px] transition-opacity duration-500 z-[15]",
+          "fixed inset-0 bg-[#472F1D]/50 backdrop-blur-[2px] transition-opacity duration-500 z-[15]",
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         aria-hidden="true"
@@ -447,19 +447,19 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         <header
           className={cn(
             "fixed top-0 left-0 w-full z-[30] px-6 transition-all duration-300 ease-in-out pointer-events-auto flex items-center",
-            "bg-[#5B6653]/90 backdrop-blur-md border-b border-[#4D5746]",
+            "bg-[#5F493C]/90 backdrop-blur-md border-b border-[#472F1D]",
             (shrinkOnScroll && isScrolled) || open
               ? "h-16 py-3 shadow-md shadow-black/15"
               : "h-20 py-5 shadow-none"
           )}
         >
-          <nav className="max-w-7xl mx-auto w-full flex items-center justify-between text-[#E8E3D9]">
+          <nav className="max-w-7xl mx-auto w-full flex items-center justify-between text-[#EEE6D7]">
             {/* Logo / Brand Wordmark */}
             <div className="flex items-center">
               {logo || (
                 <a
                   href="#"
-                  className="text-[18px] font-bold tracking-tight uppercase hover:text-[#D99C5B] transition-colors font-sans text-[#E8E3D9]"
+                  className="text-[18px] font-bold tracking-tight uppercase hover:text-[#C7B8AE] transition-colors font-sans text-[#EEE6D7]"
                 >
                   KONTRAKAN COFFEE
                 </a>
@@ -477,7 +477,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             <button
               ref={toggleBtnRef}
               onClick={toggleMenu}
-              className="sm-toggle flex items-center gap-3 px-4 py-2 sharp-edges bg-[#4D5746]/60 border border-[#4D5746] hover:border-[#D99C5B] hover:text-[#D99C5B] text-[#E8E3D9] transition-all focus:outline-none cursor-pointer group"
+              className="sm-toggle flex items-center gap-3 px-4 py-2 sharp-edges bg-[#472F1D]/60 border border-[#472F1D] hover:border-[#C7B8AE] hover:text-[#C7B8AE] text-[#EEE6D7] transition-all focus:outline-none cursor-pointer group"
               aria-expanded={open}
               aria-label={open ? "Close Navigation Menu" : "Open Navigation Menu"}
             >
@@ -511,7 +511,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         <aside
           ref={panelRef}
           className={cn(
-            "staggered-menu-panel absolute top-0 bottom-0 z-[25] pointer-events-auto flex flex-col pt-32 pb-12 px-8 sm:px-14 overflow-y-auto w-[100vw] sm:w-[60vw] md:w-[48vw] lg:w-[36vw] border-l border-[#4D5746] shadow-2xl sharp-edges",
+            "staggered-menu-panel absolute top-0 bottom-0 z-[25] pointer-events-auto flex flex-col pt-32 pb-12 px-8 sm:px-14 overflow-y-auto w-[100vw] sm:w-[60vw] md:w-[48vw] lg:w-[36vw] border-l border-[#472F1D] shadow-2xl sharp-edges",
             position === "left" ? "left-0" : "right-0"
           )}
           style={{ background: colors[colors.length - 1] }}
@@ -519,11 +519,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           <div className="flex-1 flex flex-col justify-between">
             {/* Primary Navigation Items */}
             <nav className="my-auto py-6">
-              <div className="mb-8 border-b border-[#4D5746] pb-3">
-                <span className="font-mono text-[13px] uppercase tracking-widest text-[#D99C5B] font-semibold">
-                  [NAVIGATION // INDEX]
-                </span>
-              </div>
               <ul className="flex flex-col gap-6 list-none p-0 m-0">
                 {items.map((item, idx) => (
                   <li key={idx} className="overflow-hidden">
@@ -536,11 +531,11 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                       aria-label={item.ariaLabel}
                     >
                       {displayItemNumbering && (
-                        <span className="text-sm font-mono text-[#D99C5B] translate-y-[-0.3rem] font-medium select-none">
+                        <span className="text-sm font-mono text-[#C7B8AE] translate-y-[-0.3rem] font-medium select-none">
                           {(idx + 1).toString().padStart(2, "0")}
                         </span>
                       )}
-                      <span className="sm-panel-itemLabel inline-block font-sans font-black text-4xl sm:text-5xl text-[#E8E3D9] uppercase tracking-[-0.03em] transition-colors group-hover:text-[#D99C5B]">
+                      <span className="sm-panel-itemLabel inline-block font-sans font-black text-4xl sm:text-5xl text-[#EEE6D7] uppercase tracking-[-0.03em] transition-colors group-hover:text-[#C7B8AE]">
                         {item.label}
                       </span>
                     </a>
@@ -551,10 +546,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
             {/* Social Links & Legal Bottom Section */}
             {displaySocials && socialItems.length > 0 && (
-              <div className="mt-auto pt-8 border-t border-[#4D5746]">
-                <h3 className="sm-socials-title font-mono text-[12px] uppercase tracking-widest text-[#D99C5B] font-semibold mb-4">
-                  [INDEX // SOCIAL]
-                </h3>
+              <div className="mt-auto pt-8 border-t border-[#472F1D]">
                 <ul className="flex flex-wrap gap-x-6 gap-y-2 list-none p-0 m-0">
                   {socialItems.map((social, i) => (
                     <li key={i}>
@@ -562,7 +554,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                         href={social.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="sm-socials-link font-sans text-[15px] font-medium text-[#E8E3D9] no-underline hover:text-[#D99C5B] transition-colors py-1 inline-block"
+                        className="sm-socials-link font-sans text-[15px] font-medium text-[#EEE6D7] no-underline hover:text-[#C7B8AE] transition-colors py-1 inline-block"
                       >
                         {social.label}
                       </a>
@@ -571,8 +563,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 </ul>
 
                 {/* Micro Atelier Tag */}
-                <div className="mt-8 pt-4 border-t border-[#4D5746]/60 flex flex-col sm:flex-row justify-between text-[11px] font-mono text-[#E8E3D9]/60 gap-1 tracking-wider">
-                  <span>SPATIAL ATELIER & ROASTERY</span>
+                <div className="mt-8 pt-4 border-t border-[#472F1D]/60 flex flex-col sm:flex-row justify-between text-[11px] font-mono text-[#EEE6D7]/60 gap-1 tracking-wider">
+                  <span>SPATIAL ATELIER &amp; ROASTERY</span>
                   <span>© 2026 KONTRAKAN COFFEE</span>
                 </div>
               </div>
