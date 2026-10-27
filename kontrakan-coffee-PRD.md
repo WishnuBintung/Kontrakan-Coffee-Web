@@ -58,7 +58,7 @@ Membangun satu ekosistem web resmi **Kontrakan Coffee** yang berfungsi sebagai w
 | **FR-09** | **Full-Screen Lightbox** | Mengetuk foto galeri membuka tampilan layar penuh berlatar gelap dengan navigasi foto sebelumnya/berikutnya dan kontrol papan ketik (`Escape`, `ArrowLeft`, `ArrowRight`). |
 | **FR-10** | **Jam Operasional Real-Time** | Menghitung status kafe secara langsung berdasarkan waktu WIB (UTC+7): menampilkan badge *beacon* berdenyut (*"BUKA SEKARANG"* / *"SEDANG TUTUP"*), teks status penutupan/pembukaan berikutnya, dan penanda khusus hari ini (*"HARI INI"*) pada tabel jadwal 7 hari. |
 | **FR-11** | **Peta Interaktif & Navigasi** | Menyajikan iframe Google Maps responsif yang ditata dengan filter kontras/grayscale estetik, chip alamat, dan tombol navigasi langsung ke Google Maps. |
-| **FR-12** | **Kontak & One-Click Copy** | Menampilkan tautan navigasi cepat, tautan sosial media, dan tombol interaktif *one-click copy to clipboard* untuk alamat email kafe dengan indikator status konfirmasi (*toast feedback*). |
+| **FR-12** | **Footer & Presensi Digital** | Menyajikan penutup halaman (*designed closing scene*) monumental 2-kolom: kanal media sosial resmi (Instagram, WhatsApp, Google Maps) di sisi kiri, serta alamat lengkap kafe dan kalimat hak cipta `© 2026 KONTRAKAN COFFEE` di sisi kanan desktop. |
 | **FR-13** | **Navigasi Multi-Layered GSAP** | Header navigasi desktop yang menyusut saat di-scroll (*shrinkOnScroll*), dilengkapi menu hamparan penuh (*full-screen staggered overlay*) di ponsel dengan animasi lapis warna GSAP timeline. |
 | **FR-14** | **Pengelolaan Konten Mandiri (CMS)**| Mengedit seluruh menu, kategori, foto galeri, promo, dan jam operasional via Decap CMS di `/admin` dengan dukungan alur kerja editorial (*draft-review-publish*). |
 | **FR-15** | **REST API Server** | Backend Express.js melayani 11 endpoint JSON publik dengan dukungan CORS, parameter filter/sorting, dan dynamic host URL rewriting untuk akses LAN. |
@@ -337,8 +337,10 @@ Frontend mengadopsi standar desain *strict anti-slop* yang didefinisikan melalui
    - Indikator status *Live Beacon* berdenyut: Menghitung secara dinamis apakah kafe saat ini Buka atau Tutup berdasarkan waktu WIB (UTC+7), dilengkapi polling otomatis setiap 45 detik.
    - Kolom kanan: Tampilan *Google Maps Live Embed* interaktif dengan filter visual kontras, pin penanda Seturan, dan tombol navigasi rute langsung.
 8. **`ContactFooter.tsx`:**
-   - Tipografi raksasa 9.5vw *"KONTRAKAN COFFEE"* yang mengarahkan kembali ke bagian lokasi.
-   - Grid 3 kolom: Navigasi cepat, kontak email dengan tombol *one-click copy to clipboard* disertai feedback visual, dan catatan hak cipta atelier.
+   - Tipografi penutup monumental 9.5vw *"KONTRAKAN COFFEE"* sebagai *designed closing scene* (sesuai kaidah `.agents`: footer sebagai penutup desain arsitektural, bukan sitemap tautan internal).
+   - Layout 2-kolom seimbang (*flank-split layout*):
+     - **Sisi Kiri:** Tautan kanal media sosial & komunikasi eksternal (Instagram `@kontrakan.coffee`, WhatsApp Direct Chat, Google Maps Navigation) dengan transisi hover halus.
+     - **Sisi Kanan (Desktop: Right-Aligned):** Alamat lengkap fisik kafe (Jl. Seturan Raya No. 45, Caturtunggal, Depok, Sleman, Yogyakarta) dan baris hak cipta resmi `© 2026 KONTRAKAN COFFEE`.
 
 ---
 
