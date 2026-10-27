@@ -5,9 +5,11 @@ import { useState, useEffect, useMemo } from "react";
 import {
   MENU_ITEMS,
   GALLERY_ITEMS,
+  PROMO_ITEMS,
   CAFE_INFO,
   CafeMenuItem,
   CafeGalleryItem,
+  CafePromoItem,
   CafeInfo,
   getOpenStatusWIB,
 } from "@/lib/cafeData";
@@ -16,6 +18,7 @@ import {
   getClientStatusToko,
   getClientInfoToko,
   getClientGaleri,
+  getClientPromo,
   ApiStatusToko,
 } from "@/lib/clientApi";
 
@@ -171,4 +174,26 @@ export function useGalleryData() {
   }, []);
 
   return gallery;
+}
+
+/**
+ * Hook untuk mendapatkan data promo & kegiatan kafe dari backend
+ */
+export function usePromoData() {
+  const [promos, setPromos] = useState<CafePromoItem[]>(PROMO_ITEMS);
+
+  useEffect(() => {
+    let isMounted = true;
+    getClientPromo().then((data) => {
+      if (isMounted && data && data.length > 0) {
+        setPromos(data);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return promos;
 }

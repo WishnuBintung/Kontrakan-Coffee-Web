@@ -5,7 +5,7 @@ import { StaggeredMenu } from "./StaggeredMenu";
 
 export function Navbar() {
   const navLinks = [
-    { label: "Deskripsi", href: "#pembuka" },
+    { label: "Promo", href: "#promo" },
     { label: "Menu", href: "#menu" },
     { label: "Galeri", href: "#galeri" },
     { label: "Informasi", href: "#lokasi" },
@@ -36,9 +36,9 @@ export function Navbar() {
       }
       items={[
         {
-          label: "Deskripsi",
-          ariaLabel: "Baca kalimat pembuka dan deskripsi Kontrakan Coffee",
-          link: "#pembuka",
+          label: "Promo",
+          ariaLabel: "Lihat promo spesial dan kegiatan di Kontrakan Coffee",
+          link: "#promo",
         },
         {
           label: "Menu",

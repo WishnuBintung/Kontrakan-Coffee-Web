@@ -4,9 +4,11 @@
 import {
   MENU_ITEMS,
   GALLERY_ITEMS,
+  PROMO_ITEMS,
   CAFE_INFO,
   CafeMenuItem,
   CafeGalleryItem,
+  CafePromoItem,
   CafeInfo,
 } from "./cafeData";
 
@@ -202,6 +204,61 @@ export async function getClientGaleri(onlyFavorites = false): Promise<CafeGaller
       gambar,
       sudut_favorit: Boolean(item.sudut_favorit),
       tag: item.tag || (item.sudut_favorit ? "Spot Favorit" : matchingLocal?.tag || "Area"),
+    };
+  });
+}
+
+export type ApiPromoItem = {
+  id: string;
+  judul: string;
+  deskripsi: string;
+  tipe: "promo" | "kegiatan";
+  tanggal_mulai: string;
+  tanggal_selesai: string;
+  gambar?: string;
+  aktif: boolean;
+};
+
+/**
+ * Mengambil daftar promo & kegiatan dari backend /api/promo
+ */
+export async function getClientPromo(): Promise<CafePromoItem[]> {
+  const apiUrl = getBackendApiUrl();
+  const data = await requestWithTimeout<ApiPromoItem[]>(`${apiUrl}/promo`);
+
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return PROMO_ITEMS;
+  }
+
+  return data.map((item, idx) => {
+    const matchingLocal = PROMO_ITEMS.find(
+      (p) =>
+        p.id === item.id ||
+        p.judul.toLowerCase() === (item.judul || "").toLowerCase()
+    );
+
+    const isPlaceholder =
+      !item.gambar ||
+      item.gambar === "/images/placeholder-coffee.svg" ||
+      (item.gambar.includes("/uploads/") && !item.gambar.startsWith("http"));
+
+    const gambar =
+      isPlaceholder && matchingLocal
+        ? matchingLocal.gambar
+        : item.gambar || matchingLocal?.gambar || PROMO_ITEMS[0].gambar;
+
+    return {
+      id: item.id || `promo-${idx}`,
+      judul: item.judul || matchingLocal?.judul || "Promo Spesial",
+      deskripsi:
+        item.deskripsi ||
+        matchingLocal?.deskripsi ||
+        "Nikmati penawaran menarik di Kontrakan Coffee.",
+      tipe: item.tipe === "kegiatan" ? "kegiatan" : "promo",
+      tanggal_mulai: item.tanggal_mulai || "2026-01-01",
+      tanggal_selesai: item.tanggal_selesai || "2026-12-31",
+      gambar,
+      aktif: item.aktif !== false,
     };
   });
 }

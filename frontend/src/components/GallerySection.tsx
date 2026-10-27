@@ -104,11 +104,6 @@ export function GallerySection() {
                     className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
                   />
 
-                  {/* Tag Overlay */}
-                  <div className="absolute top-3 left-3 bg-[#472F1D]/85 backdrop-blur-sm text-[#C7B8AE] font-mono text-[10px] sm:text-[11px] font-bold px-2.5 py-1 sharp-edges border border-[#C7B8AE]/40 uppercase tracking-widest">
-                    {photo.tag}
-                  </div>
-
                   {photo.sudut_favorit && (
                     <div className="absolute top-3 right-3 bg-[#C7B8AE] text-[#472F1D] font-mono text-[10px] font-bold px-2 py-0.5 sharp-edges shadow-md uppercase tracking-wider">
                       SPOT FAVORIT
@@ -163,11 +158,8 @@ export function GallerySection() {
               {/* Lightbox Top Header */}
               <div className="flex items-center justify-between p-4 sm:p-6 bg-[#5F493C] text-[#EEE6D7] border-b border-[#472F1D] sticky top-0 z-20">
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-[12px] sm:text-[13px] uppercase tracking-widest text-[#C7B8AE] font-semibold">
-                    {selectedPhoto.tag}
-                  </span>
                   {selectedPhoto.sudut_favorit && (
-                    <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono bg-[#C7B8AE] text-[#472F1D] font-bold uppercase tracking-wider sharp-edges">
+                    <span className="inline-block px-2 py-0.5 text-[10px] font-mono bg-[#C7B8AE] text-[#472F1D] font-bold uppercase tracking-wider sharp-edges">
                       SPOT FAVORIT
                     </span>
                   )}

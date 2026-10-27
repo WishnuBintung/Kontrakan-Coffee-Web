@@ -3,7 +3,7 @@
 import React from "react";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
-import { ManifestoSection } from "@/components/ManifestoSection";
+import { PromoSection } from "@/components/PromoSection";
 import { MenuSection } from "@/components/MenuSection";
 import { GallerySection } from "@/components/GallerySection";
 import { LocationSection } from "@/components/LocationSection";
@@ -23,8 +23,8 @@ export default function Home() {
       {/* 1. HERO SECTION */}
       <HeroSection />
 
-      {/* 2. DESKRIPSI / KALIMAT PEMBUKA */}
-      <ManifestoSection />
+      {/* 2. PROMO & KEGIATAN SPESIAL */}
+      <PromoSection />
 
       {/* 3. LIST MENU & FILTER */}
       <MenuSection />

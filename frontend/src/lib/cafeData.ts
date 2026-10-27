@@ -25,6 +25,17 @@ export interface CafeGalleryItem {
   tag: string;
 }
 
+export interface CafePromoItem {
+  id: string;
+  judul: string;
+  deskripsi: string;
+  tipe: "promo" | "kegiatan";
+  tanggal_mulai: string;
+  tanggal_selesai: string;
+  gambar: string;
+  aktif: boolean;
+}
+
 export interface CafeJamBuka {
   hari: string;
   buka: string;
@@ -388,6 +399,45 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
     gambar: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
     sudut_favorit: true,
     tag: "COZY CORNER",
+  },
+];
+
+export const PROMO_ITEMS: CafePromoItem[] = [
+  {
+    id: "diskon-senja",
+    judul: "Promo Senja Ceria 20%",
+    deskripsi:
+      "Dapatkan diskon 20% untuk semua varian menu kopi setiap pukul 16:00 - 18:00 WIB.",
+    tipe: "promo",
+    tanggal_mulai: "2026-01-01",
+    tanggal_selesai: "2026-12-31",
+    gambar:
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1200&auto=format&fit=crop",
+    aktif: true,
+  },
+  {
+    id: "paket-pelajar",
+    judul: "Paket Nongkrong Pelajar & Mahasiswa Rp 25.000",
+    deskripsi:
+      "Dapatkan kombinasi 1 Es Kopi Susu Senja + 1 Porsi Cireng Rujak Salju hanya Rp 25.000 dengan menunjukkan kartu pelajar atau KTM aktif. Berlaku setiap Senin hingga Jumat.",
+    tipe: "promo",
+    tanggal_mulai: "2026-01-01",
+    tanggal_selesai: "2026-12-31",
+    gambar:
+      "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=1200&auto=format&fit=crop",
+    aktif: true,
+  },
+  {
+    id: "live-music-akustik",
+    judul: "Acoustic Night: Senja Berdendang",
+    deskripsi:
+      "Nikmati alunan musik akustik indie dan pop santai setiap hari Sabtu malam mulai pukul 19:30 WIB di area outdoor garden. Tanpa tiket masuk, cukup pesan menu favoritmu!",
+    tipe: "kegiatan",
+    tanggal_mulai: "2026-01-01",
+    tanggal_selesai: "2026-12-31",
+    gambar:
+      "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop",
+    aktif: true,
   },
 ];
 
