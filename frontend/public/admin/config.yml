@@ -2,7 +2,9 @@ backend:
   name: git-gateway
   branch: main
 
-local_backend: true                 # untuk edit lokal via `npx decap-server`
+local_backend:
+  url: http://localhost:8081/api/v1
+  allowed_hosts: ['192.168.68.230', '192.168.68.*', '192.168.*', 'localhost', '127.0.0.1']
 publish_mode: editorial_workflow    # PRD §2 no.8: draft -> review/pratinjau -> publish
 
 media_folder: public/images/uploads
@@ -50,13 +52,13 @@ collections:
     label: Galeri Suasana
     folder: content/galeri
     create: true
-    slug: "foto-{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
-    identifier_field: gambar
-    summary: "{{gambar}} (Urutan: {{urutan}})"
+    slug: "{{slug}}"
+    identifier_field: judul
+    summary: "{{filename}} (Urutan: {{fields.urutan}})"
     fields:
       - { label: Berkas Foto, name: gambar, widget: image, hint: "Pilih atau unggah berkas foto kafe" }
-      - { label: Judul, name: judul, widget: hidden, default: "Foto Kafe" }
       - { label: Urutan Tampil, name: urutan, widget: number, value_type: int, default: 1 }
+      - { label: Judul, name: judul, widget: hidden, default: "Foto Suasana" }
 
   - name: promo
     label: Promo & Kegiatan
@@ -83,10 +85,12 @@ collections:
           - { label: Nama Coffee Shop, name: nama_toko, widget: string }
           - { label: Judul Kenapa Kontrakan, name: judul_kenapa, widget: string, default: "Betah Berjam-jam. Kenapa Kontrakan?", hint: "Judul utama bagian fasilitas / Kenapa Kontrakan" }
           - { label: Alamat Lengkap, name: alamat, widget: text }
+          - { label: Patokan Lokasi, name: patokan, widget: string, required: false, hint: "Contoh: Kawasan Sekaran, Gunungpati — dekat kampus UNNES" }
           - { label: Link Google Maps, name: link_peta, widget: string, hint: "URL Google Maps untuk tombol Buka Peta" }
-          - { label: Link Embed Google Maps (iframe), name: embed_peta, widget: string, required: false, hint: "URL embed untuk iframe peta" }
-          - { label: Tautan Akun Instagram, name: instagram, widget: string, hint: "Contoh: https://instagram.com/kontrakancoffee" }
-          - { label: Nomor WhatsApp (kontak), name: whatsapp, widget: string, required: false, hint: "Format internasional tanpa +, contoh: 6281234567890. Hanya untuk tanya-tanya, bukan pemesanan." }
+          - { label: Link Embed Google Maps (iframe), name: embed_peta, widget: string, required: false, hint: "Opsional. Jika kosong, sistem otomatis membuat embed peta dari alamat di atas" }
+          - { label: Tautan Akun Instagram, name: instagram, widget: string, hint: "Contoh: https://www.instagram.com/kontrakan.coffee" }
+          - { label: Tautan Akun TikTok, name: tiktok, widget: string, required: false, hint: "Contoh: https://www.tiktok.com/@kontrakancoffee" }
+          - { label: Nomor WhatsApp, name: whatsapp, widget: string, required: false, hint: "Contoh: 6281234567890" }
           - label: Jam Buka Mingguan
             name: jam_buka
             widget: list

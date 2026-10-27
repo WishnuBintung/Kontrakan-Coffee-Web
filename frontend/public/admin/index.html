@@ -92,6 +92,21 @@
             );
           }
         }));
+
+        // Preview untuk Galeri Suasana
+        CMS.registerPreviewTemplate('galeri', createClass({
+          render: function() {
+            var entry = this.props.entry;
+            var gambarRaw = entry.getIn(['data', 'gambar']);
+            var gambar = gambarRaw ? this.props.getAsset(gambarRaw) : null;
+            var urutan = entry.getIn(['data', 'urutan']) || 1;
+
+            return h('div', { style: { padding: '24px', fontFamily: 'sans-serif', maxWidth: '440px', border: '1px solid #e5e7eb', borderRadius: '12px', background: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.08)' } },
+              gambar ? h('img', { src: gambar.toString(), style: { width: '100%', height: '240px', objectFit: 'cover', borderRadius: '8px' } }) : h('div', { style: { width: '100%', height: '200px', background: '#f3f4f6', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: '14px' } }, 'Pilih atau unggah berkas foto'),
+              h('div', { style: { marginTop: '12px', fontSize: '13px', color: '#4b5563', fontWeight: '500' } }, 'Urutan Tampil: ' + urutan)
+            );
+          }
+        }));
       }
     </script>
   </body>

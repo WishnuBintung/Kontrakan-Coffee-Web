@@ -19,7 +19,7 @@ collections:
     identifier_field: nama
     summary: "{{nama}} — Rp{{harga}} ({{kategori}})"
     fields:
-      - { label: Nama Menu, name: nama, widget: string, hint: "Contoh: Es Kopi Susu Senja" }
+      - { label: Nama Menu, name: nama, widget: string, hint: "Contoh: Es Kopi Susu Kontrakan" }
       - label: Kategori
         name: kategori
         widget: relation
@@ -52,13 +52,13 @@ collections:
     label: Galeri Suasana
     folder: content/galeri
     create: true
-    slug: "foto-{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
-    identifier_field: gambar
-    summary: "{{gambar}} (Urutan: {{urutan}})"
+    slug: "{{slug}}"
+    identifier_field: judul
+    summary: "{{filename}} (Urutan: {{fields.urutan}})"
     fields:
       - { label: Berkas Foto, name: gambar, widget: image, hint: "Pilih atau unggah berkas foto kafe" }
-      - { label: Judul, name: judul, widget: hidden, default: "Foto Kafe" }
       - { label: Urutan Tampil, name: urutan, widget: number, value_type: int, default: 1 }
+      - { label: Judul, name: judul, widget: hidden, default: "Foto Suasana" }
 
   - name: promo
     label: Promo & Kegiatan
