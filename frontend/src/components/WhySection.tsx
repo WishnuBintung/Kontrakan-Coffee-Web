@@ -1,9 +1,21 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Car, Coffee, Plug, Sparkles, Trees, Wifi, Wind } from "lucide-react";
+import {
+  BookOpen,
+  Car,
+  Clock,
+  Coffee,
+  Plug,
+  ShieldCheck,
+  Sparkles,
+  Trees,
+  Users,
+  Wifi,
+  Wind,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useCafeInfo, useGalleryData } from "@/hooks/useCafeData";
+import { useGalleryData, useWhyData } from "@/hooks/useCafeData";
 
 const ICONS: Record<string, LucideIcon> = {
   wifi: Wifi,
@@ -12,6 +24,11 @@ const ICONS: Record<string, LucideIcon> = {
   trees: Trees,
   car: Car,
   sparkles: Sparkles,
+  coffee: Coffee,
+  book: BookOpen,
+  shield: ShieldCheck,
+  clock: Clock,
+  users: Users,
 };
 
 const SURFACES = [
@@ -23,15 +40,19 @@ const SURFACES = [
 /**
  * "A way that's 100% Better. But why Bettr?" — Bettr's sticky stacked cards
  * over a photograph, adapted to the cafe's facilities (Wi-Fi, outlets, …).
+ * Fully editable via Decap CMS (content/why.json).
  */
 export function WhySection() {
-  const info = useCafeInfo();
+  const whyData = useWhyData();
   const gallery = useGalleryData();
 
   const backdrop = useMemo(() => {
+    if (whyData.foto_backdrop && !whyData.foto_backdrop.includes("placeholder")) {
+      return whyData.foto_backdrop;
+    }
     const garden = gallery.find((g) => /garden|taman|outdoor/i.test(`${g.judul} ${g.id}`));
     return (garden ?? gallery[0])?.gambar;
-  }, [gallery]);
+  }, [whyData.foto_backdrop, gallery]);
 
   return (
     <section
@@ -58,15 +79,21 @@ export function WhySection() {
           data-rev
           className="font-display mb-10 text-[clamp(2.6rem,6vw,5.5rem)] text-sunshine sm:mb-14"
         >
-          {info.judulKenapa || "Betah Berjam-jam. Kenapa Kontrakan?"}
+          {whyData.judul || "Betah Berjam-jam. Kenapa Kontrakan?"}
         </h2>
 
+        {whyData.deskripsi && (
+          <p className="mb-8 max-w-2xl text-lg text-cream/90 -mt-6">
+            {whyData.deskripsi}
+          </p>
+        )}
+
         <div className="flex flex-col gap-6">
-          {info.fasilitas.map((f, i) => {
-            const Icon = ICONS[f.icon] ?? Coffee;
+          {whyData.items.map((f, i) => {
+            const Icon = ICONS[f.icon.toLowerCase()] ?? Coffee;
             return (
               <article
-                key={f.title}
+                key={`${f.title}-${i}`}
                 style={{ "--i": i } as React.CSSProperties}
                 className={`stack-card relative flex min-h-[22rem] flex-col justify-between overflow-hidden rounded-[0.25rem] p-6 shadow-[0_-8px_24px_-12px_rgba(17,11,6,0.45)] sm:p-10 ${SURFACES[i % SURFACES.length]}`}
               >
@@ -81,9 +108,6 @@ export function WhySection() {
                   <h3 className="font-display max-w-md text-[clamp(2.2rem,4vw,3.4rem)]">
                     {f.title}
                   </h3>
-                  <span className="tag shrink-0">
-                    {String(i + 1).padStart(2, "0")} / {String(info.fasilitas.length).padStart(2, "0")}
-                  </span>
                 </div>
 
                 <div className="relative mt-16 max-w-md">
@@ -100,4 +124,3 @@ export function WhySection() {
 }
 
 export default WhySection;
-

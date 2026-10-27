@@ -180,6 +180,39 @@ export async function getClientInfoToko(): Promise<CafeInfo> {
           catatan: j.catatan || (j.libur ? "Tutup / Libur Operasional" : undefined),
         }))
       : CAFE_INFO.jamBuka,
+    fasilitas:
+      Array.isArray(data.fasilitas) && data.fasilitas.length > 0
+        ? data.fasilitas
+        : CAFE_INFO.fasilitas,
+  };
+}
+
+export type WhyItem = {
+  icon: string;
+  title: string;
+  desc: string;
+};
+
+export type WhySectionData = {
+  judul: string;
+  deskripsi?: string;
+  foto_backdrop?: string;
+  items: WhyItem[];
+};
+
+export async function getClientWhyData(): Promise<WhySectionData> {
+  const apiUrl = getBackendApiUrl();
+  const data = await requestWithTimeout<WhySectionData>(`${apiUrl}/why`, 3000);
+
+  if (data && Array.isArray(data.items) && data.items.length > 0) {
+    return data;
+  }
+
+  return {
+    judul: CAFE_INFO.judulKenapa || "Betah Berjam-jam. Kenapa Kontrakan?",
+    deskripsi: "Fasilitas lengkap dan suasana nyaman yang dirancang untuk produktivitas dan momen santai Anda.",
+    foto_backdrop: "",
+    items: CAFE_INFO.fasilitas,
   };
 }
 

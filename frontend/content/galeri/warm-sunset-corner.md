@@ -1,7 +1,7 @@
 ---
 judul: Warm Amber Lounge
 gambar: https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop
-sudut_favorit: true
+sudut_favorit: false
 tag: COZY CORNER
 urutan: 6
 ---

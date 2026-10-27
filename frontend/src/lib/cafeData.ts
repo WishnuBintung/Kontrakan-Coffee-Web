@@ -60,6 +60,8 @@ export interface CafeInfo {
   tiktok?: string;
   email: string;
   judulKenapa?: string;
+  deskripsiKenapa?: string;
+  fotoKenapa?: string;
   jamBuka: CafeJamBuka[];
   fasilitas: { icon: string; title: string; desc: string }[];
 }
@@ -401,7 +403,7 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
     deskripsi:
       "Sudut sofa empuk dengan pencahayaan temaram amber gold 2700K. Spot paling nyaman untuk membaca buku atau menikmati secangkir pour-over hangat.",
     gambar: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
-    sudut_favorit: true,
+    sudut_favorit: false,
     tag: "COZY CORNER",
   },
 ];

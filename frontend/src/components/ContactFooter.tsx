@@ -27,6 +27,7 @@ export function ContactFooter() {
   const navLinks = [
     { label: "Promo", href: "#promo" },
     { label: "Menu", href: "#menu" },
+    { label: "Fasilitas", href: "#fasilitas" },
     { label: "Galeri", href: "#galeri" },
     { label: "Jam Buka & Lokasi", href: "#lokasi" },
   ];

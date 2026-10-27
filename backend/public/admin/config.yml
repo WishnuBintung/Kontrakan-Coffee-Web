@@ -52,13 +52,12 @@ collections:
     label: Galeri Suasana
     folder: content/galeri
     create: true
-    slug: "{{slug}}"
-    identifier_field: judul
-    summary: "{{judul}}"
+    slug: "foto-{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    identifier_field: gambar
+    summary: "{{gambar}} (Urutan: {{urutan}})"
     fields:
-      - { label: Judul Foto, name: judul, widget: string, hint: "Contoh: Suasana Meja Bar Sore Hari" }
-      - { label: Berkas Foto, name: gambar, widget: image }
-      - { label: Tandai sebagai Sudut Favorit, name: sudut_favorit, widget: boolean, default: false, hint: "Akan disorot khusus di galeri foto" }
+      - { label: Berkas Foto, name: gambar, widget: image, hint: "Pilih atau unggah berkas foto kafe" }
+      - { label: Judul, name: judul, widget: hidden, default: "Foto Kafe" }
       - { label: Urutan Tampil, name: urutan, widget: number, value_type: int, default: 1 }
 
   - name: promo
@@ -77,10 +76,10 @@ collections:
       - { label: Tampilkan, name: aktif, widget: boolean, default: true }
 
   - name: pengaturan
-    label: Info Toko
+    label: Pengaturan & Konten Toko
     files:
       - name: info_toko
-        label: Informasi Coffee Shop
+        label: Informasi Coffee Shop & Jam Buka
         file: content/info-toko.json
         fields:
           - { label: Nama Coffee Shop, name: nama_toko, widget: string }
@@ -100,3 +99,34 @@ collections:
               - { label: Jam Buka, name: buka, widget: string, hint: "Contoh: 09:00" }
               - { label: Jam Tutup, name: tutup, widget: string, hint: "Contoh: 23:00 atau 24:00" }
               - { label: Tutup / Libur, name: libur, widget: boolean, default: false }
+
+      - name: why_section
+        label: Section Why / Kenapa Kontrakan (Fasilitas)
+        file: content/why.json
+        fields:
+          - { label: Judul Section Why, name: judul, widget: string, default: "Betah Berjam-jam. Kenapa Kontrakan?", hint: "Judul besar bagian Kenapa Kontrakan" }
+          - { label: Deskripsi Singkat, name: deskripsi, widget: string, required: false, default: "Fasilitas lengkap dan suasana nyaman yang dirancang untuk produktivitas dan momen santai Anda." }
+          - { label: Foto Latar Belakang (Backdrop), name: foto_backdrop, widget: image, required: false, hint: "Foto background untuk section Why / Fasilitas" }
+          - label: Daftar Fasilitas / Keunggulan (Cards)
+            name: items
+            widget: list
+            summary: "{{fields.title}} ({{fields.icon}})"
+            fields:
+              - label: Pilihan Ikon
+                name: icon
+                widget: select
+                options:
+                  - { label: "Wi-Fi Kencang", value: "wifi" }
+                  - { label: "Stopkontak / Colokan", value: "plug" }
+                  - { label: "AC / Dingin", value: "wind" }
+                  - { label: "Taman / Outdoor", value: "trees" }
+                  - { label: "Parkir Luas", value: "car" }
+                  - { label: "Musholla Nyaman", value: "sparkles" }
+                  - { label: "Kopi / Barista", value: "coffee" }
+                  - { label: "Buku / Baca", value: "book" }
+                  - { label: "Aman / Satpam", value: "shield" }
+                  - { label: "Jam Fleksibel", value: "clock" }
+                  - { label: "Komunitas / Diskusi", value: "users" }
+                default: "wifi"
+              - { label: Judul Fasilitas, name: title, widget: string, hint: "Contoh: Wi-Fi Kencang 100 Mbps" }
+              - { label: Penjelasan Fasilitas, name: desc, widget: text, hint: "Deskripsi fasilitas atau keunggulan" }

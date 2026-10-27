@@ -6,12 +6,13 @@ import type {
   GaleriFoto,
   Hari,
   InfoToko,
-
   Kategori,
   MenuItem,
   MenuWithKategori,
   Promo,
   StatusToko,
+  WhyItem,
+  WhySectionData,
 } from "./types";
 
 const CONTENT_DIR = fs.existsSync(path.join(process.cwd(), "content"))
@@ -286,19 +287,44 @@ export function getActivePromo(
   });
 }
 
-export function getInfoToko(): InfoToko {
-  const filePath = path.join(CONTENT_DIR, "info-toko.json");
-  const fallback: InfoToko = {
-    nama_toko: "Kontrakan Coffee",
-    alamat: "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
-    patokan: "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES)",
-    link_peta: "https://maps.app.goo.gl/7kn5wi3aeE15r61T9?g_st=ic",
-    embed_peta:
-      "https://maps.google.com/maps?q=Jl.+Nyai+Ketrik,+Sekaran,+Kec.+Gn.+Pati,+Kota+Semarang,+Jawa+Tengah+50229&t=&z=16&ie=UTF8&iwloc=&output=embed",
-    instagram: "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3",
-    tiktok: "https://www.tiktok.com/@kontrakancoffee?_r=1&_t=ZS-9AubeEe0g5M",
-    whatsapp: "6281234567890",
-    jam_buka: [],
+export function getWhyData(): WhySectionData {
+  const filePath = path.join(CONTENT_DIR, "why.json");
+  const fallback: WhySectionData = {
+    judul: "Betah Berjam-jam. Kenapa Kontrakan?",
+    deskripsi: "Fasilitas lengkap dan suasana nyaman yang dirancang untuk produktivitas dan momen santai Anda.",
+    foto_backdrop: "",
+    items: [
+      {
+        icon: "wifi",
+        title: "Wi-Fi Kencang 100 Mbps",
+        desc: "Koneksi internet fiber optik berkecepatan tinggi dan stabil untuk video conference, upload file besar, hingga streaming lancar tanpa hambatan.",
+      },
+      {
+        icon: "plug",
+        title: "Stopkontak di Tiap Meja",
+        desc: "Tidak perlu rebutan colokan. Hampir seluruh sudut meja kerja dan komunal dilengkapi stopkontak untuk menjaga daya laptop dan ponsel Anda tetap terisi.",
+      },
+      {
+        icon: "wind",
+        title: "Ruang AC Tenang & Bebas Rokok",
+        desc: "Area indoor berpendingin udara sejuk dan tenang dirancang khusus bagi Anda yang butuh fokus tinggi untuk bekerja, meeting, atau belajar.",
+      },
+      {
+        icon: "trees",
+        title: "Area Terbuka Semi Outdoor",
+        desc: "Suasana semi terbuka yang asri dengan sirkulasi udara alami dan pencahayaan matahari sore yang pas untuk nongkrong santai.",
+      },
+      {
+        icon: "car",
+        title: "Parkir Luas & Aman",
+        desc: "Tersedia area parkir motor dan mobil tertata rapi dijaga petugas kafe.",
+      },
+      {
+        icon: "sparkles",
+        title: "Musholla Nyaman",
+        desc: "Tempat ibadah bersih dan lengkap dengan sarung, mukena, serta tempat wudhu.",
+      },
+    ],
   };
 
   if (!fs.existsSync(filePath)) {
@@ -309,7 +335,45 @@ export function getInfoToko(): InfoToko {
     const raw = fs.readFileSync(filePath, "utf8");
     const data = JSON.parse(raw);
     return {
+      judul: data.judul || fallback.judul,
+      deskripsi: data.deskripsi || fallback.deskripsi,
+      foto_backdrop: data.foto_backdrop || fallback.foto_backdrop,
+      items: Array.isArray(data.items) && data.items.length > 0 ? data.items : fallback.items,
+    };
+  } catch (err) {
+    console.error("Gagal membaca why.json, menggunakan fallback:", err);
+    return fallback;
+  }
+}
+
+export function getInfoToko(): InfoToko {
+  const filePath = path.join(CONTENT_DIR, "info-toko.json");
+  const fallback: InfoToko = {
+    nama_toko: "Kontrakan Coffee",
+    judul_kenapa: "Betah Berjam-jam. Kenapa Kontrakan?",
+    alamat: "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
+    patokan: "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES)",
+    link_peta: "https://maps.app.goo.gl/7kn5wi3aeE15r61T9?g_st=ic",
+    embed_peta:
+      "https://maps.google.com/maps?q=Jl.+Nyai+Ketrik,+Sekaran,+Kec.+Gn.+Pati,+Kota+Semarang,+Jawa+Tengah+50229&t=&z=16&ie=UTF8&iwloc=&output=embed",
+    instagram: "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3",
+    tiktok: "https://www.tiktok.com/@kontrakancoffee?_r=1&_t=ZS-9AubeEe0g5M",
+    whatsapp: "6281234567890",
+    jam_buka: [],
+    fasilitas: getWhyData().items,
+  };
+
+  if (!fs.existsSync(filePath)) {
+    return fallback;
+  }
+
+  try {
+    const raw = fs.readFileSync(filePath, "utf8");
+    const data = JSON.parse(raw);
+    const whyData = getWhyData();
+    return {
       nama_toko: data.nama_toko || fallback.nama_toko,
+      judul_kenapa: data.judul_kenapa || whyData.judul || fallback.judul_kenapa,
       alamat: data.alamat || fallback.alamat,
       patokan: data.patokan || fallback.patokan,
       link_peta: data.link_peta || fallback.link_peta,
@@ -321,6 +385,7 @@ export function getInfoToko(): InfoToko {
           ? data.whatsapp.replace(/\D/g, "")
           : undefined,
       jam_buka: Array.isArray(data.jam_buka) ? data.jam_buka : [],
+      fasilitas: Array.isArray(data.fasilitas) && data.fasilitas.length > 0 ? data.fasilitas : whyData.items,
     };
   } catch (err) {
     console.error("Gagal memuat info toko, menggunakan fallback:", err);
