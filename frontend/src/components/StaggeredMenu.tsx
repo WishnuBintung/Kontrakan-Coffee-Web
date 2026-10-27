@@ -438,6 +438,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               key={i}
               className="sm-prelayer absolute inset-0 shadow-2xl will-change-transform"
               style={{ background: c }}
+              suppressHydrationWarning
             />
           ))}
         </div>
@@ -518,6 +519,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             position === "left" ? "left-0" : "right-0"
           )}
           style={{ background: colors[colors.length - 1] }}
+          suppressHydrationWarning
         >
           <div className="flex-1 flex flex-col justify-between items-start text-left">
             {/* Primary Navigation Items — Shifted Left, No Section Numbers */}
