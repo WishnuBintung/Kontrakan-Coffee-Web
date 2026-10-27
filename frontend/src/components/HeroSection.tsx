@@ -1,132 +1,142 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import React, { useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
-import { ScrollLinkedZoomHeader } from "./ScrollLinkedZoomHeader";
+import React from "react";
+import { SplitWords } from "./EditorialMotion";
 
 export function HeroSection() {
-  const [viewportHeight, setViewportHeight] = useState(800);
-
-  useEffect(() => {
-    setViewportHeight(window.innerHeight || 800);
-    const handleResize = () => setViewportHeight(window.innerHeight || 800);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Framer Motion useScroll capturing Y-axis
-  const { scrollY } = useScroll();
-
-  // Layer 1 (Back): Background image scale linked to scroll (1.0 to 1.27)
-  const bgScale = useTransform(scrollY, [0, viewportHeight], [1.0, 1.27], {
-    clamp: true,
-  });
-
-  // Main 12vw heading scale: Map scroll 0-30% of viewport to a scale of 1.0 to 0.89
-  const headingScale = useTransform(
-    scrollY,
-    [0, viewportHeight * 0.3],
-    [1.0, 0.89],
-    { clamp: true }
-  );
-
-  // Optical receding effect along Z-axis (simulating depth into the screen)
-  const headingZ = useTransform(
-    scrollY,
-    [0, viewportHeight * 0.3],
-    [0, -45],
-    { clamp: true }
-  );
-
-  // Gentle downward glide (turun perlahan seiring scroll)
-  const titleY = useTransform(
-    scrollY,
-    [0, viewportHeight * 0.45],
-    [0, 45],
-    { clamp: true }
-  );
-
-  // Kata "coffee": pudar lebih lama dan halus, tetapi tetap hilang duluan (hilang total di 28% viewport)
-  const coffeeOpacity = useTransform(
-    scrollY,
-    [0, viewportHeight * 0.12, viewportHeight * 0.28],
-    [1.0, 0.65, 0.0],
-    { clamp: true }
-  );
-
-  // Title "Kontrakan": animasi menghilang dibuat lebih lama (bertahan penuh di awal, lalu pudar bertahap hingga 45% viewport)
-  const titleOpacity = useTransform(
-    scrollY,
-    [0, viewportHeight * 0.12, viewportHeight * 0.45],
-    [1.0, 1.0, 0.0],
-    { clamp: true }
-  );
-
-  // Kalimat di bagian bawah hero: pudar bertahap selaras dengan title
-  const bottomTextOpacity = useTransform(
-    scrollY,
-    [0, viewportHeight * 0.12, viewportHeight * 0.4],
-    [1.0, 1.0, 0.0],
-    { clamp: true }
-  );
-
   return (
-    // Hero section berukuran full satu layar penuh di semua device (100dvh) dengan Warna Dasar Krem Hangat (#E8E3D9) dan stacking context terisolasi (isolate)
-    <section className="relative w-full h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between items-center text-center px-6 pt-28 pb-12 bg-[#E8E3D9] text-[#1C1A18] isolate">
-      {/* Layer 1 (Back): Background image jernih tanpa efek blur/filter, scale linked to scroll (1.0 to 1.27) */}
-      <motion.div
-        style={{
-          scale: bgScale,
-          transformStyle: "preserve-3d",
-          willChange: "transform",
-        }}
-        className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none"
-      >
-        {/* Coffee atelier background image - jernih tanpa efek blur atau filter apapun */}
-        <img
-          src="/images/bg-hero.jpg"
-          alt="Kontrakan Coffee Atelier Atmosphere"
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            const target = e.currentTarget;
-            if (!target.dataset.fallbackTried) {
-              target.dataset.fallbackTried = "1";
-              target.src = "./images/bg-hero.jpg";
-            }
-          }}
-        />
-      </motion.div>
+    <section
+      id="hero"
+      data-scroll-stage="hero"
+      className="stage-hero-pin relative w-full h-[300svh] bg-[#E8E3D9] text-[#1C1A18] select-none"
+    >
+      {/* Sticky 100svh Inner Pin (Prompt Layout & Choreography) */}
+      <div className="sticky top-0 left-0 w-full h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between items-center text-center px-6 pt-24 sm:pt-28 pb-8 sm:pb-10 bg-[#E8E3D9] text-[#1C1A18] isolate">
+        {/* Multiply-blended still-life photograph scaling 1.04 -> 1.11 and drifting up 3% */}
+        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
+          <img
+            src="/images/bg-hero.jpg"
+            alt="Kontrakan Coffee Atelier Atmosphere"
+            className="stage-hero-photo w-full h-full object-cover opacity-85"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.dataset.fallbackTried) {
+                target.dataset.fallbackTried = "1";
+                target.src = "./images/bg-hero.jpg";
+              }
+            }}
+          />
+        </div>
 
-      {/* Spacer atas */}
-      <div className="h-6 relative z-10" aria-hidden="true" />
+        {/* Top Mono Bar */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto flex items-center justify-between border-b border-[#1C1A18]/20 pb-3">
+          <span
+            data-rev
+            style={{ "--d": "40ms" } as React.CSSProperties}
+            className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#1C1A18] font-semibold"
+          >
+            [00 // SPATIAL COFFEE ATELIER]
+          </span>
+          <span
+            data-rev
+            style={{ "--d": "90ms" } as React.CSSProperties}
+            className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#1C1A18] font-semibold hidden sm:inline-block"
+          >
+            7.7725° S, 110.4092° E // YOGYAKARTA
+          </span>
+          <span
+            data-rev
+            style={{ "--d": "140ms" } as React.CSSProperties}
+            className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#1C1A18] font-semibold"
+          >
+            EST. 2026
+          </span>
+        </div>
 
-      {/* Layer 2 (Mid) & Layer 3 (Overlay): Scroll-Linked Zoom Header Component */}
-      <div className="my-auto relative z-10 w-full flex items-center justify-center">
-        <ScrollLinkedZoomHeader
-          title="Kontrakan"
-          secondaryLabel="coffee"
-          headingScale={headingScale}
-          headingZ={headingZ}
-          titleY={titleY}
-          titleOpacity={titleOpacity}
-          coffeeOpacity={coffeeOpacity}
-        />
+        {/* Center Type Block ABOVE the multiplied photograph — lifts 46px and fades out on scroll */}
+        <div className="stage-hero-type my-auto relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center">
+          {/* Rotated Overline Accent */}
+          <span
+            data-rev
+            style={{ "--d": "70ms" } as React.CSSProperties}
+            className="font-sans italic font-light text-lg sm:text-2xl text-[#D99C5B] inline-block -rotate-2 mb-3 tracking-normal"
+          >
+            Artisanal Spatial Roastery &amp; Slow Bar
+          </span>
+
+          {/* Main Heading: Kontrakan + coffee with original typography */}
+          <div
+            data-rev
+            style={{ "--d": "120ms" } as React.CSSProperties}
+            className="relative inline-flex items-center justify-center py-4 md:py-6"
+          >
+            <h1 className="font-sans font-black text-[12vw] leading-none text-[#1C1A18] tracking-[-0.03em] select-none text-center">
+              Kontrakan
+            </h1>
+            <span className="hidden sm:inline-block absolute left-[calc(100%+1rem)] top-1/2 -translate-y-1/2 text-[32px] font-thin italic text-[#D99C5B] whitespace-nowrap font-sans tracking-normal pointer-events-none select-none">
+              coffee
+            </span>
+          </div>
+
+          {/* Mobile secondary label */}
+          <span className="sm:hidden text-2xl font-thin italic text-[#D99C5B] font-sans -mt-2 mb-2">
+            coffee
+          </span>
+
+          {/* Bottom hero paragraph (Per-word stagger animation) */}
+          <div className="relative z-10 max-w-2xl mx-auto px-4 mt-4 sm:mt-6">
+            <p className="text-[17px] md:text-[20px] font-light tracking-tight text-[#1C1A18]/90 leading-relaxed font-sans font-medium">
+              <SplitWords
+                text="The Kontrakan Coffee design system combines warm brick-reflected cream, dark olive green surfaces, and glowing amber gold accents to create an immersive, architectural coffee atelier experience."
+                staggerMs={38}
+                baseDelayMs={150}
+              />
+            </p>
+          </div>
+        </div>
+
+        {/* Three Mono Straps Pinned Across the Base (Prompt Layout Spec) */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto pt-4 border-t border-[#1C1A18]/25">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 items-center bg-[#E8E3D9]/80 backdrop-blur-[2px] px-4 py-2.5 border border-[#1C1A18]/20">
+            <div
+              data-rev
+              style={{ "--d": "60ms" } as React.CSSProperties}
+              className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#1C1A18] font-bold text-left flex items-center gap-2"
+            >
+              <span className="text-[#D99C5B]">[01]</span>
+              <span>JL. SETURAN RAYA NO. 45, SLEMAN</span>
+            </div>
+
+            <div
+              data-rev
+              style={{ "--d": "120ms" } as React.CSSProperties}
+              className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#1C1A18] font-bold sm:text-center hidden sm:block"
+            >
+              <span className="text-[#D99C5B]">[02]</span>{" "}
+              <span>SINGLE ORIGIN &amp; ARTISANAL BREW</span>
+            </div>
+
+            <div
+              data-rev
+              style={{ "--d": "180ms" } as React.CSSProperties}
+              className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#1C1A18] font-bold sm:text-right flex sm:justify-end items-center gap-2"
+            >
+              <span className="text-[#D99C5B]">[03]</span>
+              <span>SCROLL UNTUK MENJELAJAH ↓</span>
+            </div>
+          </div>
+
+          {/* Progress Rail in Accent Color */}
+          <div className="w-full h-[2px] bg-[#1C1A18]/15 mt-2 overflow-hidden">
+            <div
+              data-stage-progress
+              className="h-full w-full bg-[#D99C5B] origin-left scale-x-0 transition-transform duration-75"
+            />
+          </div>
+        </div>
       </div>
-
-      {/* Bottom: Kalimat di bagian bawah hero dengan Warna Teks (#1C1A18) */}
-      <motion.div
-        style={{
-          opacity: bottomTextOpacity,
-          willChange: "opacity",
-        }}
-        className="relative z-10 max-w-2xl mx-auto px-4"
-      >
-        <p className="text-[17px] md:text-[20px] font-light tracking-tight text-[#1C1A18]/90 leading-relaxed font-sans font-medium">
-          The Kontrakan Coffee design system combines warm brick-reflected cream, dark olive green surfaces,
-          and glowing amber gold accents to create an immersive, architectural coffee atelier experience.
-        </p>
-      </motion.div>
     </section>
   );
 }
+export default HeroSection;

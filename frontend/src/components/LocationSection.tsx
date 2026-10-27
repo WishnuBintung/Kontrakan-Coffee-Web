@@ -94,7 +94,11 @@ export function LocationSection() {
           {/* Left Column: Address, Quick Contact & Amenities (6 Cols) */}
           <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
             {/* Main Address Card */}
-            <div className="bg-[#5B6653] text-[#E8E3D9] p-6 sm:p-8 border border-[#4D5746] sharp-edges shadow-xl space-y-5">
+            <div
+              data-rev
+              style={{ "--d": "60ms" } as React.CSSProperties}
+              className="bg-[#5B6653] text-[#E8E3D9] p-6 sm:p-8 border border-[#4D5746] sharp-edges shadow-xl space-y-5"
+            >
               <div className="flex items-center justify-between border-b border-[#4D5746] pb-4">
                 <span className="font-mono text-[12px] uppercase tracking-widest text-[#D99C5B] font-semibold flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
@@ -154,6 +158,8 @@ export function LocationSection() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* WhatsApp Card */}
               <a
+                data-rev
+                style={{ "--d": "110ms" } as React.CSSProperties}
                 href={`https://wa.me/${CAFE_INFO.whatsapp}?text=${encodeURIComponent(CAFE_INFO.whatsappText)}`}
                 target="_blank"
                 rel="noreferrer"
@@ -178,6 +184,8 @@ export function LocationSection() {
 
               {/* Instagram Card */}
               <a
+                data-rev
+                style={{ "--d": "160ms" } as React.CSSProperties}
                 href={CAFE_INFO.instagram}
                 target="_blank"
                 rel="noreferrer"
@@ -202,7 +210,11 @@ export function LocationSection() {
             </div>
 
             {/* Facilities & Amenities Badges */}
-            <div className="bg-[#5B6653]/10 border border-[#D6CFC2] p-5 sm:p-6 sharp-edges">
+            <div
+              data-rev
+              style={{ "--d": "210ms" } as React.CSSProperties}
+              className="bg-[#5B6653]/10 border border-[#D6CFC2] p-5 sm:p-6 sharp-edges"
+            >
               <span className="font-mono text-[12px] uppercase tracking-widest text-[#5B6653] block mb-3 font-bold">
                 [FASILITAS // LOKASI KAFE]
               </span>
@@ -227,7 +239,11 @@ export function LocationSection() {
           </div>
 
           {/* Right Column: Google Maps Interactive Frame (6 Cols) */}
-          <div className="lg:col-span-6 flex flex-col min-h-[380px] sm:min-h-[460px] lg:min-h-[580px]">
+          <div
+            data-rev
+            style={{ "--d": "120ms" } as React.CSSProperties}
+            className="lg:col-span-6 flex flex-col min-h-[380px] sm:min-h-[460px] lg:min-h-[580px]"
+          >
             <div className="relative w-full h-full bg-[#5B6653] border border-[#4D5746] sharp-edges overflow-hidden shadow-2xl flex flex-col">
               {/* Maps Frame Top Bar */}
               <div className="p-3.5 sm:p-4 bg-[#5B6653] border-b border-[#4D5746] flex items-center justify-between text-[#E8E3D9]">
@@ -242,7 +258,7 @@ export function LocationSection() {
                 </span>
               </div>
 
-              {/* Google Maps Iframe with client-only mounting & hydration suppression for browser extensions */}
+              {/* Google Maps Iframe */}
               <div className="relative flex-1 w-full min-h-[340px] bg-[#4D5746]">
                 {isMounted ? (
                   <iframe

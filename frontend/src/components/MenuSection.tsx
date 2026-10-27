@@ -1,17 +1,17 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useMemo } from "react";
-import { Search, X, ArrowUpRight, Sparkles, Filter, SlidersHorizontal } from "lucide-react";
+import { Search, X, ArrowUpRight, Sparkles, SlidersHorizontal, Filter } from "lucide-react";
 import { MENU_ITEMS, formatPriceRupiah, CafeMenuItem } from "@/lib/cafeData";
 import { MenuDetailModal } from "./MenuDetailModal";
-import { PhotoFrameTemplate } from "./PhotoFrameTemplate";
+import { SplitWords } from "./EditorialMotion";
 
 const CATEGORIES = [
   { id: "semua", label: "Semua Menu", code: "00" },
   { id: "kopi", label: "Kopi Atelier", code: "01" },
   { id: "non-kopi", label: "Non-Kopi", code: "02" },
   { id: "camilan", label: "Camilan & Pastry", code: "03" },
+  { id: "rekomendasi", label: "Andalan Kafe ★", code: "04" },
 ];
 
 export function MenuSection() {
@@ -23,8 +23,10 @@ export function MenuSection() {
   const filteredItems = useMemo(() => {
     let items = [...MENU_ITEMS];
 
-    // Filter by Category
-    if (activeCategory !== "semua") {
+    // Filter by Category or Recommended
+    if (activeCategory === "rekomendasi") {
+      items = items.filter((item) => item.rekomendasi);
+    } else if (activeCategory !== "semua") {
       items = items.filter((item) => item.kategori === activeCategory);
     }
 
@@ -35,7 +37,8 @@ export function MenuSection() {
         (item) =>
           item.nama.toLowerCase().includes(q) ||
           item.deskripsi.toLowerCase().includes(q) ||
-          (item.specs && item.specs.toLowerCase().includes(q))
+          (item.specs && item.specs.toLowerCase().includes(q)) ||
+          (item.rasa && item.rasa.some((r) => r.toLowerCase().includes(q)))
       );
     }
 
@@ -58,10 +61,14 @@ export function MenuSection() {
         className="w-full bg-[#E8E3D9] text-[#1C1A18] py-20 sm:py-28 px-4 sm:px-6 relative sharp-edges border-b border-[#D6CFC2]"
       >
         <div className="max-w-7xl mx-auto">
-          {/* Header Section */}
+          {/* Header Section (Original Typography) */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
             <div>
-              <span className="font-mono text-[13px] sm:text-[14px] text-[#666158] uppercase tracking-widest block mb-3 font-semibold">
+              <span
+                data-rev
+                style={{ "--d": "40ms" } as React.CSSProperties}
+                className="font-mono text-[13px] sm:text-[14px] text-[#666158] uppercase tracking-widest block mb-3 font-semibold"
+              >
                 [02 // DIGITAL CATALOGUE]
               </span>
               <h2 className="text-[10vw] sm:text-[7vw] md:text-[5vw] lg:text-[4.5vw] leading-none tracking-[-0.03em] uppercase font-sans text-[#1C1A18]">
@@ -70,15 +77,22 @@ export function MenuSection() {
               </h2>
             </div>
             <p className="text-[15px] sm:text-[17px] text-[#666158] font-sans max-w-md leading-relaxed">
-              Jelajahi sajian kopi spesialti, minuman non-kopi segar, dan hidangan pastry artisan. Setiap menu disajikan dengan bahan terbaik.
+              <SplitWords
+                text="Jelajahi sajian kopi spesialti, minuman non-kopi segar, dan hidangan pastry artisan dalam daftar rapi. Ketuk baris menu untuk melihat detail ukuran dan varian."
+                staggerMs={28}
+              />
             </p>
           </div>
 
           {/* Controls: Search, Category Filters, and Sort Options */}
-          <div className="space-y-4 mb-10 sm:mb-12">
+          <div
+            data-rev
+            style={{ "--d": "90ms" } as React.CSSProperties}
+            className="space-y-4 mb-10 sm:mb-12"
+          >
             {/* Top row: Search Bar & Sort Dropdown */}
             <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-              {/* Search input with tactile sharp styling */}
+              {/* Search input */}
               <div className="relative flex-1 max-w-lg">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#666158]">
                   <Search className="w-4 h-4" />
@@ -110,7 +124,11 @@ export function MenuSection() {
                 </div>
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) =>
+                    setSortBy(
+                      e.target.value as "default" | "price-asc" | "price-desc" | "name-asc"
+                    )
+                  }
                   className="bg-[#5B6653] text-[#E8E3D9] font-mono text-[12px] sm:text-[13px] px-3.5 py-3 border border-[#4D5746] focus:outline-none focus:border-[#D99C5B] cursor-pointer sharp-edges uppercase"
                   aria-label="Urutkan menu berdasarkan"
                 >
@@ -130,7 +148,7 @@ export function MenuSection() {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`whitespace-nowrap px-4 py-2.5 font-mono text-[12px] sm:text-[13px] uppercase tracking-wider transition-all sharp-edges shrink-0 flex items-center gap-2 border ${
+                    className={`whitespace-nowrap px-4 py-2.5 font-mono text-[12px] sm:text-[13px] uppercase tracking-wider transition-all sharp-edges shrink-0 flex items-center gap-2 border cursor-pointer ${
                       isActive
                         ? "bg-[#5B6653] text-[#E8E3D9] border-[#5B6653] shadow-md"
                         : "bg-transparent text-[#666158] border-[#D6CFC2] hover:border-[#5B6653] hover:text-[#1C1A18]"
@@ -145,7 +163,7 @@ export function MenuSection() {
           </div>
 
           {/* Results Summary Bar */}
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#D6CFC2] font-mono text-[12px] text-[#666158] uppercase">
+          <div className="flex items-center justify-between pb-4 mb-2 border-b border-[#D6CFC2] font-mono text-[12px] text-[#666158] uppercase">
             <span>
               Menampilkan {filteredItems.length} menu{" "}
               {activeCategory !== "semua" ? `kategori ${activeCategory}` : ""}
@@ -163,83 +181,115 @@ export function MenuSection() {
             )}
           </div>
 
-          {/* Menu Items Grid: 1 col on mobile, 2 col on tablet, 3 col on desktop */}
+          {/* Table Column Headers (Desktop >=700px) */}
+          <div className="hidden md:grid grid-cols-[52px_minmax(200px,1.3fr)_minmax(240px,2fr)_auto] gap-5 py-3 border-b-2 border-[#1C1A18] font-mono text-[11px] uppercase tracking-widest text-[#666158] font-semibold">
+            <span>NO.</span>
+            <span>NAMA MENU &amp; KATEGORI</span>
+            <span>DESKRIPSI &amp; KOMPOSISI</span>
+            <span className="text-right">HARGA</span>
+          </div>
+
+          {/* Clean Ruled List Without Images (Prompt Layout + Original Typography) */}
           {filteredItems.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {filteredItems.map((item, idx) => (
-                <div
-                  key={item.id}
-                  onClick={() => setSelectedItem(item)}
-                  className="group relative bg-[#5B6653] border border-[#4D5746] overflow-hidden cursor-pointer sharp-edges flex flex-col transition-all duration-300 hover:shadow-2xl hover:border-[#D99C5B]/70"
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedItem(item);
-                    }
-                  }}
-                  aria-label={`Lihat detail menu ${item.nama}`}
-                >
-                  {/* Image container with PhotoFrameTemplate */}
-                  <div className="relative aspect-[16/10] overflow-hidden w-full bg-[#4D5746]">
-                    <PhotoFrameTemplate
-                      src={item.foto}
-                      title={item.nama}
-                      category={item.kategori}
-                      slotIndex={idx + 1}
-                      aspectRatio="aspect-[16/10]"
-                    />
+            <div className="divide-y divide-[#D6CFC2] border-b-2 border-[#1C1A18]">
+              {filteredItems.map((item, idx) => {
+                const indexStr = String(idx + 1).padStart(2, "0");
+                return (
+                  <div
+                    key={item.id}
+                    data-rev
+                    style={{ "--d": `${Math.min(idx * 45, 360)}ms` } as React.CSSProperties}
+                    onClick={() => setSelectedItem(item)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedItem(item);
+                      }
+                    }}
+                    aria-label={`Lihat detail menu ${item.nama}`}
+                    className="group py-5 sm:py-6 px-3 sm:px-4 -mx-3 sm:-mx-4 hover:bg-[#5B6653] hover:text-[#E8E3D9] transition-colors duration-200 cursor-pointer sharp-edges"
+                  >
+                    <div className="menu-ruled-row">
+                      {/* Col 1: Index Numeral */}
+                      <span className="hidden md:inline-block font-mono text-[13px] font-bold text-[#D99C5B] tracking-widest">
+                        [{indexStr}]
+                      </span>
 
-                    {/* Badge Rekomendasi */}
-                    {item.rekomendasi && (
-                      <div className="absolute top-3 left-3 bg-[#D99C5B] text-[#1C1A18] font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 sharp-edges shadow-md flex items-center gap-1 z-20">
-                        <Sparkles className="w-3 h-3" />
-                        <span>REKOMENDASI</span>
-                      </div>
-                    )}
-
-                    {/* Price Tag Floating Overlay */}
-                    <div className="absolute bottom-3 right-3 bg-[#1C1A18]/85 backdrop-blur-md text-[#D99C5B] font-mono text-[15px] sm:text-[16px] font-bold px-3 py-1 sharp-edges border border-[#D99C5B]/30 z-20">
-                      {formatPriceRupiah(item.harga)}
-                    </div>
-                  </div>
-
-                  {/* Card Content */}
-                  <div className="p-5 sm:p-6 bg-[#5B6653] flex-1 flex flex-col justify-between border-t border-[#4D5746]">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-mono text-[11px] text-[#D99C5B] uppercase tracking-widest font-semibold">
-                          [0{idx + 1} // {item.kategori.toUpperCase()}]
-                        </span>
-                        {item.badge && (
-                          <span className="font-mono text-[10px] text-[#E8E3D9]/70 uppercase tracking-wider">
-                            {item.badge}
+                      {/* Col 2: Menu Name, Badges & Sizes */}
+                      <div className="space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="md:hidden font-mono text-[12px] font-bold text-[#D99C5B] mr-1">
+                            [{indexStr}]
                           </span>
+                          <h3 className="font-sans font-black text-xl sm:text-2xl text-[#1C1A18] uppercase tracking-[-0.02em] leading-snug group-hover:text-[#D99C5B] transition-colors">
+                            {item.nama}
+                          </h3>
+                          {item.rekomendasi && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#D99C5B] text-[#1C1A18] font-mono text-[10px] font-bold uppercase tracking-widest sharp-edges">
+                              <Sparkles className="w-2.5 h-2.5" />
+                              <span>REKOMENDASI</span>
+                            </span>
+                          )}
+                          {item.badge && !item.rekomendasi && (
+                            <span className="px-2 py-0.5 border border-[#666158]/40 text-[#666158] group-hover:text-[#E8E3D9]/80 group-hover:border-[#E8E3D9]/30 font-mono text-[10px] uppercase tracking-wider sharp-edges">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-wider text-[#666158] group-hover:text-[#E8E3D9]/75">
+                          <span className="text-[#5B6653] group-hover:text-[#D99C5B] font-semibold">
+                            {item.kategori}
+                          </span>
+                          {item.ukuran && item.ukuran.length > 0 && (
+                            <span>• {item.ukuran.join(" / ")}</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Mobile Price Col (<700px) */}
+                      <div className="md:hidden text-right self-start">
+                        <span className="font-mono text-[16px] font-bold text-[#D99C5B] whitespace-nowrap block">
+                          {formatPriceRupiah(item.harga)}
+                        </span>
+                        <span className="font-mono text-[10px] text-[#666158] group-hover:text-[#E8E3D9]/70 uppercase inline-flex items-center gap-0.5">
+                          <span>DETAIL</span>
+                          <ArrowUpRight className="w-3 h-3" />
+                        </span>
+                      </div>
+
+                      {/* Col 3: Description & Specs */}
+                      <div className="col-span-2 md:col-span-1 space-y-1 pt-1 md:pt-0">
+                        <p className="font-sans italic text-[14px] sm:text-[15px] text-[#1C1A18]/85 group-hover:text-[#E8E3D9]/90 leading-relaxed">
+                          {item.deskripsi}
+                        </p>
+                        {item.specs && (
+                          <p className="font-mono text-[11px] text-[#666158] group-hover:text-[#D99C5B] uppercase tracking-wider pt-0.5">
+                            // {item.specs}
+                          </p>
                         )}
                       </div>
 
-                      <h3 className="font-sans font-black text-xl sm:text-2xl text-[#E8E3D9] uppercase tracking-[-0.02em] leading-snug group-hover:text-[#D99C5B] transition-colors duration-300">
-                        {item.nama}
-                      </h3>
-
-                      <p className="font-sans text-[13px] sm:text-[14px] text-[#E8E3D9]/80 mt-2 line-clamp-2 leading-relaxed">
-                        {item.deskripsi}
-                      </p>
-                    </div>
-
-                    {/* Card Action Footer */}
-                    <div className="pt-4 mt-4 border-t border-[#4D5746] flex items-center justify-between">
-                      <span className="font-mono text-[11px] text-[#E8E3D9]/60 uppercase">
-                        TAP UNTUK DETAIL
-                      </span>
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#D99C5B] text-[#1C1A18] flex items-center justify-center shrink-0 shadow-md transition-all duration-300 group-hover:bg-[#C08343] group-hover:scale-105">
-                        <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
+                      {/* Col 4: Desktop Right-Aligned Price */}
+                      <div className="hidden md:flex items-center justify-end gap-4 text-right whitespace-nowrap">
+                        <div>
+                          <span className="font-mono text-[18px] sm:text-[20px] font-bold text-[#1C1A18] group-hover:text-[#D99C5B] transition-colors block">
+                            {formatPriceRupiah(item.harga)}
+                          </span>
+                          <span className="font-mono text-[10px] text-[#666158] group-hover:text-[#E8E3D9]/70 uppercase tracking-wider">
+                            TAP UNTUK DETAIL
+                          </span>
+                        </div>
+                        <div className="w-9 h-9 bg-[#D99C5B] text-[#1C1A18] flex items-center justify-center shrink-0 sharp-edges transition-transform duration-300 group-hover:scale-105">
+                          <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             /* Empty State */
@@ -256,7 +306,7 @@ export function MenuSection() {
                   setSearchQuery("");
                   setActiveCategory("semua");
                 }}
-                className="px-6 py-3 bg-[#5B6653] text-[#E8E3D9] font-mono text-[13px] uppercase tracking-wider hover:bg-[#D99C5B] hover:text-[#1C1A18] transition-colors sharp-edges"
+                className="px-6 py-3 bg-[#5B6653] text-[#E8E3D9] font-mono text-[13px] uppercase tracking-wider hover:bg-[#D99C5B] hover:text-[#1C1A18] transition-colors sharp-edges cursor-pointer"
               >
                 Tampilkan Semua Menu
               </button>
@@ -275,4 +325,3 @@ export function MenuSection() {
 }
 
 export default MenuSection;
-

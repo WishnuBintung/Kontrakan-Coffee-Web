@@ -5,12 +5,11 @@ import { StaggeredMenu } from "./StaggeredMenu";
 
 export function Navbar() {
   const navLinks = [
-    { label: "Rekomendasi", href: "#rekomendasi" },
+    { label: "Deskripsi", href: "#pembuka" },
     { label: "Menu", href: "#menu" },
     { label: "Jam Buka", href: "#jam-buka" },
     { label: "Galeri", href: "#galeri" },
     { label: "Lokasi", href: "#lokasi" },
-    { label: "Manifesto", href: "#manifesto" },
   ];
 
   return (
@@ -38,9 +37,9 @@ export function Navbar() {
       }
       items={[
         {
-          label: "Rekomendasi",
-          ariaLabel: "Lihat menu rekomendasi Kontrakan Coffee",
-          link: "#rekomendasi",
+          label: "Deskripsi",
+          ariaLabel: "Baca kalimat pembuka dan deskripsi Kontrakan Coffee",
+          link: "#pembuka",
         },
         {
           label: "Menu",
@@ -61,11 +60,6 @@ export function Navbar() {
           label: "Lokasi",
           ariaLabel: "Kunjungi kami di lokasi kafe",
           link: "#lokasi",
-        },
-        {
-          label: "Manifesto",
-          ariaLabel: "Baca manifesto kopi Kontrakan",
-          link: "#manifesto",
         },
       ]}
       socialItems={[

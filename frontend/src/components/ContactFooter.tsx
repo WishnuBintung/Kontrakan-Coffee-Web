@@ -19,17 +19,21 @@ export function ContactFooter() {
       className="w-full bg-[#5B6653] text-[#E8E3D9] py-20 px-6 relative sharp-edges border-t border-[#4D5746]"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Top element: Full-width border-b text 'VISIT KONTRAKAN' at 12vw, Black weight, uppercase, hover turns #D99C5B */}
-        <div className="border-b border-[#4D5746] pb-10 md:pb-16 mb-16 md:mb-20">
+        {/* Retained div 'VISIT KONTRAKAN' updated to 'KONTRAKAN COFFEE' with original typography */}
+        <div
+          data-rev
+          style={{ "--d": "40ms" } as React.CSSProperties}
+          className="border-b border-[#4D5746] pb-10 md:pb-16 mb-16 md:mb-20"
+        >
           <a
             href="#lokasi"
-            className="block font-sans font-black text-[10vw] md:text-[11vw] leading-none text-[#E8E3D9] uppercase tracking-[-0.03em] hover:text-[#D99C5B] transition-colors select-none"
+            className="block font-sans font-black text-[9vw] md:text-[9.5vw] leading-none text-[#E8E3D9] uppercase tracking-[-0.03em] hover:text-[#D99C5B] transition-colors select-none"
           >
-            VISIT KONTRAKAN
+            KONTRAKAN COFFEE
           </a>
         </div>
 
-        {/* Bottom: 3-column grid */}
+        {/* Bottom: 3-column grid (Original Typography) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
           {/* Column 1: Social links with wavy underline hover */}
           <div className="flex flex-col space-y-4">
@@ -38,11 +42,12 @@ export function ContactFooter() {
             </span>
             <ul className="space-y-2">
               {[
+                { label: "Deskripsi & Pembuka", href: "#pembuka" },
+                { label: "Daftar Menu & Harga", href: "#menu" },
+                { label: "Jadwal Jam Buka", href: "#jam-buka" },
                 { label: "Instagram (@kontrakancoffee)", href: "https://instagram.com/kontrakancoffee" },
                 { label: "WhatsApp Chat", href: "https://wa.me/6281234567890" },
                 { label: "Google Maps Navigasi", href: "https://maps.google.com/?q=Kontrakan+Coffee+Yogyakarta" },
-                { label: "Menu Rekomendasi", href: "#rekomendasi" },
-                { label: "Jadwal Jam Buka", href: "#jam-buka" },
               ].map((item) => (
                 <li key={item.label}>
                   <a
@@ -93,7 +98,7 @@ export function ContactFooter() {
               </button>
             </div>
             <p className="font-mono text-[14px] text-[#E8E3D9]/70 leading-relaxed pt-2">
-              Artisanal spatial coffee roastery, architectural collaborations & sensory consultations.
+              Artisanal spatial coffee roastery, architectural collaborations &amp; sensory consultations.
             </p>
           </div>
 
@@ -104,7 +109,7 @@ export function ContactFooter() {
             </span>
             <div className="font-mono text-[14px] text-[#E8E3D9]/70 leading-relaxed space-y-1">
               <p>© 2026 KONTRAKAN COFFEE ATELIER.</p>
-              <p>SPATIAL BOTANICAL & WARM MONOCHROME SYSTEM.</p>
+              <p>SPATIAL BOTANICAL &amp; WARM MONOCHROME SYSTEM.</p>
               <p>ALL RIGHTS RESERVED.</p>
             </div>
           </div>
@@ -113,3 +118,4 @@ export function ContactFooter() {
     </footer>
   );
 }
+export default ContactFooter;

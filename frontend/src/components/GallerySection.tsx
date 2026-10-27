@@ -67,7 +67,7 @@ export function GallerySection() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="font-mono text-[13px] sm:text-[14px] text-[#666158] uppercase tracking-widest font-semibold">
-                  [04 // SPACE & ATMOSPHERE]
+                  [04 // SPACE &amp; ATMOSPHERE]
                 </span>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] bg-[#D99C5B] text-[#1C1A18] font-bold uppercase tracking-wider sharp-edges">
                   <Sparkles className="w-3 h-3" />
@@ -93,7 +93,7 @@ export function GallerySection() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`whitespace-nowrap px-4 py-2.5 font-mono text-[12px] sm:text-[13px] uppercase tracking-wider transition-all sharp-edges shrink-0 border ${
+                  className={`whitespace-nowrap px-4 py-2.5 font-mono text-[12px] sm:text-[13px] uppercase tracking-wider transition-all sharp-edges shrink-0 border cursor-pointer ${
                     isActive
                       ? "bg-[#5B6653] text-[#E8E3D9] border-[#5B6653] shadow-md"
                       : "bg-transparent text-[#666158] border-[#D6CFC2] hover:border-[#5B6653] hover:text-[#1C1A18]"
@@ -110,6 +110,8 @@ export function GallerySection() {
             {filteredPhotos.map((photo, idx) => (
               <div
                 key={photo.id}
+                data-rev
+                style={{ "--d": `${idx * 60}ms` } as React.CSSProperties}
                 onClick={() => setSelectedPhoto(photo)}
                 className="group relative bg-[#5B6653] border border-[#4D5746] overflow-hidden cursor-pointer sharp-edges flex flex-col transition-all duration-300 hover:shadow-2xl hover:border-[#D99C5B]/70"
                 role="button"
@@ -273,4 +275,3 @@ export function GallerySection() {
 }
 
 export default GallerySection;
-

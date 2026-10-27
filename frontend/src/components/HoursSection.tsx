@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Clock, Calendar, CheckCircle2, AlertCircle, ArrowUpRight, Coffee, Wifi, Zap } from "lucide-react";
+import { Clock, Calendar, ArrowUpRight, Coffee, Wifi, Zap } from "lucide-react";
 import { CAFE_INFO, getOpenStatusWIB } from "@/lib/cafeData";
 
 export function HoursSection() {
@@ -49,7 +49,11 @@ export function HoursSection() {
         </div>
 
         {/* Live Status Card: Pulsing Beacon Indicator */}
-        <div className="mb-10 sm:mb-12 bg-[#4D5746] border border-[#5B6653] p-5 sm:p-7 sharp-edges shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div
+          data-rev
+          style={{ "--d": "80ms" } as React.CSSProperties}
+          className="mb-10 sm:mb-12 bg-[#4D5746] border border-[#5B6653] p-5 sm:p-7 sharp-edges shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
           <div className="flex items-center gap-4">
             {/* Status Beacon Circle */}
             <div className="relative flex items-center justify-center shrink-0">
@@ -117,12 +121,15 @@ export function HoursSection() {
             </div>
 
             <div className="divide-y divide-[#5B6653]">
-              {CAFE_INFO.jamBuka.map((item) => {
+              {CAFE_INFO.jamBuka.map((item, idx) => {
                 const isToday =
+                  isMounted &&
                   item.hari.toLowerCase() === storeStatus.todayName.toLowerCase();
                 return (
                   <div
                     key={item.hari}
+                    data-rev
+                    style={{ "--d": `${idx * 50}ms` } as React.CSSProperties}
                     className={`p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 transition-colors ${
                       isToday
                         ? "bg-[#5B6653] border-l-4 border-l-[#D99C5B]"
@@ -175,12 +182,16 @@ export function HoursSection() {
           {/* Right Column: Roastery Notes & Facility Highlights (4 Columns) */}
           <div className="lg:col-span-4 space-y-6">
             {/* Highlights Box */}
-            <div className="bg-[#4D5746]/60 border border-[#4D5746] p-6 sharp-edges space-y-4">
+            <div
+              data-rev
+              style={{ "--d": "120ms" } as React.CSSProperties}
+              className="bg-[#4D5746]/60 border border-[#4D5746] p-6 sharp-edges space-y-4"
+            >
               <span className="font-mono text-[12px] uppercase tracking-widest text-[#D99C5B] block font-semibold">
-                [STUDY & WFC SESSIONS]
+                [STUDY &amp; WFC SESSIONS]
               </span>
               <h3 className="font-sans font-black text-2xl uppercase tracking-[-0.02em] text-[#E8E3D9]">
-                SUASANA PRODUKTIF & NYAMAN
+                SUASANA PRODUKTIF &amp; NYAMAN
               </h3>
               <p className="font-sans text-[14px] text-[#E8E3D9]/80 leading-relaxed">
                 Didesain khusus untuk mahasiswa dan pekerja kreatif. Dapatkan ketenangan seduhan pagi dan suasana fokus tanpa gangguan.
@@ -232,7 +243,11 @@ export function HoursSection() {
             </div>
 
             {/* Friday Note Card */}
-            <div className="p-4 bg-[#5B6653] border-l-4 border-l-[#D99C5B] border border-[#4D5746] sharp-edges text-[13px] text-[#E8E3D9]/90 font-sans leading-relaxed">
+            <div
+              data-rev
+              style={{ "--d": "180ms" } as React.CSSProperties}
+              className="p-4 bg-[#5B6653] border-l-4 border-l-[#D99C5B] border border-[#4D5746] sharp-edges text-[13px] text-[#E8E3D9]/90 font-sans leading-relaxed"
+            >
               <strong className="text-[#D99C5B] font-semibold">Khusus Hari Jumat:</strong> Kafe buka mulai pukul 13:00 WIB setelah pelaksanaan ibadah Sholat Jumat, dan beroperasi hingga 23:30 WIB.
             </div>
           </div>
@@ -243,4 +258,3 @@ export function HoursSection() {
 }
 
 export default HoursSection;
-
