@@ -36,7 +36,11 @@ export function ContactFooter() {
         {/* Bottom: 3-column grid (Original Typography) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
           {/* Column 1: Social links with wavy underline hover */}
-          <div className="flex flex-col space-y-4">
+          <div
+            data-rev
+            style={{ "--d": "90ms" } as React.CSSProperties}
+            className="flex flex-col space-y-4"
+          >
             <ul className="space-y-2">
               {[
                 { label: "Deskripsi & Pembuka", href: "#pembuka" },
@@ -61,17 +65,21 @@ export function ContactFooter() {
           </div>
 
           {/* Column 2: Contact email (3xl font) with Action button */}
-          <div className="flex flex-col space-y-4">
+          <div
+            data-rev
+            style={{ "--d": "150ms" } as React.CSSProperties}
+            className="flex flex-col space-y-4"
+          >
             <div className="flex flex-col items-start gap-2">
               <a
                 href={`mailto:${email}`}
-                className="text-2xl md:text-3xl font-medium tracking-tight text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors break-words font-sans"
+                className="text-2xl md:text-3xl font-medium tracking-tight text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] break-words font-sans"
               >
                 {email}
               </a>
               <button
                 onClick={handleCopyEmail}
-                className={`font-mono text-[12px] uppercase tracking-wider px-3.5 py-1.5 sharp-edges transition-all inline-flex items-center gap-2 font-medium ${
+                className={`font-mono text-[12px] uppercase tracking-wider px-3.5 py-1.5 sharp-edges transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] inline-flex items-center gap-2 font-medium ${
                   copied
                     ? "bg-[#EEE6D7] text-[#472F1D]"
                     : "bg-[#C7B8AE] text-[#472F1D] hover:bg-[#EEE6D7]"
@@ -97,7 +105,11 @@ export function ContactFooter() {
           </div>
 
           {/* Column 3: Rights reserved text aligned bottom-right */}
-          <div className="flex flex-col md:items-end justify-between h-full space-y-4 md:text-right">
+          <div
+            data-rev
+            style={{ "--d": "210ms" } as React.CSSProperties}
+            className="flex flex-col md:items-end justify-between h-full space-y-4 md:text-right"
+          >
             <div className="font-mono text-[14px] text-[#EEE6D7]/70 leading-relaxed space-y-1">
               <p>© 2026 KONTRAKAN COFFEE ATELIER.</p>
               <p>SPATIAL BOTANICAL &amp; WARM MONOCHROME SYSTEM.</p>

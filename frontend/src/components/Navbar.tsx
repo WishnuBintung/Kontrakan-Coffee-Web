@@ -17,7 +17,7 @@ export function Navbar() {
       logo={
         <a
           href="#"
-          className="text-[18px] font-bold tracking-tight uppercase hover:text-[#C7B8AE] transition-colors font-sans text-[#EEE6D7]"
+          className="text-[18px] font-bold tracking-tight uppercase hover:text-[#C7B8AE] transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] font-sans text-[#EEE6D7]"
         >
           KONTRAKAN COFFEE
         </a>
@@ -28,7 +28,7 @@ export function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className="text-[17px] font-medium tracking-tight uppercase text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors font-sans"
+              className="relative py-1 text-[17px] font-medium tracking-tight uppercase text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] font-sans after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1.5px] after:bg-[#C7B8AE] after:origin-right after:scale-x-0 hover:after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)]"
             >
               {link.label}
             </a>
@@ -72,11 +72,11 @@ export function Navbar() {
       accentColor="#C7B8AE"
       menuButtonColor="#EEE6D7"
       openMenuButtonColor="#C7B8AE"
-      displayItemNumbering={true}
+      displayItemNumbering={false}
       displaySocials={true}
       isFixed={true}
       shrinkOnScroll={true}
-      scrollThreshold={100}
+      scrollThreshold={80}
     />
   );
 }

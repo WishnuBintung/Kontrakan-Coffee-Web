@@ -74,14 +74,21 @@ export function LocationSection() {
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
-          <div>
+          <div
+            data-rev
+            style={{ "--d": "40ms" } as React.CSSProperties}
+          >
             <h2 className="text-[10vw] sm:text-[7vw] md:text-[5vw] lg:text-[4.5vw] leading-none tracking-[-0.03em] uppercase font-sans text-[#472F1D]">
               <span className="font-black">FIND US AT </span>
               <span className="font-thin italic text-[#5F493C]">THE LOCATION</span>
             </h2>
           </div>
 
-          <p className="text-[15px] sm:text-[17px] text-[#5F493C] font-sans max-w-md leading-relaxed">
+          <p
+            data-rev
+            style={{ "--d": "90ms" } as React.CSSProperties}
+            className="text-[15px] sm:text-[17px] text-[#5F493C] font-sans max-w-md leading-relaxed"
+          >
             Berada di pusat denyut kreatif Seturan, Sleman, Yogyakarta. Singgahlah untuk menikmati seduhan berkualitas, suasana tenang, dan ruang kolaboratif.
           </p>
         </div>

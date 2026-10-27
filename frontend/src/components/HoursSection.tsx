@@ -27,7 +27,10 @@ export function HoursSection() {
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
-          <div>
+          <div
+            data-rev
+            style={{ "--d": "40ms" } as React.CSSProperties}
+          >
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 font-mono text-[11px] bg-[#EEE6D7] text-[#472F1D] font-bold uppercase tracking-wider sharp-edges">
                 <Clock className="w-3 h-3" />
@@ -40,7 +43,11 @@ export function HoursSection() {
             </h2>
           </div>
 
-          <p className="text-[15px] sm:text-[17px] text-[#EEE6D7]/80 font-sans max-w-md leading-relaxed">
+          <p
+            data-rev
+            style={{ "--d": "90ms" } as React.CSSProperties}
+            className="text-[15px] sm:text-[17px] text-[#EEE6D7]/80 font-sans max-w-md leading-relaxed"
+          >
             Buka setiap hari dari Senin hingga Minggu. Tempat tepat untuk seduhan kopi pagi, nugas produktif siang hari, hingga nongkrong santai larut malam.
           </p>
         </div>

@@ -12,7 +12,7 @@ export function HeroSection() {
       className="stage-hero-pin relative w-full h-[300svh] bg-[#EEE6D7] text-[#472F1D] select-none"
     >
       {/* Sticky 100svh Inner Pin (Prompt Layout & Choreography) */}
-      <div className="sticky top-0 left-0 w-full h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between items-center text-center px-6 pt-24 sm:pt-28 pb-8 sm:pb-10 bg-[#EEE6D7] text-[#472F1D] isolate">
+      <div className="sticky top-0 left-0 w-full h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-center items-center text-center px-6 py-16 bg-[#EEE6D7] text-[#472F1D] isolate">
         {/* Multiply-blended still-life photograph scaling 1.04 -> 1.11 and drifting up 3% */}
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
           <img
@@ -28,9 +28,6 @@ export function HeroSection() {
             }}
           />
         </div>
-
-        {/* Spacer atas */}
-        <div className="h-4 relative z-10" aria-hidden="true" />
 
         {/* Center Type Block ABOVE the multiplied photograph — lifts 46px and fades out on scroll */}
         <div className="stage-hero-type my-auto relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center">
@@ -67,47 +64,10 @@ export function HeroSection() {
             <p className="text-[17px] md:text-[20px] font-light tracking-tight text-[#472F1D]/90 leading-relaxed font-sans font-medium">
               <SplitWords
                 text="The Kontrakan Coffee design system combines warm oat cream, roasted mocha surfaces, deep espresso typography, and latte taupe accents to create an immersive, architectural coffee atelier experience."
-                staggerMs={38}
-                baseDelayMs={150}
+                staggerMs={26}
+                baseDelayMs={160}
               />
             </p>
-          </div>
-        </div>
-
-        {/* Three Straps Pinned Across the Base */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto pt-4 border-t border-[#472F1D]/25">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 items-center bg-[#EEE6D7]/80 backdrop-blur-[2px] px-4 py-2.5 border border-[#C7B8AE]">
-            <div
-              data-rev
-              style={{ "--d": "60ms" } as React.CSSProperties}
-              className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#472F1D] font-bold text-left"
-            >
-              JL. SETURAN RAYA NO. 45, SLEMAN
-            </div>
-
-            <div
-              data-rev
-              style={{ "--d": "120ms" } as React.CSSProperties}
-              className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#472F1D] font-bold sm:text-center hidden sm:block"
-            >
-              SINGLE ORIGIN &amp; ARTISANAL BREW
-            </div>
-
-            <div
-              data-rev
-              style={{ "--d": "180ms" } as React.CSSProperties}
-              className="font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[#472F1D] font-bold sm:text-right"
-            >
-              SCROLL UNTUK MENJELAJAH ↓
-            </div>
-          </div>
-
-          {/* Progress Rail in Accent Color */}
-          <div className="w-full h-[2px] bg-[#472F1D]/15 mt-2 overflow-hidden">
-            <div
-              data-stage-progress
-              className="h-full w-full bg-[#C7B8AE] origin-left scale-x-0 transition-transform duration-75"
-            />
           </div>
         </div>
       </div>

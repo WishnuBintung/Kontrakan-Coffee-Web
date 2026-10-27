@@ -64,7 +64,10 @@ export function GallerySection() {
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
-            <div>
+            <div
+              data-rev
+              style={{ "--d": "40ms" } as React.CSSProperties}
+            >
               <div className="flex items-center gap-2 mb-3">
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] bg-[#C7B8AE] text-[#472F1D] font-bold uppercase tracking-wider sharp-edges">
                   <Sparkles className="w-3 h-3" />
@@ -77,7 +80,11 @@ export function GallerySection() {
               </h2>
             </div>
 
-            <p className="text-[15px] sm:text-[17px] text-[#5F493C] font-sans max-w-md leading-relaxed">
+            <p
+              data-rev
+              style={{ "--d": "90ms" } as React.CSSProperties}
+              className="text-[15px] sm:text-[17px] text-[#5F493C] font-sans max-w-md leading-relaxed"
+            >
               Jelajahi suasana ruang, meja komunal kerja, bar seduhan manual, dan taman terbuka Kontrakan Coffee sebelum Anda berkunjung langsung.
             </p>
           </div>
@@ -209,13 +216,20 @@ export function GallerySection() {
                 </button>
               </div>
 
-              {/* Image with Left/Right Navigation */}
+              {/* Image with Left/Right Navigation and Smooth Crossfade */}
               <div className="relative w-full bg-[#472F1D] flex items-center justify-center min-h-[300px] sm:min-h-[460px] md:min-h-[520px] max-h-[70vh] overflow-hidden">
-                <img
-                  src={selectedPhoto.gambar}
-                  alt={selectedPhoto.judul}
-                  className="w-full h-full max-h-[70vh] object-contain"
-                />
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={selectedPhoto.id}
+                    initial={{ opacity: 0, scale: 0.985 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.985 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    src={selectedPhoto.gambar}
+                    alt={selectedPhoto.judul}
+                    className="w-full h-full max-h-[70vh] object-contain"
+                  />
+                </AnimatePresence>
 
                 {/* Left arrow */}
                 <button

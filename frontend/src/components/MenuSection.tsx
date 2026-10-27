@@ -63,7 +63,10 @@ export function MenuSection() {
         <div className="max-w-7xl mx-auto">
           {/* Header Section (Original Typography) */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
-            <div>
+            <div
+              data-rev
+              style={{ "--d": "40ms" } as React.CSSProperties}
+            >
               <h2 className="text-[10vw] sm:text-[7vw] md:text-[5vw] lg:text-[4.5vw] leading-none tracking-[-0.03em] uppercase font-sans text-[#472F1D]">
                 <span className="font-black">DIGITAL </span>
                 <span className="font-thin italic text-[#5F493C]">MENU</span>
@@ -72,7 +75,7 @@ export function MenuSection() {
             <p className="text-[15px] sm:text-[17px] text-[#5F493C] font-sans max-w-md leading-relaxed">
               <SplitWords
                 text="Jelajahi sajian kopi spesialti, minuman non-kopi segar, dan hidangan pastry artisan dalam daftar rapi. Ketuk baris menu untuk melihat detail ukuran dan varian."
-                staggerMs={28}
+                staggerMs={26}
               />
             </p>
           </div>
@@ -201,11 +204,11 @@ export function MenuSection() {
                       }
                     }}
                     aria-label={`Lihat detail menu ${item.nama}`}
-                    className="group py-5 sm:py-6 px-3 sm:px-4 -mx-3 sm:-mx-4 hover:bg-[#5F493C] hover:text-[#EEE6D7] transition-colors duration-200 cursor-pointer sharp-edges"
+                    className="group py-5 sm:py-6 px-3 sm:px-4 -mx-3 sm:-mx-4 hover:bg-[#5F493C] hover:text-[#EEE6D7] transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer sharp-edges"
                   >
                     <div className="menu-ruled-row">
                       {/* Col 1: Index Numeral */}
-                      <span className="hidden md:inline-block font-mono text-[13px] font-bold text-[#5F493C] group-hover:text-[#C7B8AE] tracking-widest">
+                      <span className="hidden md:inline-block font-mono text-[13px] font-bold text-[#5F493C] group-hover:text-[#C7B8AE] transition-colors duration-400 tracking-widest">
                         {indexStr}
                       </span>
 
@@ -215,7 +218,7 @@ export function MenuSection() {
                           <span className="md:hidden font-mono text-[12px] font-bold text-[#5F493C] group-hover:text-[#C7B8AE] mr-1">
                             {indexStr}.
                           </span>
-                          <h3 className="font-sans font-black text-xl sm:text-2xl text-[#472F1D] uppercase tracking-[-0.02em] leading-snug group-hover:text-[#EEE6D7] transition-colors">
+                          <h3 className="font-sans font-black text-xl sm:text-2xl text-[#472F1D] uppercase tracking-[-0.02em] leading-snug group-hover:text-[#EEE6D7] group-hover:translate-x-1 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]">
                             {item.nama}
                           </h3>
                           {item.rekomendasi && (

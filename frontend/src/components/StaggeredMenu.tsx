@@ -67,7 +67,7 @@ export interface StaggeredMenuProps {
   onMenuOpen?: () => void;
   /** Callback when menu starts closing */
   onMenuClose?: () => void;
-  /** Whether the header shrinks on scroll past 100px */
+  /** Whether the header shrinks on scroll past threshold */
   shrinkOnScroll?: boolean;
   /** Scroll distance threshold in pixels to trigger shrinking header */
   scrollThreshold?: number;
@@ -89,7 +89,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     { label: "Are.na", link: "https://are.na" },
   ],
   displaySocials = true,
-  displayItemNumbering = true,
   className,
   logo,
   desktopNav,
@@ -102,25 +101,18 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   onMenuOpen,
   onMenuClose,
   shrinkOnScroll = true,
-  scrollThreshold = 100,
+  scrollThreshold = 80,
 }) => {
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
-  // Shrinking Sticky Header: tracks scroll position past 100px threshold
   const [isScrolled, setIsScrolled] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const preLayersRef = useRef<HTMLDivElement | null>(null);
   const preLayerElsRef = useRef<HTMLElement[]>([]);
-  const plusHRef = useRef<HTMLSpanElement | null>(null);
-  const plusVRef = useRef<HTMLSpanElement | null>(null);
-  const iconRef = useRef<HTMLDivElement | null>(null);
-  const textInnerRef = useRef<HTMLDivElement | null>(null);
-  const [textLines, setTextLines] = useState<string[]>(["Menu", "Close"]);
+  const backdropRef = useRef<HTMLDivElement | null>(null);
 
   const openTlRef = useRef<gsap.core.Timeline | null>(null);
   const closeTweenRef = useRef<gsap.core.Tween | null>(null);
-  const spinTweenRef = useRef<gsap.core.Timeline | null>(null);
-  const textCycleAnimRef = useRef<gsap.core.Tween | null>(null);
   const colorTweenRef = useRef<gsap.core.Tween | null>(null);
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
   const busyRef = useRef(false);
@@ -129,12 +121,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     const ctx = gsap.context(() => {
       const panel = panelRef.current;
       const preContainer = preLayersRef.current;
-      const plusH = plusHRef.current;
-      const plusV = plusVRef.current;
-      const icon = iconRef.current;
-      const textInner = textInnerRef.current;
 
-      if (!panel || !plusH || !plusV || !icon || !textInner) return;
+      if (!panel) return;
 
       let preLayers: HTMLElement[] = [];
       if (preContainer) {
@@ -145,16 +133,47 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       preLayerElsRef.current = preLayers;
 
       const offscreen = position === "left" ? -100 : 100;
-      gsap.set([panel, ...preLayers], { xPercent: offscreen });
-      gsap.set(plusH, { transformOrigin: "50% 50%", rotate: 0 });
-      gsap.set(plusV, { transformOrigin: "50% 50%", rotate: 90 });
-      gsap.set(icon, { rotate: 0, transformOrigin: "50% 50%" });
-      gsap.set(textInner, { yPercent: 0 });
+      gsap.set([panel, ...preLayers], { xPercent: offscreen, force3D: true });
 
       if (toggleBtnRef.current) gsap.set(toggleBtnRef.current, { color: menuButtonColor });
     });
     return () => ctx.revert();
   }, [menuButtonColor, position]);
+
+  // Strict Scroll Lock: When sidebar is open, ONLY the sidebar can scroll; outside page cannot scroll at all
+  useEffect(() => {
+    const htmlEl = document.documentElement;
+    const bodyEl = document.body;
+
+    if (open) {
+      htmlEl.style.overflow = "hidden";
+      bodyEl.style.overflow = "hidden";
+    } else {
+      htmlEl.style.overflow = "";
+      bodyEl.style.overflow = "";
+    }
+
+    const preventOutsideScroll = (e: TouchEvent | WheelEvent) => {
+      if (!openRef.current) return;
+      const panel = panelRef.current;
+      if (panel && panel.contains(e.target as Node)) {
+        return; // Allow scrolling inside the sidebar panel
+      }
+      e.preventDefault();
+    };
+
+    if (open) {
+      window.addEventListener("wheel", preventOutsideScroll, { passive: false });
+      window.addEventListener("touchmove", preventOutsideScroll, { passive: false });
+    }
+
+    return () => {
+      htmlEl.style.overflow = "";
+      bodyEl.style.overflow = "";
+      window.removeEventListener("wheel", preventOutsideScroll);
+      window.removeEventListener("touchmove", preventOutsideScroll);
+    };
+  }, [open]);
 
   const buildOpenTimeline = useCallback(() => {
     const panel = panelRef.current;
@@ -181,9 +200,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     }));
     const panelStart = Number(gsap.getProperty(panel, "xPercent"));
 
-    if (itemEls.length) gsap.set(itemEls, { yPercent: 140, rotate: 10 });
+    if (itemEls.length) gsap.set(itemEls, { yPercent: 140, rotate: 8, force3D: true });
     if (socialTitle) gsap.set(socialTitle, { opacity: 0 });
-    if (socialLinks.length) gsap.set(socialLinks, { y: 25, opacity: 0 });
+    if (socialLinks.length) gsap.set(socialLinks, { y: 25, opacity: 0, force3D: true });
 
     const tl = gsap.timeline({ paused: true });
 
@@ -191,19 +210,19 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       tl.fromTo(
         ls.el,
         { xPercent: ls.start },
-        { xPercent: 0, duration: 0.5, ease: "power4.out" },
+        { xPercent: 0, duration: 0.55, ease: "power4.out", force3D: true },
         i * 0.07
       );
     });
 
     const lastTime = layerStates.length ? (layerStates.length - 1) * 0.07 : 0;
     const panelInsertTime = lastTime + (layerStates.length ? 0.08 : 0);
-    const panelDuration = 0.65;
+    const panelDuration = 0.7;
 
     tl.fromTo(
       panel,
       { xPercent: panelStart },
-      { xPercent: 0, duration: panelDuration, ease: "power4.out" },
+      { xPercent: 0, duration: panelDuration, ease: "power4.out", force3D: true },
       panelInsertTime
     );
 
@@ -216,7 +235,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           rotate: 0,
           duration: 0.9,
           ease: "power4.out",
-          stagger: { each: 0.1, from: "start" },
+          force3D: true,
+          stagger: { each: 0.09, from: "start" },
         },
         itemsStart
       );
@@ -235,6 +255,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             opacity: 1,
             duration: 0.55,
             ease: "power3.out",
+            force3D: true,
             stagger: { each: 0.08, from: "start" },
           },
           socialsStart + 0.04
@@ -244,10 +265,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
     openTlRef.current = tl;
     return tl;
-  }, [position]);
+  }, []);
 
   const playOpen = useCallback(() => {
-    if (busyRef.current) return;
     busyRef.current = true;
     const tl = buildOpenTimeline();
     if (tl) {
@@ -273,10 +293,11 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
     closeTweenRef.current = gsap.to(all, {
       xPercent: offscreen,
-      duration: 0.35,
-      ease: "power3.in",
+      duration: 0.48,
+      ease: "power3.inOut",
+      force3D: true,
       stagger: {
-        each: 0.05,
+        each: 0.045,
         from: "end",
       },
       overwrite: "auto",
@@ -285,26 +306,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       },
     });
   }, [position]);
-
-  const animateIcon = useCallback((opening: boolean) => {
-    const icon = iconRef.current;
-    const h = plusHRef.current;
-    const v = plusVRef.current;
-    if (!icon || !h || !v) return;
-
-    spinTweenRef.current?.kill();
-    if (opening) {
-      spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: "power4.out" } })
-        .to(h, { rotate: 45, duration: 0.5 }, 0)
-        .to(v, { rotate: -45, duration: 0.5 }, 0);
-    } else {
-      spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: "power3.inOut" } })
-        .to(h, { rotate: 0, duration: 0.35 }, 0)
-        .to(v, { rotate: 90, duration: 0.35 }, 0);
-    }
-  }, []);
 
   const animateColor = useCallback(
     (opening: boolean) => {
@@ -316,7 +317,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         const targetColor = opening ? openMenuButtonColor : menuButtonColor;
         colorTweenRef.current = gsap.to(btn, {
           color: targetColor,
-          delay: 0.18,
+          delay: 0.1,
           duration: 0.3,
           ease: "power2.out",
         });
@@ -324,26 +325,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     },
     [openMenuButtonColor, menuButtonColor, changeMenuColorOnOpen]
   );
-
-  const animateText = useCallback((opening: boolean) => {
-    const inner = textInnerRef.current;
-    if (!inner) return;
-    textCycleAnimRef.current?.kill();
-
-    const seq = opening ? ["Menu", "...", "Close"] : ["Close", "...", "Menu"];
-
-    setTextLines(seq);
-    gsap.set(inner, { yPercent: 0 });
-
-    const lineCount = seq.length;
-    const finalShift = ((lineCount - 1) / lineCount) * 100;
-
-    textCycleAnimRef.current = gsap.to(inner, {
-      yPercent: -finalShift,
-      duration: 0.5,
-      ease: "power4.out",
-    });
-  }, []);
 
   const toggleMenu = useCallback(() => {
     const target = !openRef.current;
@@ -358,10 +339,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       playClose();
     }
 
-    animateIcon(target);
     animateColor(target);
-    animateText(target);
-  }, [playOpen, playClose, animateIcon, animateColor, animateText, onMenuOpen, onMenuClose]);
+  }, [playOpen, playClose, animateColor, onMenuOpen, onMenuClose]);
 
   // Keyboard accessibility: ESC key to close
   useEffect(() => {
@@ -391,16 +370,35 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [closeOnClickAway, open, toggleMenu]);
 
-  // Shrinking Sticky Header scroll listener: activates when user scrolls past 100px
+  // Shrinking Sticky Header scroll listener with hysteresis
   useEffect(() => {
     if (!shrinkOnScroll) return;
-    const handleScroll = () => {
-      const scrolled = window.scrollY > scrollThreshold;
-      setIsScrolled(scrolled);
+    let rafId: number | null = null;
+    const upperThreshold = scrollThreshold;
+    const lowerThreshold = Math.max(20, scrollThreshold - 36);
+
+    const checkScroll = () => {
+      rafId = null;
+      const y = window.scrollY;
+      setIsScrolled((prev) => {
+        if (!prev && y > upperThreshold) return true;
+        if (prev && y < lowerThreshold) return false;
+        return prev;
+      });
     };
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    const onScroll = () => {
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(checkScroll);
+      }
+    };
+
+    checkScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [shrinkOnScroll, scrollThreshold]);
 
   return (
@@ -411,11 +409,12 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         className
       )}
     >
-      {/* Dimmed backdrop when panel is open */}
+      {/* Dimmed backdrop when panel is open — blocks outside clicks & scroll */}
       <div
+        ref={backdropRef}
         onClick={open ? toggleMenu : undefined}
         className={cn(
-          "fixed inset-0 bg-[#472F1D]/50 backdrop-blur-[2px] transition-opacity duration-500 z-[15]",
+          "fixed inset-0 bg-[#472F1D]/50 backdrop-blur-[2px] transition-opacity duration-500 z-[15] touch-none",
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         aria-hidden="true"
@@ -426,18 +425,18 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         style={{ "--sm-accent": accentColor } as React.CSSProperties}
         data-position={position}
       >
-        {/* Layer Backgrounds (Pre-layers) */}
+        {/* Layer Backgrounds (Pre-layers) — Restored Full-Screen Mobile Width w-[100vw] */}
         <div
           ref={preLayersRef}
           className={cn(
-            "sm-prelayers absolute top-0 bottom-0 pointer-events-none z-[20] w-[100vw] sm:w-[60vw] md:w-[48vw] lg:w-[36vw]",
+            "sm-prelayers absolute top-0 bottom-0 pointer-events-none z-[20] w-[100vw] sm:w-[60vw] md:w-[48vw] lg:w-[36vw] will-change-transform",
             position === "left" ? "left-0" : "right-0"
           )}
         >
           {colors.slice(0, -1).map((c, i) => (
             <div
               key={i}
-              className="sm-prelayer absolute inset-0 shadow-2xl"
+              className="sm-prelayer absolute inset-0 shadow-2xl will-change-transform"
               style={{ background: c }}
             />
           ))}
@@ -446,7 +445,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         {/* Global Navigation Bar / Shrinking Sticky Header */}
         <header
           className={cn(
-            "fixed top-0 left-0 w-full z-[30] px-6 transition-all duration-300 ease-in-out pointer-events-auto flex items-center",
+            "fixed top-0 left-0 w-full z-[30] px-6 transition-[padding,height,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-auto flex items-center",
             "bg-[#5F493C]/90 backdrop-blur-md border-b border-[#472F1D]",
             (shrinkOnScroll && isScrolled) || open
               ? "h-16 py-3 shadow-md shadow-black/15"
@@ -473,69 +472,68 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               </div>
             )}
 
-            {/* Interactive Animated StaggeredMenu Toggle Button */}
+            {/* 3-Line Hamburger Toggle Button with Rounded Square (Retained as requested) */}
             <button
               ref={toggleBtnRef}
               onClick={toggleMenu}
-              className="sm-toggle flex items-center gap-3 px-4 py-2 sharp-edges bg-[#472F1D]/60 border border-[#472F1D] hover:border-[#C7B8AE] hover:text-[#C7B8AE] text-[#EEE6D7] transition-all focus:outline-none cursor-pointer group"
+              className={cn(
+                "sm-toggle relative w-11 h-11 rounded-xl flex items-center justify-center",
+                "bg-[#472F1D]/75 border border-[#C7B8AE]/45 hover:border-[#C7B8AE] hover:bg-[#472F1D]",
+                "text-[#EEE6D7] hover:text-[#C7B8AE] shadow-sm",
+                "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none cursor-pointer group",
+                open && "bg-[#472F1D] border-[#C7B8AE] text-[#C7B8AE]"
+              )}
               aria-expanded={open}
               aria-label={open ? "Close Navigation Menu" : "Open Navigation Menu"}
             >
-              <div className="relative h-[1.2em] overflow-hidden min-w-[48px] text-left">
-                <div
-                  ref={textInnerRef}
-                  className="flex flex-col font-mono uppercase tracking-widest text-[12px] font-bold"
-                >
-                  {textLines.map((line, i) => (
-                    <span key={i} className="h-[1.2em] leading-tight flex items-center">
-                      {line}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div ref={iconRef} className="relative w-3.5 h-3.5 flex items-center justify-center">
+              <div className="relative w-5 h-3.5 flex flex-col justify-between items-center">
                 <span
-                  ref={plusHRef}
-                  className="absolute top-1/2 left-0 w-full h-[2px] bg-current -translate-y-1/2"
+                  className={cn(
+                    "block w-5 h-[2px] rounded-full bg-current transform-gpu transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] origin-center",
+                    open ? "translate-y-[6px] rotate-45" : "translate-y-0 rotate-0"
+                  )}
                 />
                 <span
-                  ref={plusVRef}
-                  className="absolute top-0 left-1/2 w-[2px] h-full bg-current -translate-x-1/2"
+                  className={cn(
+                    "block w-5 h-[2px] rounded-full bg-current transform-gpu transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] origin-center",
+                    open ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"
+                  )}
+                />
+                <span
+                  className={cn(
+                    "block w-5 h-[2px] rounded-full bg-current transform-gpu transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] origin-center",
+                    open ? "-translate-y-[6px] -rotate-45" : "translate-y-0 rotate-0"
+                  )}
                 />
               </div>
             </button>
           </nav>
         </header>
 
-        {/* Staggered Menu Panel (Main Content Layer) */}
+        {/* Staggered Menu Panel (Main Content Layer — Full-Screen Mobile w-[100vw], Left-Aligned, No Numbers, Contained Scroll) */}
         <aside
           ref={panelRef}
           className={cn(
-            "staggered-menu-panel absolute top-0 bottom-0 z-[25] pointer-events-auto flex flex-col pt-32 pb-12 px-8 sm:px-14 overflow-y-auto w-[100vw] sm:w-[60vw] md:w-[48vw] lg:w-[36vw] border-l border-[#472F1D] shadow-2xl sharp-edges",
+            "staggered-menu-panel absolute top-0 bottom-0 z-[25] pointer-events-auto flex flex-col pt-28 pb-12 pl-6 pr-6 sm:pl-9 sm:pr-10 overflow-y-auto overscroll-contain w-[100vw] sm:w-[60vw] md:w-[48vw] lg:w-[36vw] border-l border-[#472F1D] shadow-2xl sharp-edges will-change-transform",
             position === "left" ? "left-0" : "right-0"
           )}
           style={{ background: colors[colors.length - 1] }}
         >
-          <div className="flex-1 flex flex-col justify-between">
-            {/* Primary Navigation Items */}
-            <nav className="my-auto py-6">
-              <ul className="flex flex-col gap-6 list-none p-0 m-0">
+          <div className="flex-1 flex flex-col justify-between items-start text-left">
+            {/* Primary Navigation Items — Shifted Left, No Section Numbers */}
+            <nav className="my-auto py-6 w-full">
+              <ul className="flex flex-col gap-6 list-none p-0 m-0 items-start text-left">
                 {items.map((item, idx) => (
-                  <li key={idx} className="overflow-hidden">
+                  <li key={idx} className="overflow-hidden w-full">
                     <a
                       href={item.link}
                       onClick={() => {
                         if (open) toggleMenu();
                       }}
-                      className="group relative flex items-baseline gap-4 no-underline"
+                      className="group relative flex items-baseline justify-start no-underline text-left"
                       aria-label={item.ariaLabel}
                     >
-                      {displayItemNumbering && (
-                        <span className="text-sm font-mono text-[#C7B8AE] translate-y-[-0.3rem] font-medium select-none">
-                          {(idx + 1).toString().padStart(2, "0")}
-                        </span>
-                      )}
-                      <span className="sm-panel-itemLabel inline-block font-sans font-black text-4xl sm:text-5xl text-[#EEE6D7] uppercase tracking-[-0.03em] transition-colors group-hover:text-[#C7B8AE]">
+                      <span className="sm-panel-itemLabel inline-block font-sans font-black text-4xl sm:text-5xl text-[#EEE6D7] uppercase tracking-[-0.03em] transition-colors duration-300 group-hover:text-[#C7B8AE]">
                         {item.label}
                       </span>
                     </a>
@@ -546,7 +544,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
             {/* Social Links & Legal Bottom Section */}
             {displaySocials && socialItems.length > 0 && (
-              <div className="mt-auto pt-8 border-t border-[#472F1D]">
+              <div className="mt-auto pt-8 border-t border-[#472F1D] w-full text-left">
                 <ul className="flex flex-wrap gap-x-6 gap-y-2 list-none p-0 m-0">
                   {socialItems.map((social, i) => (
                     <li key={i}>
