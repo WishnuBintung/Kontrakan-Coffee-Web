@@ -2,13 +2,12 @@
 /* eslint-disable @next/next/no-img-element */
 
 import React from "react";
-import { ArrowDown } from "lucide-react";
 
 export function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative isolate flex min-h-[calc(100svh-7.5rem)] w-full flex-col justify-end overflow-hidden bg-coffee-dark text-cream"
+      className="relative isolate flex min-h-[85svh] sm:min-h-[calc(100svh-4.5rem)] w-full flex-col justify-end overflow-hidden bg-coffee-dark text-cream"
       style={{ marginTop: "var(--header-h)" }}
     >
       {/* Photograph — toned down by a warm coffee wash, like Bettr's moody hero */}
@@ -29,47 +28,36 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-coffee-darker/90 via-coffee/35 to-coffee/10" />
       </div>
 
-      <div className="mx-auto w-full max-w-[90rem] px-6 pb-10 pt-24 sm:pb-14">
+      <div className="mx-auto w-full max-w-[90rem] px-5 pb-8 pt-16 sm:px-6 sm:pb-14 sm:pt-24">
+        {/* Eyebrow: concise on mobile, editorial on desktop */}
         <p
           data-rev
           style={{ "--d": "60ms" } as React.CSSProperties}
-          className="eyebrow mb-3 text-xl text-latte-light sm:text-3xl"
+          className="eyebrow mb-2 sm:mb-3 text-xs sm:text-2xl uppercase tracking-widest text-sunshine-light sm:tracking-normal sm:text-latte-light"
         >
           Kopi spesialti · Ruang nongkrong &amp; nugas
         </p>
 
+        {/* Headline: responsive and well-spaced */}
         <h1
           data-rev
           style={{ "--d": "140ms" } as React.CSSProperties}
-          className="font-display text-[clamp(3.4rem,11.2vw,10.5rem)] text-sunshine"
+          className="font-display text-[2.6rem] sm:text-[clamp(3.4rem,11.2vw,10.5rem)] leading-[1.08] sm:leading-none text-sunshine"
         >
-          Kopi Enak. Nongkrong Betah.
+          Kopi Enak.
+          <br className="sm:hidden" /> Nongkrong Betah.
         </h1>
 
         <div
           data-rev
           style={{ "--d": "240ms" } as React.CSSProperties}
-          className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"
+          className="mt-6 sm:mt-8"
         >
-          <p className="max-w-xl text-lg text-cream/90 sm:text-xl">
+          {/* Paragraph: clean readable text */}
+          <p className="max-w-xl text-[15px] sm:text-xl text-cream/85 leading-relaxed">
             Seduhan hangat, promo senja, Wi-Fi kencang, dan stopkontak di tiap
             meja — tempat yang pas untuk ngopi santai maupun nugas seharian.
           </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <a href="#menu" className="btn">
-              Lihat Menu
-            </a>
-            <a href="#lokasi" className="btn btn-outline-cream">
-              Jam Buka &amp; Lokasi
-            </a>
-            <a
-              href="#kategori"
-              aria-label="Gulir ke bawah"
-              className="btn btn-earth hidden !px-3 sm:inline-flex"
-            >
-              <ArrowDown className="h-4 w-4" />
-            </a>
-          </div>
         </div>
       </div>
     </section>

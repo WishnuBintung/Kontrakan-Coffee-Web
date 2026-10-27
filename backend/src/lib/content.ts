@@ -13,6 +13,8 @@ import type {
   MenuWithKategori,
   Promo,
   StatusToko,
+  WhyItem,
+  WhySectionData,
 } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -330,12 +332,75 @@ export function getActivePromo(
 }
 
 /**
+ * Mengambil data section Why / Kenapa Kontrakan dari content/why.json
+ */
+export function getWhyData(): WhySectionData {
+  const filePath = path.join(CONTENT_DIR, "why.json");
+  const fallback: WhySectionData = {
+    judul: "Betah Berjam-jam. Kenapa Kontrakan?",
+    deskripsi: "Fasilitas lengkap dan suasana nyaman yang dirancang untuk produktivitas dan momen santai Anda.",
+    foto_backdrop: "",
+    items: [
+      {
+        icon: "wifi",
+        title: "Wi-Fi Kencang 100 Mbps",
+        desc: "Koneksi internet fiber optik berkecepatan tinggi dan stabil untuk video conference, upload file besar, hingga streaming lancar tanpa hambatan.",
+      },
+      {
+        icon: "plug",
+        title: "Stopkontak di Tiap Meja",
+        desc: "Tidak perlu rebutan colokan. Hampir seluruh sudut meja kerja dan komunal dilengkapi stopkontak untuk menjaga daya laptop dan ponsel Anda tetap terisi.",
+      },
+      {
+        icon: "wind",
+        title: "Ruang AC Tenang & Bebas Rokok",
+        desc: "Area indoor berpendingin udara sejuk dan tenang dirancang khusus bagi Anda yang butuh fokus tinggi untuk bekerja, meeting, atau belajar.",
+      },
+      {
+        icon: "trees",
+        title: "Area Terbuka Semi Outdoor",
+        desc: "Suasana semi terbuka yang asri dengan sirkulasi udara alami dan pencahayaan matahari sore yang pas untuk nongkrong santai.",
+      },
+      {
+        icon: "car",
+        title: "Parkir Luas & Aman",
+        desc: "Tersedia area parkir motor dan mobil tertata rapi dijaga petugas kafe.",
+      },
+      {
+        icon: "sparkles",
+        title: "Musholla Nyaman",
+        desc: "Tempat ibadah bersih dan lengkap dengan sarung, mukena, serta tempat wudhu.",
+      },
+    ],
+  };
+
+  if (!fs.existsSync(filePath)) {
+    return fallback;
+  }
+
+  try {
+    const raw = fs.readFileSync(filePath, "utf8");
+    const data = JSON.parse(raw);
+    return {
+      judul: data.judul || fallback.judul,
+      deskripsi: data.deskripsi || fallback.deskripsi,
+      foto_backdrop: data.foto_backdrop || fallback.foto_backdrop,
+      items: Array.isArray(data.items) && data.items.length > 0 ? data.items : fallback.items,
+    };
+  } catch (err) {
+    console.error("Gagal membaca why.json, menggunakan fallback:", err);
+    return fallback;
+  }
+}
+
+/**
  * Mengambil profil & informasi toko dari content/info-toko.json
  */
 export function getInfoToko(): InfoToko {
   const filePath = path.join(CONTENT_DIR, "info-toko.json");
   const fallback: InfoToko = {
     nama_toko: "Kontrakan Coffee",
+    judul_kenapa: "Betah Berjam-jam. Kenapa Kontrakan?",
     alamat: "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
     patokan: "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES)",
     link_peta: "https://maps.app.goo.gl/7kn5wi3aeE15r61T9?g_st=ic",
@@ -345,6 +410,7 @@ export function getInfoToko(): InfoToko {
     tiktok: "https://www.tiktok.com/@kontrakancoffee?_r=1&_t=ZS-9AubeEe0g5M",
     whatsapp: "6281234567890",
     jam_buka: [],
+    fasilitas: getWhyData().items,
   };
 
   if (!fs.existsSync(filePath)) {
@@ -365,8 +431,12 @@ export function getInfoToko(): InfoToko {
       : alamat
       ? `https://maps.google.com/?q=${encodeURIComponent(alamat)}`
       : fallback.link_peta;
+
+    const whyData = getWhyData();
+
     return {
       nama_toko: data.nama_toko || fallback.nama_toko,
+      judul_kenapa: data.judul_kenapa || whyData.judul || fallback.judul_kenapa,
       alamat,
       patokan: data.patokan || fallback.patokan,
       link_peta,
@@ -375,6 +445,7 @@ export function getInfoToko(): InfoToko {
       tiktok: data.tiktok || fallback.tiktok,
       whatsapp: data.whatsapp || fallback.whatsapp,
       jam_buka: Array.isArray(data.jam_buka) ? data.jam_buka : [],
+      fasilitas: Array.isArray(data.fasilitas) && data.fasilitas.length > 0 ? data.fasilitas : whyData.items,
     };
   } catch (err) {
     console.error("Gagal memuat info toko, menggunakan fallback:", err);

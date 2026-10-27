@@ -19,7 +19,9 @@ import {
   getClientGaleri,
   getClientPromo,
   getClientPromoResult,
+  getClientWhyData,
   ApiStatusToko,
+  WhySectionData,
 } from "@/lib/clientApi";
 
 export type MenuStatus = "loading" | "success" | "empty" | "error";
@@ -202,6 +204,33 @@ export function useGalleryData() {
   }, []);
 
   return gallery;
+}
+
+/**
+ * Hook untuk mendapatkan data section Why / Kenapa Kontrakan dari CMS / backend
+ */
+export function useWhyData(): WhySectionData {
+  const [whyData, setWhyData] = useState<WhySectionData>({
+    judul: CAFE_INFO.judulKenapa || "Betah Berjam-jam. Kenapa Kontrakan?",
+    deskripsi: "Fasilitas lengkap dan suasana nyaman yang dirancang untuk produktivitas dan momen santai Anda.",
+    foto_backdrop: "",
+    items: CAFE_INFO.fasilitas,
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+    getClientWhyData().then((data) => {
+      if (isMounted && data && Array.isArray(data.items) && data.items.length > 0) {
+        setWhyData(data);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return whyData;
 }
 
 export type PromoStatus = "loading" | "success" | "empty" | "error";

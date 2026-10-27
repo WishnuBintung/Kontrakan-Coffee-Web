@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MapPin, Calendar, Clock, ArrowUpRight } from "lucide-react";
+import { MapPin, Calendar, ChevronDown, ArrowUpRight } from "lucide-react";
 import { getOpenStatusWIB } from "@/lib/cafeData";
 import { useCafeInfo, useStoreStatus } from "@/hooks/useCafeData";
 
 export function LocationSection() {
   const CAFE_INFO = useCafeInfo();
   const [isMounted, setIsMounted] = useState(false);
+  const [isScheduleDropdownOpen, setIsScheduleDropdownOpen] = useState(false);
   const localInitial = getOpenStatusWIB();
   const [storeStatus] = useState(localInitial);
   const { status: liveStatus } = useStoreStatus();
@@ -59,7 +60,7 @@ export function LocationSection() {
             <div
               data-rev
               style={{ "--d": "60ms" } as React.CSSProperties}
-              className="space-y-5 rounded-[0.5rem] bg-roast p-6 sm:p-8"
+              className="flex-1 space-y-5 rounded-[0.5rem] bg-roast p-6 sm:p-8"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="tag">
@@ -78,61 +79,40 @@ export function LocationSection() {
                   Patokan: {CAFE_INFO.patokan || "Dekat kampus UNNES"}
                 </p>
               </div>
-
-              <a
-                href={CAFE_INFO.googleMapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="btn inline-flex"
-              >
-                Buka di Google Maps
-                <ArrowUpRight className="h-4 w-4 stroke-[2.5]" />
-              </a>
             </div>
 
-            {/* Jadwal Operasional Mingguan */}
+            {/* Jadwal Operasional Mingguan - Dropdown Kompak */}
             <div
               id="jam-buka"
               data-rev
               style={{ "--d": "100ms" } as React.CSSProperties}
-              className="flex flex-1 flex-col justify-between overflow-hidden rounded-[0.5rem] bg-roast"
+              className="overflow-hidden rounded-[0.5rem] bg-roast"
             >
-              {/* Header Jadwal */}
-              <div className="flex items-center justify-between border-b border-cream/15 p-4 sm:p-5">
-                <span className="inline-flex items-center gap-2 text-[15px] font-medium uppercase tracking-wide text-sunshine">
-                  <Calendar className="h-4 w-4" />
-                  Jadwal Operasional
-                </span>
-                <span className="text-sm uppercase text-cream/60">Senin – Minggu</span>
-              </div>
-
-              {/* Status Live Beacon Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cream/15 bg-coffee/50 px-4 py-3 sm:px-5">
-                <div className="flex items-center gap-2.5">
-                  <span className="relative flex h-3 w-3">
-                    <span
-                      className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${
-                        isOpen ? "bg-sunshine" : "bg-earth"
-                      }`}
-                    />
-                    <span
-                      className={`relative inline-flex h-3 w-3 rounded-full ${
-                        isOpen ? "bg-sunshine" : "bg-earth"
-                      }`}
-                    />
-                  </span>
-                  <span
-                    suppressHydrationWarning
-                    className={`text-[13px] font-bold uppercase tracking-wider ${
-                      isOpen ? "text-sunshine" : "text-earth"
-                    }`}
-                  >
-                    {isMounted ? badgeText : "STATUS OPERASIONAL"}
-                  </span>
-                  <span suppressHydrationWarning className="text-[13px] text-cream/60">
-                    {isMounted ? `(Pukul ${currentTime} WIB)` : "(Zona Waktu WIB)"}
+              {/* Header Jadwal (Dropdown Toggle Button) */}
+              <button
+                type="button"
+                onClick={() => setIsScheduleDropdownOpen(!isScheduleDropdownOpen)}
+                aria-expanded={isScheduleDropdownOpen}
+                className="flex w-full cursor-pointer items-center justify-between border-b border-cream/15 p-4 sm:p-5 text-left transition-colors hover:bg-coffee/40"
+              >
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-sunshine" />
+                  <span className="text-[15px] font-medium uppercase tracking-wide text-sunshine">
+                    Jadwal Operasional
                   </span>
                 </div>
+                <div className="flex items-center gap-2 text-xs sm:text-sm uppercase text-cream/75">
+                  <span>{isScheduleDropdownOpen ? "Tutup Jadwal" : "Lihat Jadwal 7 Hari"}</span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-sunshine transition-transform duration-300 ${
+                      isScheduleDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
+              </button>
+
+              {/* Status Bar Ringkas (div/div telah dihapus, space kosong dihilangkan) */}
+              <div className="border-b border-cream/15 bg-coffee/50 px-4 py-3 sm:px-5">
                 <p
                   suppressHydrationWarning
                   className="text-[14px] font-medium text-cream/90"
@@ -141,47 +121,49 @@ export function LocationSection() {
                 </p>
               </div>
 
-              {/* 7-Day Schedule List */}
-              <div className="flex-1 divide-y divide-cream/10">
-                {CAFE_INFO.jamBuka.map((item) => {
-                  const isToday =
-                    isMounted && item.hari.toLowerCase() === currentDay.toLowerCase();
-                  return (
-                    <div
-                      key={item.hari}
-                      className={`flex items-center justify-between gap-2 px-4 py-2.5 transition-colors sm:px-5 sm:py-3 ${
-                        isToday ? "bg-sunshine text-coffee" : "hover:bg-coffee/40"
-                      }`}
-                    >
-                      {/* Hari & Badge Hari Ini */}
-                      <div className="flex items-center gap-2.5">
-                        <span className="w-20 text-base font-bold uppercase tracking-tight">
-                          {item.hari}
-                        </span>
-                        {isToday && (
-                          <span className="rounded-[0.2rem] bg-coffee px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sunshine">
-                            Hari Ini
+              {/* 7-Day Schedule List (Tampil saat Dropdown Dibuka) */}
+              {isScheduleDropdownOpen && (
+                <div className="flex-1 divide-y divide-cream/10 animate-in fade-in duration-300">
+                  {CAFE_INFO.jamBuka.map((item) => {
+                    const isToday =
+                      isMounted && item.hari.toLowerCase() === currentDay.toLowerCase();
+                    return (
+                      <div
+                        key={item.hari}
+                        className={`flex items-center justify-between gap-2 px-4 py-2.5 transition-colors sm:px-5 sm:py-3 ${
+                          isToday ? "bg-sunshine text-coffee" : "hover:bg-coffee/40"
+                        }`}
+                      >
+                        {/* Hari & Badge Hari Ini */}
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-20 text-base font-bold uppercase tracking-tight">
+                            {item.hari}
                           </span>
-                        )}
-                      </div>
+                          {isToday && (
+                            <span className="rounded-[0.2rem] bg-coffee px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sunshine">
+                              Hari Ini
+                            </span>
+                          )}
+                        </div>
 
-                      {/* Jam Buka / Tutup */}
-                      <div className="text-right">
-                        <span className="text-[15px] font-bold">
-                          {item.libur ? "LIBUR" : `${item.buka} – ${item.tutup}`}
-                        </span>
-                        <span
-                          className={`mt-0.5 block text-[11px] leading-none ${
-                            isToday ? "text-coffee/70" : "text-cream/60"
-                          }`}
-                        >
-                          {item.libur ? "Tutup" : "WIB"}
-                        </span>
+                        {/* Jam Buka / Tutup */}
+                        <div className="text-right">
+                          <span className="text-[15px] font-bold">
+                            {item.libur ? "LIBUR" : `${item.buka} – ${item.tutup}`}
+                          </span>
+                          <span
+                            className={`mt-0.5 block text-[11px] leading-none ${
+                              isToday ? "text-coffee/70" : "text-cream/60"
+                            }`}
+                          >
+                            {item.libur ? "Tutup" : "WIB"}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
