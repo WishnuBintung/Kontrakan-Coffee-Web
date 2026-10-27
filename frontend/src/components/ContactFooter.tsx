@@ -19,13 +19,13 @@ export function ContactFooter() {
       className="w-full bg-[#5B6653] text-[#E8E3D9] py-20 px-6 relative sharp-edges border-t border-[#4D5746]"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Top element: Full-width border-b text 'START A PROJECT' at 12vw, Black weight, uppercase, hover turns #D99C5B */}
+        {/* Top element: Full-width border-b text 'VISIT KONTRAKAN' at 12vw, Black weight, uppercase, hover turns #D99C5B */}
         <div className="border-b border-[#4D5746] pb-10 md:pb-16 mb-16 md:mb-20">
           <a
-            href={`mailto:${email}`}
-            className="block font-sans font-black text-[12vw] leading-none text-[#E8E3D9] uppercase tracking-[-0.03em] hover:text-[#D99C5B] transition-colors select-none"
+            href="#lokasi"
+            className="block font-sans font-black text-[10vw] md:text-[11vw] leading-none text-[#E8E3D9] uppercase tracking-[-0.03em] hover:text-[#D99C5B] transition-colors select-none"
           >
-            START A PROJECT
+            VISIT KONTRAKAN
           </a>
         </div>
 
@@ -34,21 +34,22 @@ export function ContactFooter() {
           {/* Column 1: Social links with wavy underline hover */}
           <div className="flex flex-col space-y-4">
             <span className="font-mono text-[14px] text-[#D99C5B] uppercase tracking-widest block font-semibold">
-              [INDEX // SOCIAL]
+              [INDEX // LINKS]
             </span>
             <ul className="space-y-2">
               {[
-                { label: "Instagram", href: "https://instagram.com" },
-                { label: "Twitter / X", href: "https://x.com" },
-                { label: "Behance", href: "https://behance.net" },
-                { label: "Are.na", href: "https://are.na" },
+                { label: "Instagram (@kontrakancoffee)", href: "https://instagram.com/kontrakancoffee" },
+                { label: "WhatsApp Chat", href: "https://wa.me/6281234567890" },
+                { label: "Google Maps Navigasi", href: "https://maps.google.com/?q=Kontrakan+Coffee+Yogyakarta" },
+                { label: "Menu Rekomendasi", href: "#rekomendasi" },
+                { label: "Jadwal Jam Buka", href: "#jam-buka" },
               ].map((item) => (
                 <li key={item.label}>
                   <a
                     href={item.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[18px] font-medium tracking-tight text-[#E8E3D9] wavy-hover inline-block font-sans"
+                    target={item.href.startsWith("http") ? "_blank" : undefined}
+                    rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+                    className="text-[17px] font-medium tracking-tight text-[#E8E3D9] wavy-hover inline-block font-sans"
                   >
                     {item.label}
                   </a>

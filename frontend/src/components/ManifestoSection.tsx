@@ -18,7 +18,7 @@ export function ManifestoSection() {
       >
         {/* Category sub-label: 14px Mono dengan warna aksen Amber Gold #D99C5B */}
         <span className="font-mono text-[14px] uppercase tracking-widest text-[#D99C5B] mb-8 block font-semibold">
-          [02 // MANIFESTO]
+          [06 // MANIFESTO]
         </span>
 
         {/* Centered text: 5vw-7vw font-weight 500, leading-tight, Warna Teks Krem #E8E3D9 */}

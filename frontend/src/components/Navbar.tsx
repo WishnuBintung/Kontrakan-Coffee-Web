@@ -5,9 +5,12 @@ import { StaggeredMenu } from "./StaggeredMenu";
 
 export function Navbar() {
   const navLinks = [
-    { label: "Works", href: "#works" },
+    { label: "Rekomendasi", href: "#rekomendasi" },
+    { label: "Menu", href: "#menu" },
+    { label: "Jam Buka", href: "#jam-buka" },
+    { label: "Galeri", href: "#galeri" },
+    { label: "Lokasi", href: "#lokasi" },
     { label: "Manifesto", href: "#manifesto" },
-    { label: "Contact", href: "#contact" },
   ];
 
   return (
@@ -35,19 +38,34 @@ export function Navbar() {
       }
       items={[
         {
-          label: "Works",
-          ariaLabel: "View selected architectural coffee works",
-          link: "#works",
+          label: "Rekomendasi",
+          ariaLabel: "Lihat menu rekomendasi Kontrakan Coffee",
+          link: "#rekomendasi",
+        },
+        {
+          label: "Menu",
+          ariaLabel: "Lihat daftar menu lengkap dan harga",
+          link: "#menu",
+        },
+        {
+          label: "Jam Buka",
+          ariaLabel: "Cek jadwal jam operasional kafe",
+          link: "#jam-buka",
+        },
+        {
+          label: "Galeri",
+          ariaLabel: "Jelajahi foto suasana kafe",
+          link: "#galeri",
+        },
+        {
+          label: "Lokasi",
+          ariaLabel: "Kunjungi kami di lokasi kafe",
+          link: "#lokasi",
         },
         {
           label: "Manifesto",
-          ariaLabel: "Read our spatial coffee manifesto",
+          ariaLabel: "Baca manifesto kopi Kontrakan",
           link: "#manifesto",
-        },
-        {
-          label: "Contact",
-          ariaLabel: "Contact our coffee atelier",
-          link: "#contact",
         },
       ]}
       socialItems={[
