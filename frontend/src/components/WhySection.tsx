@@ -58,7 +58,7 @@ export function WhySection() {
           data-rev
           className="font-display mb-10 text-[clamp(2.6rem,6vw,5.5rem)] text-sunshine sm:mb-14"
         >
-          Betah Berjam-jam. Kenapa Kontrakan?
+          {info.judulKenapa || "Betah Berjam-jam. Kenapa Kontrakan?"}
         </h2>
 
         <div className="flex flex-col gap-6">

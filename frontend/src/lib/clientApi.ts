@@ -139,6 +139,7 @@ export async function getClientInfoToko(): Promise<CafeInfo> {
     ...CAFE_INFO,
     nama: data.nama_toko || CAFE_INFO.nama,
     tagline: data.tagline || CAFE_INFO.tagline,
+    judulKenapa: data.judul_kenapa || CAFE_INFO.judulKenapa,
     alamat: data.alamat || CAFE_INFO.alamat,
     patokan: data.patokan || CAFE_INFO.patokan,
     googleMapsUrl:

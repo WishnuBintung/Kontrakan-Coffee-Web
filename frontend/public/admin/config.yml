@@ -83,6 +83,7 @@ collections:
         file: content/info-toko.json
         fields:
           - { label: Nama Coffee Shop, name: nama_toko, widget: string }
+          - { label: Judul Kenapa Kontrakan, name: judul_kenapa, widget: string, default: "Betah Berjam-jam. Kenapa Kontrakan?", hint: "Judul utama bagian fasilitas / Kenapa Kontrakan" }
           - { label: Alamat Lengkap, name: alamat, widget: text }
           - { label: Link Google Maps, name: link_peta, widget: string, hint: "URL Google Maps untuk tombol Buka Peta" }
           - { label: Link Embed Google Maps (iframe), name: embed_peta, widget: string, required: false, hint: "URL embed untuk iframe peta" }

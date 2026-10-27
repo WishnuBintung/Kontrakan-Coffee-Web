@@ -59,6 +59,7 @@ export interface CafeInfo {
   instagramHandle: string;
   tiktok?: string;
   email: string;
+  judulKenapa?: string;
   jamBuka: CafeJamBuka[];
   fasilitas: { icon: string; title: string; desc: string }[];
 }
@@ -66,6 +67,7 @@ export interface CafeInfo {
 export const CAFE_INFO: CafeInfo = {
   nama: "Kontrakan Coffee",
   tagline: "Spatial Botanical & Warm Monochrome Atelier",
+  judulKenapa: "Betah Berjam-jam. Kenapa Kontrakan?",
   alamat: "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
   patokan: "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES).",
   koordinat: "7.0505° S, 110.3920° E",

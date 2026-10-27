@@ -2,7 +2,6 @@
 
 import React from "react";
 import { StaggeredMenu } from "./StaggeredMenu";
-import { NoticeBanner, NOTICE_BANNER_HEIGHT } from "./NoticeBanner";
 import { useCafeInfo } from "@/hooks/useCafeData";
 
 export function Navbar() {
@@ -24,15 +23,14 @@ export function Navbar() {
   const navLinks = [
     { label: "Promo", href: "#promo" },
     { label: "Menu", href: "#menu" },
+    { label: "Fasilitas", href: "#fasilitas" },
     { label: "Galeri", href: "#galeri" },
     { label: "Informasi", href: "#lokasi" },
   ];
 
   return (
-    <>
-      <NoticeBanner />
-      <StaggeredMenu
-        logo={
+    <StaggeredMenu
+      logo={
           <a
             href="#"
             aria-label="Kontrakan Coffee — beranda"
@@ -69,6 +67,11 @@ export function Navbar() {
             link: "#menu",
           },
           {
+            label: "Fasilitas",
+            ariaLabel: "Lihat fasilitas dan kenyamanan di Kontrakan Coffee",
+            link: "#fasilitas",
+          },
+          {
             label: "Galeri",
             ariaLabel: "Jelajahi foto suasana kafe",
             link: "#galeri",
@@ -94,9 +97,8 @@ export function Navbar() {
         isFixed={true}
         shrinkOnScroll={true}
         scrollThreshold={80}
-        topOffset={NOTICE_BANNER_HEIGHT}
+        topOffset={0}
       />
-    </>
   );
 }
 export default Navbar;
