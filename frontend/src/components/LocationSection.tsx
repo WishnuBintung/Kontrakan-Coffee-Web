@@ -1,72 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  MapPin,
-  ArrowUpRight,
-  Copy,
-  Check,
-  MessageCircle,
-  Navigation,
-  Wifi,
-  Plug,
-  Wind,
-  Trees,
-  Car,
-  Sparkles,
-} from "lucide-react";
-import { CAFE_INFO as INITIAL_CAFE_INFO } from "@/lib/cafeData";
-import { useCafeInfo } from "@/hooks/useCafeData";
-
-function InstagramIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-    </svg>
-  );
-}
+import React, { useState, useEffect } from "react";
+import { MapPin, Calendar, Clock, ArrowUpRight } from "lucide-react";
+import { getOpenStatusWIB } from "@/lib/cafeData";
+import { useCafeInfo, useStoreStatus } from "@/hooks/useCafeData";
 
 export function LocationSection() {
   const CAFE_INFO = useCafeInfo();
-  const [copied, setCopied] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const localInitial = getOpenStatusWIB();
+  const [storeStatus] = useState(localInitial);
+  const { status: liveStatus } = useStoreStatus();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const handleCopyAddress = () => {
-    navigator.clipboard.writeText(CAFE_INFO.alamat);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2200);
-  };
-
-  const getFacilityIcon = (iconName: string) => {
-    switch (iconName) {
-      case "wifi":
-        return <Wifi className="w-4 h-4" />;
-      case "plug":
-        return <Plug className="w-4 h-4" />;
-      case "wind":
-        return <Wind className="w-4 h-4" />;
-      case "trees":
-        return <Trees className="w-4 h-4" />;
-      case "car":
-        return <Car className="w-4 h-4" />;
-      default:
-        return <Sparkles className="w-4 h-4" />;
-    }
-  };
+  const isOpen = liveStatus.isOpen ?? storeStatus.isOpen;
+  const badgeText = liveStatus.pesanStatus
+    ? liveStatus.isOpen
+      ? "BUKA SEKARANG"
+      : "SEDANG TUTUP"
+    : storeStatus.badgeText;
+  const statusText = liveStatus.pesanStatus || storeStatus.statusText;
+  const currentTime = liveStatus.sekarangJam || storeStatus.currentTimeStr;
+  const currentDay = liveStatus.hariIni || storeStatus.todayName;
 
   return (
     <section
@@ -95,17 +53,17 @@ export function LocationSection() {
           </p>
         </div>
 
-        {/* 2-Column Layout: Left (Info & Actions), Right (Interactive Google Maps Embed) */}
+        {/* 2-Column Layout: Left (Address & Jadwal Operasional), Right (Interactive Google Maps Embed) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {/* Left Column: Address, Quick Contact & Amenities (6 Cols) */}
+          {/* Left Column: Address Card & Jadwal Operasional (6 Cols) */}
           <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
             {/* Main Address Card */}
             <div
               data-rev
               style={{ "--d": "60ms" } as React.CSSProperties}
-              className="bg-[#5F493C] text-[#EEE6D7] p-6 sm:p-8 border border-[#472F1D] sharp-edges shadow-xl space-y-5"
+              className="bg-[#5F493C] text-[#EEE6D7] p-6 sm:p-7 border border-[#472F1D] sharp-edges shadow-xl space-y-4"
             >
-              <div className="flex items-center justify-between border-b border-[#472F1D] pb-4">
+              <div className="flex items-center justify-between border-b border-[#472F1D] pb-3">
                 <span className="font-mono text-[12px] uppercase tracking-widest text-[#C7B8AE] font-semibold flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
                   <span>ALAMAT LENGKAP KAFE</span>
@@ -119,127 +77,112 @@ export function LocationSection() {
                 <h3 className="font-sans font-black text-2xl sm:text-3xl text-[#EEE6D7] uppercase tracking-tight">
                   {CAFE_INFO.nama}
                 </h3>
-                <p className="font-sans text-[16px] sm:text-[18px] text-[#EEE6D7]/90 mt-2 leading-relaxed">
+                <p className="font-sans text-[15px] sm:text-[17px] text-[#EEE6D7]/90 mt-2 leading-relaxed">
                   {CAFE_INFO.alamat}
                 </p>
-                <p className="font-mono text-[13px] text-[#C7B8AE] mt-2 leading-normal">
+                <p className="font-mono text-[12px] text-[#C7B8AE] mt-2 leading-normal">
                   Patokan: {CAFE_INFO.patokan}
                 </p>
               </div>
-
-              {/* Action Buttons for Address */}
-              <div className="pt-2 flex flex-col sm:flex-row gap-3">
-                <a
-                  href={CAFE_INFO.googleMapsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-[#C7B8AE] text-[#472F1D] font-bold text-[14px] uppercase tracking-tight hover:bg-[#EEE6D7] transition-colors sharp-edges shadow-md"
-                >
-                  <Navigation className="w-4 h-4 stroke-[2.5]" />
-                  <span>Buka di Google Maps</span>
-                  <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
-                </a>
-
-                <button
-                  onClick={handleCopyAddress}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-3.5 border border-[#EEE6D7]/40 text-[#EEE6D7] font-mono text-[12px] uppercase tracking-wider hover:bg-[#EEE6D7] hover:text-[#472F1D] transition-colors sharp-edges"
-                  aria-label="Salin alamat ke clipboard"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-4 h-4 text-[#C7B8AE]" />
-                      <span>Alamat Tersalin!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4" />
-                      <span>Salin Alamat</span>
-                    </>
-                  )}
-                </button>
-              </div>
             </div>
 
-            {/* Quick Contact Links: WhatsApp & Instagram (Informational only) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* WhatsApp Card */}
-              <a
-                data-rev
-                style={{ "--d": "110ms" } as React.CSSProperties}
-                href={`https://wa.me/${CAFE_INFO.whatsapp}?text=${encodeURIComponent(CAFE_INFO.whatsappText)}`}
-                target="_blank"
-                rel="noreferrer"
-                className="group p-5 bg-[#5F493C]/10 border border-[#5F493C] hover:border-[#472F1D] hover:bg-[#5F493C]/20 transition-all sharp-edges flex flex-col justify-between"
-              >
-                <div>
-                  <span className="font-mono text-[11px] text-[#5F493C] uppercase tracking-widest block mb-2 font-bold">
-                    WHATSAPP
-                  </span>
-                  <div className="flex items-center gap-2.5">
-                    <MessageCircle className="w-5 h-5 text-[#5F493C] group-hover:text-[#472F1D] transition-colors" />
-                    <span className="font-sans font-bold text-[16px] text-[#472F1D]">
-                      {CAFE_INFO.whatsappDisplay}
-                    </span>
-                  </div>
-                </div>
-                <span className="font-mono text-[11px] text-[#5F493C] mt-3 group-hover:text-[#472F1D] flex items-center gap-1">
-                  <span>Chat CS Kafe</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </span>
-              </a>
-
-              {/* Instagram Card */}
-              <a
-                data-rev
-                style={{ "--d": "160ms" } as React.CSSProperties}
-                href={CAFE_INFO.instagram}
-                target="_blank"
-                rel="noreferrer"
-                className="group p-5 bg-[#5F493C]/10 border border-[#5F493C] hover:border-[#472F1D] hover:bg-[#5F493C]/20 transition-all sharp-edges flex flex-col justify-between"
-              >
-                <div>
-                  <span className="font-mono text-[11px] text-[#5F493C] uppercase tracking-widest block mb-2 font-bold">
-                    INSTAGRAM
-                  </span>
-                  <div className="flex items-center gap-2.5">
-                    <InstagramIcon className="w-5 h-5 text-[#5F493C] group-hover:text-[#472F1D] transition-colors" />
-                    <span className="font-sans font-bold text-[16px] text-[#472F1D]">
-                      {CAFE_INFO.instagramHandle}
-                    </span>
-                  </div>
-                </div>
-                <span className="font-mono text-[11px] text-[#5F493C] mt-3 group-hover:text-[#472F1D] flex items-center gap-1">
-                  <span>Lihat Update Story</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </span>
-              </a>
-            </div>
-
-            {/* Facilities & Amenities Badges */}
+            {/* Jadwal Operasional Mingguan — Menggantikan kontak & fasilitas sesuai permintaan */}
             <div
+              id="jam-buka"
               data-rev
-              style={{ "--d": "210ms" } as React.CSSProperties}
-              className="bg-[#5F493C]/10 border border-[#C7B8AE] p-5 sm:p-6 sharp-edges"
+              style={{ "--d": "100ms" } as React.CSSProperties}
+              className="bg-[#5F493C] text-[#EEE6D7] border border-[#472F1D] sharp-edges shadow-xl overflow-hidden flex-1 flex flex-col justify-between"
             >
-              <span className="font-mono text-[12px] uppercase tracking-widest text-[#5F493C] block mb-3 font-bold">
-                FASILITAS LOKASI KAFE
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {CAFE_INFO.fasilitas.map((f) => (
-                  <div
-                    key={f.title}
-                    className="p-3 bg-[#EEE6D7] border border-[#C7B8AE] sharp-edges flex items-start gap-2.5"
+              {/* Header Jadwal */}
+              <div className="p-4 sm:p-5 bg-[#472F1D] border-b border-[#5F493C] flex items-center justify-between">
+                <span className="font-mono text-[12px] sm:text-[13px] uppercase tracking-widest text-[#C7B8AE] font-semibold flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>JADWAL OPERASIONAL MINGGUAN</span>
+                </span>
+                <span className="font-mono text-[11px] sm:text-[12px] text-[#EEE6D7]/70 uppercase">
+                  SENIN – MINGGU
+                </span>
+              </div>
+
+              {/* Status Live Beacon Bar */}
+              <div className="px-4 sm:px-5 py-3 bg-[#472F1D]/70 border-b border-[#5F493C] flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="relative flex h-3 w-3">
+                    <span
+                      className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                        isOpen ? "bg-[#C7B8AE]" : "bg-[#5F493C]"
+                      }`}
+                    />
+                    <span
+                      className={`relative inline-flex rounded-full h-3 w-3 ${
+                        isOpen ? "bg-[#C7B8AE]" : "bg-[#5F493C]"
+                      }`}
+                    />
+                  </span>
+                  <span
+                    suppressHydrationWarning
+                    className="font-mono text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-[#C7B8AE]"
                   >
-                    <div className="text-[#5F493C] shrink-0 mt-0.5">
-                      {getFacilityIcon(f.icon)}
+                    {isMounted ? badgeText : "STATUS OPERASIONAL"}
+                  </span>
+                  <span
+                    suppressHydrationWarning
+                    className="font-mono text-[11px] text-[#EEE6D7]/60"
+                  >
+                    {isMounted ? `(Pukul ${currentTime} WIB)` : "(Zona Waktu WIB)"}
+                  </span>
+                </div>
+                <p
+                  suppressHydrationWarning
+                  className="font-sans text-[12px] sm:text-[13px] text-[#EEE6D7]/90 font-medium"
+                >
+                  {isMounted ? statusText : "Buka setiap hari"}
+                </p>
+              </div>
+
+              {/* 7-Day Schedule List */}
+              <div className="divide-y divide-[#472F1D] flex-1">
+                {CAFE_INFO.jamBuka.map((item, idx) => {
+                  const isToday =
+                    isMounted &&
+                    item.hari.toLowerCase() === currentDay.toLowerCase();
+                  return (
+                    <div
+                      key={item.hari}
+                      className={`px-4 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between gap-2 transition-colors ${
+                        isToday
+                          ? "bg-[#472F1D] border-l-4 border-l-[#C7B8AE]"
+                          : "hover:bg-[#472F1D]/40"
+                      }`}
+                    >
+                      {/* Hari & Badge Hari Ini */}
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-sans font-black text-sm sm:text-base uppercase tracking-[-0.01em] text-[#EEE6D7] w-20">
+                          {item.hari}
+                        </span>
+                        {isToday && (
+                          <span className="px-1.5 py-0.5 text-[9px] font-mono bg-[#C7B8AE] text-[#472F1D] font-bold uppercase tracking-wider sharp-edges">
+                            HARI INI
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Jam Buka / Tutup */}
+                      <div className="text-right">
+                        <span
+                          className={`font-mono text-[13px] sm:text-[15px] font-bold ${
+                            isToday ? "text-[#C7B8AE]" : "text-[#EEE6D7]"
+                          }`}
+                        >
+                          {item.libur ? "LIBUR" : `${item.buka} – ${item.tutup}`}
+                        </span>
+                        <span className="font-mono text-[10px] text-[#EEE6D7]/60 block leading-none mt-0.5">
+                          {item.libur ? "Tutup" : "WIB"}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-sans font-bold text-[12px] sm:text-[13px] text-[#472F1D] leading-snug">
-                        {f.title}
-                      </h4>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -259,62 +202,43 @@ export function LocationSection() {
                     GOOGLE MAPS LIVE EMBED
                   </span>
                 </div>
-                <span className="font-mono text-[11px] text-[#C7B8AE]">
-                  SETURAN • SLEMAN
+                <span className="font-mono text-[11px] text-[#EEE6D7]/60">
+                  INTERACTIVE VIEW
                 </span>
               </div>
 
-              {/* Google Maps Iframe */}
+              {/* Responsive Iframe Container */}
               <div className="relative flex-1 w-full min-h-[340px] bg-[#472F1D]">
-                {isMounted ? (
-                  <iframe
-                    title="Lokasi Kontrakan Coffee Yogyakarta"
-                    src={CAFE_INFO.googleMapsEmbed}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0, minHeight: "340px" }}
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    suppressHydrationWarning
-                    className="w-full h-full grayscale contrast-110 opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full min-h-[340px] flex items-center justify-center bg-[#472F1D] text-[#EEE6D7]">
-                    <div className="flex flex-col items-center gap-2">
-                      <MapPin className="w-8 h-8 text-[#C7B8AE] animate-pulse" />
-                      <span className="font-mono text-[12px] uppercase tracking-wider text-[#EEE6D7]/80">
-                        Memuat Peta Navigasi...
-                      </span>
-                    </div>
-                  </div>
-                )}
+                <iframe
+                  title="Peta Lokasi Kontrakan Coffee Yogyakarta"
+                  src={CAFE_INFO.googleMapsEmbed}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-full grayscale-[25%] contrast-[105%] hover:grayscale-0 transition-all duration-500"
+                />
 
-                {/* Floating Map Pin Badge */}
-                <div className="absolute top-4 left-4 bg-[#472F1D]/90 text-[#EEE6D7] backdrop-blur-md p-3.5 border border-[#C7B8AE]/40 sharp-edges shadow-xl pointer-events-none max-w-xs">
-                  <div className="flex items-center gap-2 mb-1">
-                    <MapPin className="w-4 h-4 text-[#C7B8AE]" />
-                    <span className="font-mono text-[11px] text-[#C7B8AE] font-bold uppercase tracking-wider">
-                      LOKASI RESMI
-                    </span>
-                  </div>
-                  <h4 className="font-sans font-black text-[15px] uppercase text-[#EEE6D7]">
-                    KONTRAKAN COFFEE
-                  </h4>
-                  <p className="text-[12px] text-[#EEE6D7]/80 font-sans mt-0.5">
-                    Jl. Seturan Raya No. 45, Sleman
-                  </p>
+                {/* Pin Location Overlay Chip */}
+                <div className="absolute top-4 left-4 bg-[#5F493C]/90 backdrop-blur-md text-[#EEE6D7] px-3.5 py-1.5 text-[11px] sm:text-[12px] font-mono border border-[#472F1D] sharp-edges shadow-lg flex items-center gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-[#C7B8AE]" />
+                  <span className="font-bold">Seturan, Depok, Sleman</span>
                 </div>
 
-                {/* Open in Google Maps Overlay Button */}
-                <div className="absolute bottom-4 right-4 z-10">
+                {/* Bottom Navigation Button Overlay */}
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 p-3.5 bg-[#472F1D]/90 backdrop-blur-md border border-[#5F493C] sharp-edges">
+                  <span className="font-mono text-[12px] text-[#EEE6D7] truncate">
+                    Klik untuk navigasi rute langsung
+                  </span>
                   <a
                     href={CAFE_INFO.googleMapsUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#C7B8AE] text-[#472F1D] font-bold text-[12px] sm:text-[13px] uppercase tracking-tight hover:bg-[#EEE6D7] transition-colors sharp-edges shadow-lg"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#C7B8AE] text-[#472F1D] font-mono text-[11px] font-bold uppercase tracking-wider sharp-edges shrink-0 hover:bg-[#EEE6D7] transition-colors"
                   >
-                    <span>Rute Google Maps</span>
+                    <span>Google Maps</span>
                     <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
                   </a>
                 </div>
@@ -326,5 +250,3 @@ export function LocationSection() {
     </section>
   );
 }
-
-export default LocationSection;

@@ -174,10 +174,10 @@ export function HoursSection() {
                             isToday ? "text-[#C7B8AE]" : "text-[#EEE6D7]"
                           }`}
                         >
-                          {item.buka} – {item.tutup}
+                          {item.libur ? "LIBUR" : `${item.buka} – ${item.tutup}`}
                         </span>
                         <span className="font-mono text-[11px] text-[#EEE6D7]/60 block">
-                          WIB
+                          {item.libur ? "Tutup" : "WIB"}
                         </span>
                       </div>
                     </div>

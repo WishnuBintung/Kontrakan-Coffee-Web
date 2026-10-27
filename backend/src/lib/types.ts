@@ -34,6 +34,9 @@ export type GaleriFoto = {
   gambar: string;
   sudut_favorit: boolean;
   urutan: number;
+  deskripsi?: string;
+  kategori?: string;
+  tag?: string;
 };
 
 export type Hari =

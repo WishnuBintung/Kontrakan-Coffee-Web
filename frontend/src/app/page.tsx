@@ -5,7 +5,6 @@ import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { ManifestoSection } from "@/components/ManifestoSection";
 import { MenuSection } from "@/components/MenuSection";
-import { HoursSection } from "@/components/HoursSection";
 import { GallerySection } from "@/components/GallerySection";
 import { LocationSection } from "@/components/LocationSection";
 import { ContactFooter } from "@/components/ContactFooter";
@@ -30,16 +29,13 @@ export default function Home() {
       {/* 3. LIST MENU & FILTER */}
       <MenuSection />
 
-      {/* 4. JAM BUKA */}
-      <HoursSection />
-
-      {/* 5. OUR GALLERY */}
+      {/* 4. OUR GALLERY */}
       <GallerySection />
 
-      {/* 6. ALAMAT LOKASI KAFE */}
+      {/* 5. ALAMAT & JADWAL OPERASIONAL KAFE */}
       <LocationSection />
 
-      {/* 7. DIV 'KONTRAKAN COFFEE' + 3-COLUMN FOOTER */}
+      {/* 6. DIV 'KONTRAKAN COFFEE' + 3-COLUMN FOOTER */}
       <ContactFooter />
     </main>
   );

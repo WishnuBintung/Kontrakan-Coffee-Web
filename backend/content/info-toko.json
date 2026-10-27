@@ -5,12 +5,47 @@
   "embed_peta": "https://maps.google.com/maps?q=Kopi+Senja+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
   "instagram": "https://instagram.com/kopisenja.yk",
   "jam_buka": [
-    { "hari": "Senin", "buka": "09:00", "tutup": "23:00", "libur": false },
-    { "hari": "Selasa", "buka": "09:00", "tutup": "23:00", "libur": false },
-    { "hari": "Rabu", "buka": "09:00", "tutup": "23:00", "libur": false },
-    { "hari": "Kamis", "buka": "09:00", "tutup": "23:00", "libur": false },
-    { "hari": "Jumat", "buka": "13:00", "tutup": "23:30", "libur": false },
-    { "hari": "Sabtu", "buka": "09:00", "tutup": "24:00", "libur": false },
-    { "hari": "Minggu", "buka": "09:00", "tutup": "23:00", "libur": false }
+    {
+      "hari": "Senin",
+      "buka": "10:00",
+      "tutup": "23:00",
+      "libur": false
+    },
+    {
+      "hari": "Selasa",
+      "buka": "09:00",
+      "tutup": "23:00",
+      "libur": false
+    },
+    {
+      "hari": "Rabu",
+      "buka": "09:00",
+      "tutup": "23:00",
+      "libur": false
+    },
+    {
+      "hari": "Kamis",
+      "buka": "09:00",
+      "tutup": "23:00",
+      "libur": false
+    },
+    {
+      "hari": "Jumat",
+      "buka": "13:00",
+      "tutup": "23:30",
+      "libur": false
+    },
+    {
+      "hari": "Sabtu",
+      "buka": "09:00",
+      "tutup": "24:00",
+      "libur": false
+    },
+    {
+      "hari": "Minggu",
+      "buka": "09:00",
+      "tutup": "23:00",
+      "libur": false
+    }
   ]
 }

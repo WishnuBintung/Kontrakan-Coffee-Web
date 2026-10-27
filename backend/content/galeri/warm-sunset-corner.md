@@ -1,8 +1,9 @@
 ---
-judul: Sudut Estetik Cahaya Senja
-gambar: /images/placeholder-coffee.svg
+judul: Warm Amber Lounge
+gambar: https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop
 sudut_favorit: true
-urutan: 5
+kategori: Sudut Favorit
+tag: COZY CORNER
+urutan: 6
 ---
-Pemandangan estetik saat matahari mulai terbenam dengan bayangan hangat ke dalam ruangan. Spot foto paling instagramable di kafe.
-
+Sudut sofa empuk dengan pencahayaan temaram amber gold 2700K. Spot paling nyaman untuk membaca buku atau menikmati secangkir pour-over hangat.

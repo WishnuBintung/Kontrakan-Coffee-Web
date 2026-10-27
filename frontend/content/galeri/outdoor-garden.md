@@ -1,7 +1,9 @@
 ---
 judul: Outdoor Garden Rindang
-gambar: /images/placeholder-coffee.svg
+gambar: https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1200&auto=format&fit=crop
 sudut_favorit: true
-urutan: 4
+kategori: Outdoor Garden
+tag: NATURAL BREEZE
+urutan: 5
 ---
-Area luar ruangan semi terbuka dengan pepohonan hijau rindang. Tempat favorit untuk mengobrol santai bersama teman menikmati hembusan angin sore.
+Area terbuka semi rindang beratap kanopi teduh dan pepohonan hijau. Suasana asri untuk mengobrol santai melepas penat di sore hingga malam.
