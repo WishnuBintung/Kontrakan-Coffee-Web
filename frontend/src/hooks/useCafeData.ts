@@ -3,9 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import {
-  MENU_ITEMS,
   GALLERY_ITEMS,
-  PROMO_ITEMS,
   CAFE_INFO,
   CafeMenuItem,
   CafeGalleryItem,
@@ -15,47 +13,73 @@ import {
 } from "@/lib/cafeData";
 import {
   getClientMenuItems,
+  getClientMenuResult,
   getClientStatusToko,
   getClientInfoToko,
   getClientGaleri,
-    getClientPromo,
+  getClientPromo,
   getClientPromoResult,
   ApiStatusToko,
 } from "@/lib/clientApi";
 
+export type MenuStatus = "loading" | "success" | "empty" | "error";
+
+export type MenuDataHookResult = {
+  items: CafeMenuItem[];
+  allItems: CafeMenuItem[];
+  status: MenuStatus;
+  error: string | null;
+  refetch: () => Promise<void>;
+  isLoading: boolean;
+};
+
 /**
- * Hook untuk mengelola daftar menu dari backend dengan fallback instan ke MENU_ITEMS lokal
+ * Hook untuk mengelola daftar menu dari CMS:
+ * - Tidak menggunakan template/data statis jika kosong atau gagal terhubung
+ * - "empty": Belum ada menu yang dimasukkan ke dalam CMS
+ * - "error": Sistem tidak dapat terhubung ke server CMS
+ * - "success": Terdapat menu yang aktif dari CMS
  */
 export function useMenuData(
   activeCategory = "semua",
   searchQuery = "",
   sortBy: "default" | "price-asc" | "price-desc" | "name-asc" = "default"
-) {
-  const [items, setItems] = useState<CafeMenuItem[]>(MENU_ITEMS);
-  const [isLoading, setIsLoading] = useState(false);
+): MenuDataHookResult {
+  const [allItems, setAllItems] = useState<CafeMenuItem[]>([]);
+  const [status, setStatus] = useState<MenuStatus>("loading");
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
+  const fetchMenu = useCallback(async () => {
+    setStatus("loading");
+    setError(null);
 
-    getClientMenuItems()
-      .then((data) => {
-        if (isMounted && data && data.length > 0) {
-          setItems(data);
-        }
-      })
-      .catch(() => {})
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
+    const result = await getClientMenuResult();
 
-    return () => {
-      isMounted = false;
-    };
+    if (result.status === "success") {
+      setAllItems(result.data);
+      setStatus("success");
+      setError(null);
+    } else if (result.status === "empty") {
+      setAllItems([]);
+      setStatus("empty");
+      setError(null);
+    } else {
+      setAllItems([]);
+      setStatus("error");
+      setError(result.error || "Sistem tidak dapat terhubung ke CMS");
+    }
   }, []);
 
+  useEffect(() => {
+    fetchMenu();
+  }, [fetchMenu]);
+
   const filteredItems = useMemo(() => {
-    let result = [...items];
+    if (status !== "success" || allItems.length === 0) {
+      return [];
+    }
+
+    let result = [...allItems];
 
     // Filter by Category or Recommended
     if (activeCategory === "rekomendasi") {
@@ -86,12 +110,15 @@ export function useMenuData(
     }
 
     return result;
-  }, [items, activeCategory, searchQuery, sortBy]);
+  }, [allItems, activeCategory, searchQuery, sortBy, status]);
 
   return {
     items: filteredItems,
-    allItems: items,
-    isLoading,
+    allItems,
+    status,
+    error,
+    refetch: fetchMenu,
+    isLoading: status === "loading",
   };
 }
 

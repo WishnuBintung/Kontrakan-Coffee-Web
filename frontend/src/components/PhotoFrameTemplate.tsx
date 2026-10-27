@@ -33,7 +33,6 @@ export function PhotoFrameTemplate({
   className = "",
 }: PhotoFrameTemplateProps) {
   const [imageError, setImageError] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const hasValidPhoto =
     Boolean(src) &&
@@ -46,22 +45,19 @@ export function PhotoFrameTemplate({
     <div
       className={`relative ${aspectRatio} w-full overflow-hidden rounded-[0.15rem] bg-latte select-none group ${className}`}
     >
-      {/* LAYER 1: Active CMS Photo */}
+      {/* LAYER 1: Active CMS Photo (Instant render, no delay) */}
       {hasValidPhoto && (
         <img
           src={src}
           alt={title}
-          loading="lazy"
+          loading="eager"
           onError={() => setImageError(true)}
-          onLoad={() => setIsLoaded(true)}
-          className={`h-full w-full object-cover transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 ${
-            isLoaded ? "opacity-100" : "opacity-0"
-          }`}
+          className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
         />
       )}
 
-      {/* LAYER 2: Fallback frame while the photo loads / when missing */}
-      {(!hasValidPhoto || !isLoaded) && (
+      {/* LAYER 2: Fallback frame while photo is missing / error */}
+      {!hasValidPhoto && (
         <div className="halftone absolute inset-0 flex flex-col items-center justify-center gap-2 bg-latte p-4 text-center text-coffee">
           <div className="flex h-12 w-12 items-center justify-center rounded-[0.25rem] bg-sunshine">
             <Coffee className="h-6 w-6" />

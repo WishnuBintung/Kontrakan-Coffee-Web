@@ -10,44 +10,57 @@ import { PhotoFrameTemplate } from "./PhotoFrameTemplate";
 interface MenuDetailModalProps {
   item: CafeMenuItem | null;
   onClose: () => void;
+  triggerMode?: "hover" | "click";
 }
 
-export function MenuDetailModal({ item, onClose }: MenuDetailModalProps) {
+export function MenuDetailModal({
+  item,
+  onClose,
+  triggerMode = "click",
+}: MenuDetailModalProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    if (item) {
+    if (item && triggerMode === "click") {
       document.body.style.overflow = "hidden";
+    }
+    if (item) {
       window.addEventListener("keydown", handleKeyDown);
     }
     return () => {
       document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [item, onClose]);
+  }, [item, onClose, triggerMode]);
 
   return (
     <AnimatePresence>
       {item && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 pointer-events-none">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.1 }}
             onClick={onClose}
-            className="fixed inset-0 bg-coffee-darker/80 backdrop-blur-sm"
+            className={`fixed inset-0 ${
+              triggerMode === "hover"
+                ? "bg-coffee-darker/35 backdrop-blur-[1px] pointer-events-none"
+                : "bg-coffee-darker/80 backdrop-blur-sm pointer-events-auto cursor-pointer"
+            }`}
           />
 
-          {/* Modal Container */}
+          {/* Modal Container: Tanpa animasi lambat, update instan */}
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-y-auto rounded-[0.5rem] bg-cream text-coffee shadow-2xl"
+            initial={{ opacity: 0, scale: 0.99 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.99 }}
+            transition={{ duration: 0.1 }}
+            className={`relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-y-auto rounded-[0.5rem] bg-cream text-coffee shadow-2xl ${
+              triggerMode === "hover" ? "pointer-events-none" : "pointer-events-auto"
+            }`}
           >
             {/* Header bar: Kategori Menu & Tombol Tutup */}
             <div className="sticky top-0 z-20 flex items-center justify-between bg-coffee-dark px-5 py-4 text-cream sm:px-6 sm:py-5">
@@ -56,7 +69,7 @@ export function MenuDetailModal({ item, onClose }: MenuDetailModalProps) {
               </span>
               <button
                 onClick={onClose}
-                className="cursor-pointer rounded-[0.2rem] p-1 text-cream transition-colors hover:text-sunshine"
+                className="cursor-pointer rounded-[0.2rem] p-1 text-cream transition-colors hover:text-sunshine pointer-events-auto"
                 aria-label="Tutup detail menu"
               >
                 <X className="w-5 h-5 stroke-[2]" />
@@ -65,7 +78,7 @@ export function MenuDetailModal({ item, onClose }: MenuDetailModalProps) {
 
             {/* Modal Body: Foto, Nama, Harga, dan Deskripsi Menu */}
             <div className="space-y-5 bg-cream p-5 sm:p-7">
-              {/* Foto Menu */}
+              {/* Foto Menu Utama (Tampil Instan Tanpa Delay) */}
               <div className="relative w-full">
                 <PhotoFrameTemplate
                   src={item.foto}
@@ -91,6 +104,52 @@ export function MenuDetailModal({ item, onClose }: MenuDetailModalProps) {
                   {item.deskripsi}
                 </p>
               </div>
+
+              {/* Detail Varian, Profil Rasa & Spesifikasi */}
+              {(item.ukuran?.length || item.rasa?.length || item.specs) && (
+                <div className="space-y-3 rounded-[0.25rem] border border-coffee/10 bg-latte/20 p-3.5 text-coffee sm:p-4">
+                  {item.ukuran && item.ukuran.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                      <span className="font-semibold uppercase tracking-wider text-coffee/70">
+                        Varian:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {item.ukuran.map((uk) => (
+                          <span
+                            key={uk}
+                            className="rounded-[0.2rem] border border-coffee/15 bg-cream px-2.5 py-0.5 text-xs font-semibold text-coffee"
+                          >
+                            {uk}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {item.rasa && item.rasa.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                      <span className="font-semibold uppercase tracking-wider text-coffee/70">
+                        Profil Rasa:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {item.rasa.map((r) => (
+                          <span
+                            key={r}
+                            className="rounded-[0.2rem] bg-coffee/10 px-2 py-0.5 text-xs font-medium text-coffee"
+                          >
+                            {r}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {item.specs && (
+                    <p className="text-xs text-coffee/80">
+                      <strong className="font-semibold text-coffee">Spesifikasi:</strong>{" "}
+                      {item.specs}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Catatan Informatif Kunjungan Fisik (Non-Pemesanan Online) */}
               <div className="rounded-[0.25rem] border-l-4 border-sunshine bg-coffee p-3.5 text-cream sm:p-4">

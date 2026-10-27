@@ -2,9 +2,7 @@
 // Pure browser-compatible API client for Kontrakan Coffee REST API
 
 import {
-  MENU_ITEMS,
   GALLERY_ITEMS,
-  PROMO_ITEMS,
   CAFE_INFO,
   CafeMenuItem,
   CafeGalleryItem,
@@ -71,23 +69,42 @@ async function requestWithTimeout<T>(
   }
 }
 
+export type MenuFetchResult =
+  | { status: "success"; data: CafeMenuItem[] }
+  | { status: "empty"; data: [] }
+  | { status: "error"; error: string };
+
 /**
- * Mengambil daftar menu dari backend /api/menu
- * Fallback ke MENU_ITEMS lokal jika backend offline.
+ * Mengambil daftar menu dari backend /api/menu dengan deteksi status:
+ * - "success": Ada menu yang aktif dari CMS
+ * - "empty": Terhubung ke CMS tetapi belum ada menu yang dimasukkan (array === 0)
+ * - "error": CMS tidak terhubung / server offline / gagal koneksi
  */
-export async function getClientMenuItems(): Promise<CafeMenuItem[]> {
+export async function getClientMenuResult(): Promise<MenuFetchResult> {
   const apiUrl = getBackendApiUrl();
   const data = await requestWithTimeout<any[]>(`${apiUrl}/menu`);
 
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    return MENU_ITEMS;
+  // 1. Jika CMS tidak terhubung / server mati / request timeout -> data === null
+  if (data === null || !Array.isArray(data)) {
+    return {
+      status: "error",
+      error: "Sistem tidak dapat terhubung ke server CMS",
+    };
   }
 
-  // Normalisasi data dari backend agar kompatibel dengan CafeMenuItem
-  return data.map((item) => ({
-    id: item.id || item.slug,
-    nama: item.nama,
-    kategori: item.kategori,
+  // 2. Jika terhubung ke CMS tetapi belum ada menu yang dimasukkan (array === 0)
+  if (data.length === 0) {
+    return {
+      status: "empty",
+      data: [],
+    };
+  }
+
+  // 3. Normalisasi data dari CMS (murni data dari CMS, tanpa fallback data statis)
+  const items: CafeMenuItem[] = data.map((item, idx) => ({
+    id: item.id || item.slug || `menu-${idx}`,
+    nama: item.nama || "Menu",
+    kategori: item.kategori || "kopi",
     harga: Number(item.harga) || 0,
     deskripsi: item.deskripsi || "",
     foto: item.foto || "/images/placeholder-coffee.svg",
@@ -97,6 +114,23 @@ export async function getClientMenuItems(): Promise<CafeMenuItem[]> {
     badge: item.badge || (item.rekomendasi ? "Pilihan Barista" : undefined),
     specs: item.specs || (item.deskripsi_panjang ? item.deskripsi_panjang.slice(0, 100) : undefined),
   }));
+
+  return {
+    status: "success",
+    data: items,
+  };
+}
+
+/**
+ * Mengambil daftar menu dari backend /api/menu
+ * Mengembalikan array kosong jika menu kosong atau CMS tidak terhubung (tanpa fallback data statis).
+ */
+export async function getClientMenuItems(): Promise<CafeMenuItem[]> {
+  const result = await getClientMenuResult();
+  if (result.status === "success") {
+    return result.data;
+  }
+  return [];
 }
 
 /**
