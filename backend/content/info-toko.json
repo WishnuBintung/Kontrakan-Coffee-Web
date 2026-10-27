@@ -1,12 +1,8 @@
 {
-  "nama_toko": "Kontrakan Coffee",
-  "alamat": "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
-  "patokan": "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES)",
   "link_peta": "https://maps.app.goo.gl/7kn5wi3aeE15r61T9?g_st=ic",
   "embed_peta": "https://maps.google.com/maps?q=Jl.+Nyai+Ketrik,+Sekaran,+Kec.+Gn.+Pati,+Kota+Semarang,+Jawa+Tengah+50229&t=&z=16&ie=UTF8&iwloc=&output=embed",
-  "instagram": "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3",
-  "tiktok": "https://www.tiktok.com/@kontrakancoffee?_r=1&_t=ZS-9AubeEe0g5M",
-  "whatsapp": "6281234567890",
+  "alamat": "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
+  "patokan": "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES)",
   "jam_buka": [
     {
       "hari": "Senin",
@@ -50,5 +46,9 @@
       "tutup": "23:00",
       "libur": false
     }
-  ]
+  ],
+  "whatsapp": "6281234567890",
+  "instagram": "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3",
+  "nama_toko": "Kontrakan Coffee",
+  "tiktok": "https://www.tiktok.com/@kontrakancoffee?_r=1&_t=ZS-9AubeEe0g5M"
 }

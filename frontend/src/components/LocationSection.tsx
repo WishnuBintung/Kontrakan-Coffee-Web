@@ -222,28 +222,6 @@ export function LocationSection() {
                   referrerPolicy="no-referrer-when-downgrade"
                   className="w-full h-full grayscale-[25%] contrast-[105%] hover:grayscale-0 transition-all duration-500"
                 />
-
-                {/* Pin Location Overlay Chip */}
-                <div className="absolute top-4 left-4 bg-[#5F493C]/90 backdrop-blur-md text-[#EEE6D7] px-3.5 py-1.5 text-[11px] sm:text-[12px] font-mono border border-[#472F1D] sharp-edges shadow-lg flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-[#C7B8AE]" />
-                  <span className="font-bold">{CAFE_INFO.alamat ? CAFE_INFO.alamat.split(",").slice(1, 3).join(",").trim() || CAFE_INFO.alamat.split(",")[0] : "Sekaran, Gunungpati, Semarang"}</span>
-                </div>
-
-                {/* Bottom Navigation Button Overlay */}
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 p-3.5 bg-[#472F1D]/90 backdrop-blur-md border border-[#5F493C] sharp-edges">
-                  <span className="font-mono text-[12px] text-[#EEE6D7] truncate">
-                    Klik untuk navigasi rute langsung
-                  </span>
-                  <a
-                    href={CAFE_INFO.googleMapsUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#C7B8AE] text-[#472F1D] font-mono text-[11px] font-bold uppercase tracking-wider sharp-edges shrink-0 hover:bg-[#EEE6D7] transition-colors"
-                  >
-                    <span>Google Maps</span>
-                    <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
-                  </a>
-                </div>
               </div>
             </div>
           </div>
