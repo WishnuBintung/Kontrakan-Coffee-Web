@@ -7,9 +7,8 @@ export function Navbar() {
   const navLinks = [
     { label: "Deskripsi", href: "#pembuka" },
     { label: "Menu", href: "#menu" },
-    { label: "Jam Buka", href: "#jam-buka" },
     { label: "Galeri", href: "#galeri" },
-    { label: "Lokasi", href: "#lokasi" },
+    { label: "Informasi", href: "#lokasi" },
   ];
 
   return (
@@ -47,18 +46,13 @@ export function Navbar() {
           link: "#menu",
         },
         {
-          label: "Jam Buka",
-          ariaLabel: "Cek jadwal jam operasional kafe",
-          link: "#jam-buka",
-        },
-        {
           label: "Galeri",
           ariaLabel: "Jelajahi foto suasana kafe",
           link: "#galeri",
         },
         {
-          label: "Lokasi",
-          ariaLabel: "Kunjungi kami di lokasi kafe",
+          label: "Informasi",
+          ariaLabel: "Lihat informasi lokasi dan jadwal jam operasional kafe",
           link: "#lokasi",
         },
       ]}

@@ -45,7 +45,8 @@ export function ContactFooter() {
               {[
                 { label: "Deskripsi & Pembuka", href: "#pembuka" },
                 { label: "Daftar Menu & Harga", href: "#menu" },
-                { label: "Jadwal Jam Buka", href: "#jam-buka" },
+                { label: "Galeri Kafe", href: "#galeri" },
+                { label: "Informasi", href: "#lokasi" },
                 { label: "Instagram (@kontrakancoffee)", href: "https://instagram.com/kontrakancoffee" },
                 { label: "WhatsApp Chat", href: "https://wa.me/6281234567890" },
                 { label: "Google Maps Navigasi", href: "https://maps.google.com/?q=Kontrakan+Coffee+Yogyakarta" },
