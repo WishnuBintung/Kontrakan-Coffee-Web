@@ -58,7 +58,7 @@ Membangun satu ekosistem web resmi **Kontrakan Coffee** yang berfungsi sebagai w
 | **FR-09** | **Full-Screen Lightbox** | Mengetuk foto galeri membuka tampilan layar penuh berlatar gelap dengan navigasi foto sebelumnya/berikutnya dan kontrol papan ketik (`Escape`, `ArrowLeft`, `ArrowRight`). |
 | **FR-10** | **Jam Operasional Real-Time** | Menghitung status kafe secara langsung berdasarkan waktu WIB (UTC+7): menampilkan badge *beacon* berdenyut (*"BUKA SEKARANG"* / *"SEDANG TUTUP"*), teks status penutupan/pembukaan berikutnya, dan penanda khusus hari ini (*"HARI INI"*) pada tabel jadwal 7 hari. |
 | **FR-11** | **Peta Interaktif & Navigasi** | Menyajikan iframe Google Maps responsif yang ditata dengan filter kontras/grayscale estetik, chip alamat, dan tombol navigasi langsung ke Google Maps. |
-| **FR-12** | **Footer & Presensi Digital** | Menyajikan penutup halaman (*designed closing scene*) monumental 2-kolom: kanal media sosial resmi (Instagram, WhatsApp, Google Maps) di sisi kiri, serta alamat lengkap kafe dan kalimat hak cipta `© 2026 KONTRAKAN COFFEE` di sisi kanan desktop. |
+| **FR-12** | **Footer & Presensi Digital** | Menyajikan penutup halaman (*designed closing scene*) 2-kolom ringkas: kanal media sosial resmi (Instagram, WhatsApp, TikTok) di sisi kiri, serta alamat lengkap Semarang dan kalimat hak cipta `© 2026 KONTRAKAN COFFEE` di sisi kanan desktop. |
 | **FR-13** | **Navigasi Multi-Layered GSAP** | Header navigasi desktop yang menyusut saat di-scroll (*shrinkOnScroll*), dilengkapi menu hamparan penuh (*full-screen staggered overlay*) di ponsel dengan animasi lapis warna GSAP timeline. |
 | **FR-14** | **Pengelolaan Konten Mandiri (CMS)**| Mengedit seluruh menu, kategori, foto galeri, promo, dan jam operasional via Decap CMS di `/admin` dengan dukungan alur kerja editorial (*draft-review-publish*). |
 | **FR-15** | **REST API Server** | Backend Express.js melayani 11 endpoint JSON publik dengan dukungan CORS, parameter filter/sorting, dan dynamic host URL rewriting untuk akses LAN. |
@@ -335,12 +335,11 @@ Frontend mengadopsi standar desain *strict anti-slop* yang didefinisikan melalui
 7. **`LocationSection.tsx`:**
    - Kolom kiri: Kartu alamat lengkap, koordinat GPS, patokan landmark kampus, dan Jadwal Operasional 7 Hari.
    - Indikator status *Live Beacon* berdenyut: Menghitung secara dinamis apakah kafe saat ini Buka atau Tutup berdasarkan waktu WIB (UTC+7), dilengkapi polling otomatis setiap 45 detik.
-   - Kolom kanan: Tampilan *Google Maps Live Embed* interaktif dengan filter visual kontras, pin penanda Seturan, dan tombol navigasi rute langsung.
+   - Kolom kanan: Tampilan *Google Maps Live Embed* interaktif dengan filter visual kontras, pin penanda Sekaran (Gunungpati, Semarang), dan tombol navigasi rute langsung.
 8. **`ContactFooter.tsx`:**
-   - Tipografi penutup monumental 9.5vw *"KONTRAKAN COFFEE"* sebagai *designed closing scene* (sesuai kaidah `.agents`: footer sebagai penutup desain arsitektural, bukan sitemap tautan internal).
-   - Layout 2-kolom seimbang (*flank-split layout*):
-     - **Sisi Kiri:** Tautan kanal media sosial & komunikasi eksternal (Instagram `@kontrakan.coffee`, WhatsApp Direct Chat, Google Maps Navigation) dengan transisi hover halus.
-     - **Sisi Kanan (Desktop: Right-Aligned):** Alamat lengkap fisik kafe (Jl. Seturan Raya No. 45, Caturtunggal, Depok, Sleman, Yogyakarta) dan baris hak cipta resmi `© 2026 KONTRAKAN COFFEE`.
+   - Desain penutup 2-kolom ringkas dan bersih (*clean two-flank layout*) tanpa redundansi banner judul:
+     - **Sisi Kiri:** Tautan kanal media sosial & komunikasi eksternal resmi (Instagram `@kontrakan.coffee`, WhatsApp Direct Chat, dan TikTok `@kontrakancoffee`).
+     - **Sisi Kanan (Desktop: Right-Aligned):** Alamat lengkap fisik kafe (Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229) yang terhubung langsung ke Google Maps, serta baris hak cipta resmi `© 2026 KONTRAKAN COFFEE`.
 
 ---
 
@@ -380,7 +379,7 @@ Frontend mengadopsi standar desain *strict anti-slop* yang didefinisikan melalui
 4. **Pencarian Menu & Filter:** Memasukkan kata kunci di *search bar* (misal: "V60", "Croissant") atau memilih tab kategori (*Kopi Atelier*, *Non-Kopi*, *Camilan*), serta mengatur urutan harga.
 5. **Inspeksi Detail Menu:** Mengetuk baris menu untuk membaca komposisi bahan, takaran, opsi varian rasa, dan melihat simulasi frame foto CMS.
 6. **Pengecekan Operasional Kafe:** Melihat indikator *Live Beacon* di bagian Lokasi untuk memastikan kafe sedang buka pada jam saat ini di zona WIB.
-7. **Kunjungan / Navigasi Fisik:** Menekan tombol Google Maps untuk membuka rute navigasi menuju Seturan, Sleman, atau menekan tombol WhatsApp untuk menanyakan ketersediaan tempat/biji kopi.
+7. **Kunjungan / Navigasi Fisik:** Menekan tombol Google Maps untuk membuka rute navigasi menuju Sekaran, Gunungpati, Semarang, atau menekan tombol WhatsApp untuk menanyakan ketersediaan tempat/biji kopi.
 
 ### 8.2 Alur Pemilik & Barista Kafe (Pengelolaan Konten via CMS)
 1. **Akses Panel Admin:** Membuka URL `http://localhost:5000/admin` (lokal) atau domain produksi kafe.

@@ -57,9 +57,12 @@ export type JamBuka = {
 export type InfoToko = {
   nama_toko: string;
   alamat: string;
+  patokan?: string;
   link_peta: string;
   embed_peta?: string;
   instagram: string;
+  tiktok?: string;
+  whatsapp?: string;
   jam_buka: JamBuka[];
 };
 

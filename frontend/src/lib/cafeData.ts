@@ -57,6 +57,7 @@ export interface CafeInfo {
   whatsappText: string;
   instagram: string;
   instagramHandle: string;
+  tiktok?: string;
   email: string;
   jamBuka: CafeJamBuka[];
   fasilitas: { icon: string; title: string; desc: string }[];
@@ -65,17 +66,18 @@ export interface CafeInfo {
 export const CAFE_INFO: CafeInfo = {
   nama: "Kontrakan Coffee",
   tagline: "Spatial Botanical & Warm Monochrome Atelier",
-  alamat: "Jl. Seturan Raya No. 45, Caturtunggal, Depok, Sleman, D.I. Yogyakarta 55281",
-  patokan: "Kawasan strategis Seturan — 5 menit dari kampus UPN Veteran, YKPN, dan Atma Jaya.",
-  koordinat: "7.7725° S, 110.4092° E",
-  googleMapsUrl: "https://maps.google.com/?q=Kontrakan+Coffee+Yogyakarta",
+  alamat: "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
+  patokan: "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES).",
+  koordinat: "7.0505° S, 110.3920° E",
+  googleMapsUrl: "https://maps.app.goo.gl/7kn5wi3aeE15r61T9?g_st=ic",
   googleMapsEmbed:
-    "https://maps.google.com/maps?q=Kontrakan+Coffee+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
+    "https://maps.google.com/maps?q=Jl.+Nyai+Ketrik,+Sekaran,+Kec.+Gn.+Pati,+Kota+Semarang,+Jawa+Tengah+50229&t=&z=16&ie=UTF8&iwloc=&output=embed",
   whatsapp: "6281234567890",
   whatsappDisplay: "+62 812-3456-7890",
   whatsappText: "Halo Kontrakan Coffee, saya ingin bertanya tentang menu dan reservasi meja.",
   instagram: "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3",
   instagramHandle: "@kontrakan.coffee",
+  tiktok: "https://www.tiktok.com/@kontrakancoffee?_r=1&_t=ZS-9AubeEe0g5M",
   email: "atelier@kontrakancoffee.com",
   jamBuka: [
     { hari: "Senin", buka: "09:00", tutup: "23:00", libur: false, catatan: "Weekday Roastery Session" },

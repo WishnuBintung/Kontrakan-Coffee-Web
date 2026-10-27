@@ -290,11 +290,14 @@ export function getInfoToko(): InfoToko {
   const filePath = path.join(CONTENT_DIR, "info-toko.json");
   const fallback: InfoToko = {
     nama_toko: "Kontrakan Coffee",
-    alamat: "Jl. Seturan Raya No. 45, Sleman, D.I. Yogyakarta 55281",
-    link_peta: "https://maps.google.com/?q=Kontrakan+Coffee+Yogyakarta",
+    alamat: "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
+    patokan: "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES)",
+    link_peta: "https://maps.app.goo.gl/7kn5wi3aeE15r61T9?g_st=ic",
     embed_peta:
-      "https://maps.google.com/maps?q=Kontrakan+Coffee+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
-    instagram: "https://instagram.com/kontrakancoffee",
+      "https://maps.google.com/maps?q=Jl.+Nyai+Ketrik,+Sekaran,+Kec.+Gn.+Pati,+Kota+Semarang,+Jawa+Tengah+50229&t=&z=16&ie=UTF8&iwloc=&output=embed",
+    instagram: "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3",
+    tiktok: "https://www.tiktok.com/@kontrakancoffee?_r=1&_t=ZS-9AubeEe0g5M",
+    whatsapp: "6281234567890",
     jam_buka: [],
   };
 
@@ -308,9 +311,11 @@ export function getInfoToko(): InfoToko {
     return {
       nama_toko: data.nama_toko || fallback.nama_toko,
       alamat: data.alamat || fallback.alamat,
+      patokan: data.patokan || fallback.patokan,
       link_peta: data.link_peta || fallback.link_peta,
       embed_peta: data.embed_peta || fallback.embed_peta,
       instagram: data.instagram || fallback.instagram,
+      tiktok: data.tiktok || fallback.tiktok,
       whatsapp:
         typeof data.whatsapp === "string" && data.whatsapp.trim()
           ? data.whatsapp.replace(/\D/g, "")
