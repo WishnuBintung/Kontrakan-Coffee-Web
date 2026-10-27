@@ -21,7 +21,7 @@ export interface CafeGalleryItem {
   deskripsi: string;
   gambar: string;
   sudut_favorit: boolean;
-  kategori: string;
+  kategori?: string;
   tag: string;
 }
 
@@ -342,7 +342,6 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
       "Pencahayaan alami sore hari yang menembus kaca atelier, menciptakan bayangan sinematis yang hangat dan menenangkan bagi setiap pengunjung.",
     gambar: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1200&auto=format&fit=crop",
     sudut_favorit: true,
-    kategori: "Sudut Favorit",
     tag: "GOLDEN HOUR",
   },
   {
@@ -352,7 +351,6 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
       "Menyaksikan langsung ketelitian barista kami menyeduh kopi filter manual V60 dan espresso presisi menggunakan mesin atelier terpilih.",
     gambar: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=1200&auto=format&fit=crop",
     sudut_favorit: false,
-    kategori: "Manual Bar",
     tag: "SLOW CRAFT",
   },
   {
@@ -362,7 +360,6 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
       "Konter barista terbuka dari beton halus berpadu kayu natural ash, menciptakan ruang dialog hangat antara barista dan penikmat kopi.",
     gambar: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
     sudut_favorit: false,
-    kategori: "Bar Area",
     tag: "SPATIAL PURITY",
   },
   {
@@ -372,7 +369,6 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
       "Area meja kayu panjang ergonomis untuk nugas dan WFC produktif. Setiap kursi dilengkapi akses stopkontak dan jaringan Wi-Fi 100 Mbps.",
     gambar: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1200&auto=format&fit=crop",
     sudut_favorit: true,
-    kategori: "Komunal Kerja",
     tag: "WFC & STUDY",
   },
   {
@@ -382,7 +378,6 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
       "Area terbuka semi rindang beratap kanopi teduh dan pepohonan hijau. Suasana asri untuk mengobrol santai melepas penat di sore hingga malam.",
     gambar: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1200&auto=format&fit=crop",
     sudut_favorit: true,
-    kategori: "Outdoor Garden",
     tag: "NATURAL BREEZE",
   },
   {
@@ -392,7 +387,6 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
       "Sudut sofa empuk dengan pencahayaan temaram amber gold 2700K. Spot paling nyaman untuk membaca buku atau menikmati secangkir pour-over hangat.",
     gambar: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
     sudut_favorit: true,
-    kategori: "Sudut Favorit",
     tag: "COZY CORNER",
   },
 ];

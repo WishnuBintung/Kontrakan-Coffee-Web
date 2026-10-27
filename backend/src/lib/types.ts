@@ -35,7 +35,6 @@ export type GaleriFoto = {
   sudut_favorit: boolean;
   urutan: number;
   deskripsi?: string;
-  kategori?: string;
   tag?: string;
 };
 

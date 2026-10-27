@@ -201,7 +201,6 @@ export async function getClientGaleri(onlyFavorites = false): Promise<CafeGaller
         "Sudut nyaman untuk rehat dan bercengkerama.",
       gambar,
       sudut_favorit: Boolean(item.sudut_favorit),
-      kategori: item.kategori || matchingLocal?.kategori || "Atelier",
       tag: item.tag || (item.sudut_favorit ? "Spot Favorit" : matchingLocal?.tag || "Area"),
     };
   });

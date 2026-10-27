@@ -257,7 +257,6 @@ export function getGaleri(onlyFavorites = false): GaleriFoto[] {
           sudut_favorit: Boolean(data.sudut_favorit),
           urutan: typeof data.urutan === "number" ? data.urutan : 99,
           deskripsi: content ? content.trim() : (data.deskripsi || undefined),
-          kategori: data.kategori || (data.sudut_favorit ? "Sudut Favorit" : "Atelier"),
           tag: data.tag || (data.sudut_favorit ? "Spot Favorit" : "Area"),
         } as GaleriFoto;
       } catch (err) {

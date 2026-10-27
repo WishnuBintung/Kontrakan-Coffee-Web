@@ -7,27 +7,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { CafeGalleryItem } from "@/lib/cafeData";
 import { useGalleryData } from "@/hooks/useCafeData";
 
-const GALLERY_CATEGORIES = [
-  { id: "semua", label: "Semua Sudut" },
-  { id: "Sudut Favorit", label: "Sudut Favorit (Instagramable)" },
-  { id: "Manual Bar", label: "Manual Brew Bar" },
-  { id: "Komunal Kerja", label: "Meja Komunal WFC" },
-  { id: "Outdoor Garden", label: "Outdoor Garden" },
-];
-
 export function GallerySection() {
-  const [activeCategory, setActiveCategory] = useState("semua");
   const [selectedPhoto, setSelectedPhoto] = useState<CafeGalleryItem | null>(null);
   const galleryItems = useGalleryData();
-
-  const filteredPhotos =
-    activeCategory === "semua"
-      ? galleryItems
-      : galleryItems.filter(
-          (item) =>
-            item.kategori === activeCategory ||
-            (activeCategory === "Sudut Favorit" && item.sudut_favorit)
-        );
 
   // Keyboard navigation for lightbox
   useEffect(() => {
@@ -45,20 +27,20 @@ export function GallerySection() {
       document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedPhoto, filteredPhotos]);
+  }, [selectedPhoto, galleryItems]);
 
   const handleNextPhoto = () => {
-    if (!selectedPhoto) return;
-    const currentIndex = filteredPhotos.findIndex((p) => p.id === selectedPhoto.id);
-    const nextIndex = (currentIndex + 1) % filteredPhotos.length;
-    setSelectedPhoto(filteredPhotos[nextIndex]);
+    if (!selectedPhoto || galleryItems.length === 0) return;
+    const currentIndex = galleryItems.findIndex((p) => p.id === selectedPhoto.id);
+    const nextIndex = (currentIndex + 1) % galleryItems.length;
+    setSelectedPhoto(galleryItems[nextIndex]);
   };
 
   const handlePrevPhoto = () => {
-    if (!selectedPhoto) return;
-    const currentIndex = filteredPhotos.findIndex((p) => p.id === selectedPhoto.id);
-    const prevIndex = (currentIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
-    setSelectedPhoto(filteredPhotos[prevIndex]);
+    if (!selectedPhoto || galleryItems.length === 0) return;
+    const currentIndex = galleryItems.findIndex((p) => p.id === selectedPhoto.id);
+    const prevIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+    setSelectedPhoto(galleryItems[prevIndex]);
   };
 
   return (
@@ -95,29 +77,9 @@ export function GallerySection() {
             </p>
           </div>
 
-          {/* Filter Chips - Mobile Scrollable */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 sm:mb-10 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-            {GALLERY_CATEGORIES.map((cat) => {
-              const isActive = activeCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`whitespace-nowrap px-4 py-2.5 font-mono text-[12px] sm:text-[13px] uppercase tracking-wider transition-all sharp-edges shrink-0 border cursor-pointer ${
-                    isActive
-                      ? "bg-[#5F493C] text-[#EEE6D7] border-[#5F493C] shadow-md"
-                      : "bg-transparent text-[#5F493C] border-[#C7B8AE] hover:border-[#5F493C] hover:text-[#472F1D]"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              );
-            })}
-          </div>
-
           {/* Gallery Architectural Grid: 1 col on mobile, 2 col on tablet, 3 col on desktop */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredPhotos.map((photo, idx) => (
+            {galleryItems.map((photo, idx) => (
               <div
                 key={photo.id}
                 data-rev
@@ -162,9 +124,6 @@ export function GallerySection() {
                 {/* Caption Bar */}
                 <div className="p-5 sm:p-6 bg-[#5F493C] flex-1 flex flex-col justify-between border-t border-[#472F1D]">
                   <div>
-                    <span className="font-mono text-[11px] text-[#C7B8AE] uppercase tracking-widest block mb-1 font-semibold">
-                      {photo.kategori.toUpperCase()}
-                    </span>
                     <h3 className="font-sans font-black text-xl sm:text-2xl text-[#EEE6D7] uppercase tracking-[-0.02em] group-hover:text-[#C7B8AE] transition-colors duration-300">
                       {photo.judul}
                     </h3>

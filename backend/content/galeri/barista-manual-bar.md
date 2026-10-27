@@ -2,7 +2,6 @@
 judul: Barista Manual Brew Bar
 gambar: https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=1200&auto=format&fit=crop
 sudut_favorit: false
-kategori: Manual Bar
 tag: SLOW CRAFT
 urutan: 2
 ---

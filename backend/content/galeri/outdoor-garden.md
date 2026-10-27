@@ -2,7 +2,6 @@
 judul: Outdoor Garden Rindang
 gambar: https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1200&auto=format&fit=crop
 sudut_favorit: true
-kategori: Outdoor Garden
 tag: NATURAL BREEZE
 urutan: 5
 ---
