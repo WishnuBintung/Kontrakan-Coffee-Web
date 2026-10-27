@@ -3,8 +3,11 @@
 import React from "react";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
+import { CategorySection } from "@/components/CategorySection";
+import { StatsMarquee } from "@/components/StatsMarquee";
 import { PromoSection } from "@/components/PromoSection";
 import { MenuSection } from "@/components/MenuSection";
+import { WhySection } from "@/components/WhySection";
 import { GallerySection } from "@/components/GallerySection";
 import { LocationSection } from "@/components/LocationSection";
 import { ContactFooter } from "@/components/ContactFooter";
@@ -16,26 +19,35 @@ export default function Home() {
   useEditorialChoreography();
 
   return (
-    <main className="relative min-h-screen bg-[#EEE6D7] text-[#472F1D] selection:bg-[#C7B8AE] selection:text-[#472F1D]">
-      {/* Sticky/Fixed Navbar */}
+    <main className="relative min-h-screen bg-cream text-coffee selection:bg-sunshine selection:text-coffee">
+      {/* Announcement banner + fixed header */}
       <Navbar />
 
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO — full-bleed photo with oversized sunshine headline */}
       <HeroSection />
 
-      {/* 2. PROMO & KEGIATAN SPESIAL */}
+      {/* 2. MENU CATEGORY PICKER ("Where does your journey begin?") */}
+      <CategorySection />
+
+      {/* 3. TILTED STICKER RIBBON (facilities) */}
+      <StatsMarquee />
+
+      {/* 4. PROMO & KEGIATAN SPESIAL */}
       <PromoSection />
 
-      {/* 3. LIST MENU & FILTER */}
+      {/* 5. LIST MENU & FILTER */}
       <MenuSection />
 
-      {/* 4. OUR GALLERY */}
+      {/* 6. WHY KONTRAKAN — sticky stacked facility cards */}
+      <WhySection />
+
+      {/* 7. GALLERY */}
       <GallerySection />
 
-      {/* 5. ALAMAT & JADWAL OPERASIONAL KAFE */}
+      {/* 8. ALAMAT & JADWAL OPERASIONAL KAFE */}
       <LocationSection />
 
-      {/* 6. DIV 'KONTRAKAN COFFEE' + 3-COLUMN FOOTER */}
+      {/* 9. FOOTER */}
       <ContactFooter />
     </main>
   );

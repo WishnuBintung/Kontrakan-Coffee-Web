@@ -38,7 +38,7 @@ export function MenuDetailModal({ item, onClose }: MenuDetailModalProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[#472F1D]/75 backdrop-blur-sm"
+            className="fixed inset-0 bg-coffee-darker/80 backdrop-blur-sm"
           />
 
           {/* Modal Container */}
@@ -47,16 +47,16 @@ export function MenuDetailModal({ item, onClose }: MenuDetailModalProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-[#EEE6D7] text-[#472F1D] border border-[#C7B8AE] shadow-2xl z-10 flex flex-col sharp-edges"
+            className="relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-y-auto rounded-[0.5rem] bg-cream text-coffee shadow-2xl"
           >
             {/* Header bar: Kategori Menu & Tombol Tutup */}
-            <div className="flex items-center justify-between px-5 py-4 sm:px-6 sm:py-5 bg-[#5F493C] text-[#EEE6D7] border-b border-[#472F1D] sticky top-0 z-20">
-              <span className="font-mono text-[12px] sm:text-[13px] uppercase tracking-widest text-[#C7B8AE] font-semibold">
+            <div className="sticky top-0 z-20 flex items-center justify-between bg-coffee-dark px-5 py-4 text-cream sm:px-6 sm:py-5">
+              <span className="text-[13px] font-medium uppercase tracking-widest text-sunshine">
                 {item.kategori}
               </span>
               <button
                 onClick={onClose}
-                className="p-1 text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors focus:outline-none cursor-pointer"
+                className="cursor-pointer rounded-[0.2rem] p-1 text-cream transition-colors hover:text-sunshine"
                 aria-label="Tutup detail menu"
               >
                 <X className="w-5 h-5 stroke-[2]" />
@@ -64,7 +64,7 @@ export function MenuDetailModal({ item, onClose }: MenuDetailModalProps) {
             </div>
 
             {/* Modal Body: Foto, Nama, Harga, dan Deskripsi Menu */}
-            <div className="p-5 sm:p-7 space-y-5 bg-[#EEE6D7]">
+            <div className="space-y-5 bg-cream p-5 sm:p-7">
               {/* Foto Menu */}
               <div className="relative w-full">
                 <PhotoFrameTemplate
@@ -76,26 +76,26 @@ export function MenuDetailModal({ item, onClose }: MenuDetailModalProps) {
               </div>
 
               {/* Nama & Harga Menu */}
-              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 border-b border-[#C7B8AE] pb-4">
-                <h3 className="font-sans font-black text-2xl sm:text-3xl uppercase tracking-[-0.02em] text-[#472F1D]">
+              <div className="flex flex-col justify-between gap-3 border-b border-coffee/15 pb-4 sm:flex-row sm:items-baseline">
+                <h3 className="font-display text-4xl sm:text-5xl">
                   {item.nama}
                 </h3>
-                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[#5F493C] whitespace-nowrap">
+                <span className="whitespace-nowrap text-2xl font-bold sm:text-3xl">
                   {formatPriceRupiah(item.harga)}
                 </span>
               </div>
 
               {/* Deskripsi Menu */}
               <div>
-                <p className="font-sans text-[15px] sm:text-[16px] font-normal tracking-tight text-[#472F1D]/90 leading-relaxed">
+                <p className="text-[16px] leading-relaxed text-coffee/90 sm:text-[17px]">
                   {item.deskripsi}
                 </p>
               </div>
 
               {/* Catatan Informatif Kunjungan Fisik (Non-Pemesanan Online) */}
-              <div className="p-3.5 sm:p-4 bg-[#5F493C] text-[#EEE6D7] border-l-4 border-[#C7B8AE] sharp-edges">
-                <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-[#EEE6D7]/95">
-                  <strong className="text-[#C7B8AE] font-semibold">Catatan Kunjungan:</strong> Menu digital ini bersifat informatif. Pemesanan dan pembayaran dilakukan langsung di meja kasir saat Anda berkunjung ke lokasi Kontrakan Coffee.
+              <div className="rounded-[0.25rem] border-l-4 border-sunshine bg-coffee p-3.5 text-cream sm:p-4">
+                <p className="text-[14px] leading-relaxed text-cream/95">
+                  <strong className="font-medium text-sunshine">Catatan Kunjungan:</strong> Menu digital ini bersifat informatif. Pemesanan dan pembayaran dilakukan langsung di meja kasir saat Anda berkunjung ke lokasi Kontrakan Coffee.
                 </p>
               </div>
             </div>

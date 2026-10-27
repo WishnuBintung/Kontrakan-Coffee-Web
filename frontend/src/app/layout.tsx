@@ -3,21 +3,21 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Kontrakan Coffee — Spatial Atelier & Roastery",
+  title: "Kontrakan Coffee — Kopi Enak, Nongkrong Betah",
   description:
-    "An artisanal spatial coffee atelier built on warm oat cream (#EEE6D7), roasted mocha surfaces (#5F493C), deep espresso typography (#472F1D), and latte taupe accents (#C7B8AE).",
+    "Kontrakan Coffee: kopi spesialti, menu non-kopi dan camilan, promo senja, serta ruang nongkrong dan nugas yang nyaman dengan Wi-Fi kencang dan stopkontak di tiap meja.",
   openGraph: {
-    title: "Kontrakan Coffee — Spatial Atelier & Roastery",
+    title: "Kontrakan Coffee — Kopi Enak, Nongkrong Betah",
     description:
-      "Warm oat cream, roasted mocha surfaces, deep espresso typography, and latte taupe accents.",
-    locale: "en_US",
+      "Kopi spesialti, promo senja, dan ruang nongkrong yang nyaman untuk pelajar dan pekerja kreatif.",
+    locale: "id_ID",
     type: "website",
     siteName: "Kontrakan Coffee",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#EEE6D7",
+  themeColor: "#23160C",
   width: "device-width",
   initialScale: 1,
 };
@@ -29,8 +29,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className="bg-[#EEE6D7] text-[#472F1D] scroll-smooth"
+      lang="id"
+      className="bg-cream text-coffee scroll-smooth"
       suppressHydrationWarning
     >
       <head>
@@ -38,16 +38,14 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Saira+Extra+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Serif:wdth,wght@50..150,100..900&display=swap"
           rel="stylesheet"
         />
       </head>
       <body
-        className="bg-[#EEE6D7] text-[#472F1D] antialiased min-h-screen selection:bg-[#C7B8AE] selection:text-[#472F1D] font-sans"
+        className="bg-cream text-coffee antialiased min-h-screen selection:bg-sunshine selection:text-coffee font-sans"
         suppressHydrationWarning
       >
-        {/* Subtle tactile noise grain overlay */}
-        <div className="grain-overlay" aria-hidden="true" />
         {children}
       </body>
     </html>

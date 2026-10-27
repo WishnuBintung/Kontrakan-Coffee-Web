@@ -206,7 +206,7 @@ export const MENU_ITEMS: CafeMenuItem[] = [
     harga: 20000,
     deskripsi:
       "Kentang goreng shoestring renyah berbalut aroma minyak white truffle mewah, ditaburi parutan keju parmesan gurih dan peterseli cincang. Disajikan dengan cocolan saus tartar homemade.",
-    foto: "https://images.unsplash.com/photo-1576107232684-1279f3908594?q=80&w=1200&auto=format&fit=crop",
+    foto: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=1200&auto=format&fit=crop",
     ukuran: ["Porsi Sharing"],
     rasa: ["Truffle Parmesan", "Sea Salt Classic"],
     rekomendasi: true,
