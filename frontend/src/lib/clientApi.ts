@@ -139,10 +139,33 @@ export async function getClientInfoToko(): Promise<CafeInfo> {
     tagline: data.tagline || CAFE_INFO.tagline,
     alamat: data.alamat || CAFE_INFO.alamat,
     patokan: data.patokan || CAFE_INFO.patokan,
-    googleMapsUrl: data.link_peta || CAFE_INFO.googleMapsUrl,
-    googleMapsEmbed: data.embed_peta || CAFE_INFO.googleMapsEmbed,
-    instagram: data.instagram ? `https://instagram.com/${data.instagram.replace("@", "")}` : CAFE_INFO.instagram,
-    instagramHandle: data.instagram ? (data.instagram.startsWith("@") ? data.instagram : `@${data.instagram}`) : CAFE_INFO.instagramHandle,
+    googleMapsUrl:
+      data.link_peta?.trim() ||
+      (data.alamat?.trim()
+        ? `https://maps.google.com/?q=${encodeURIComponent(data.alamat.trim())}`
+        : CAFE_INFO.googleMapsUrl),
+    googleMapsEmbed:
+      data.embed_peta?.trim() ||
+      (data.alamat?.trim()
+        ? `https://maps.google.com/maps?q=${encodeURIComponent(data.alamat.trim())}&t=&z=16&ie=UTF8&iwloc=&output=embed`
+        : CAFE_INFO.googleMapsEmbed),
+    instagram: data.instagram
+      ? data.instagram.startsWith("http")
+        ? data.instagram
+        : `https://www.instagram.com/${data.instagram.replace("@", "")}`
+      : CAFE_INFO.instagram,
+    instagramHandle: data.instagram
+      ? data.instagram.startsWith("http")
+        ? `@${data.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\/?/, "").split("?")[0].replace(/\/$/, "") || "kontrakan.coffee"}`
+        : data.instagram.startsWith("@")
+        ? data.instagram
+        : `@${data.instagram}`
+      : CAFE_INFO.instagramHandle,
+    tiktok: data.tiktok
+      ? data.tiktok.startsWith("http")
+        ? data.tiktok
+        : `https://www.tiktok.com/@${data.tiktok.replace("@", "")}`
+      : CAFE_INFO.tiktok,
     whatsapp: data.whatsapp || CAFE_INFO.whatsapp,
     whatsappDisplay: data.whatsapp ? `+${data.whatsapp.slice(0, 2)} ${data.whatsapp.slice(2, 5)}-${data.whatsapp.slice(5, 9)}-${data.whatsapp.slice(9)}` : CAFE_INFO.whatsappDisplay,
     jamBuka: Array.isArray(data.jam_buka)

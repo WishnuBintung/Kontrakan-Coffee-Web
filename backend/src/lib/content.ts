@@ -335,12 +335,15 @@ export function getActivePromo(
 export function getInfoToko(): InfoToko {
   const filePath = path.join(CONTENT_DIR, "info-toko.json");
   const fallback: InfoToko = {
-    nama_toko: "Kopi Senja",
-    alamat: "Jl. Seturan Raya No. 45, Sleman, D.I. Yogyakarta 55281",
-    link_peta: "https://maps.google.com/?q=Kopi+Senja+Yogyakarta",
+    nama_toko: "Kontrakan Coffee",
+    alamat: "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
+    patokan: "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES)",
+    link_peta: "https://maps.app.goo.gl/7kn5wi3aeE15r61T9?g_st=ic",
     embed_peta:
-      "https://maps.google.com/maps?q=Kopi+Senja+Yogyakarta&t=&z=15&ie=UTF8&iwloc=&output=embed",
-    instagram: "https://instagram.com/kopisenja.yk",
+      "https://maps.google.com/maps?q=Jl.+Nyai+Ketrik,+Sekaran,+Kec.+Gn.+Pati,+Kota+Semarang,+Jawa+Tengah+50229&t=&z=16&ie=UTF8&iwloc=&output=embed",
+    instagram: "https://www.instagram.com/kontrakan.coffee?dlrf=aHpsbXB6ajE4dmQ3",
+    tiktok: "https://www.tiktok.com/@kontrakancoffee?_r=1&_t=ZS-9AubeEe0g5M",
+    whatsapp: "6281234567890",
     jam_buka: [],
   };
 
@@ -351,12 +354,26 @@ export function getInfoToko(): InfoToko {
   try {
     const raw = fs.readFileSync(filePath, "utf8");
     const data = JSON.parse(raw);
+    const alamat = data.alamat || fallback.alamat;
+    const embed_peta = data.embed_peta?.trim()
+      ? data.embed_peta.trim()
+      : alamat
+      ? `https://maps.google.com/maps?q=${encodeURIComponent(alamat)}&t=&z=16&ie=UTF8&iwloc=&output=embed`
+      : fallback.embed_peta;
+    const link_peta = data.link_peta?.trim()
+      ? data.link_peta.trim()
+      : alamat
+      ? `https://maps.google.com/?q=${encodeURIComponent(alamat)}`
+      : fallback.link_peta;
     return {
       nama_toko: data.nama_toko || fallback.nama_toko,
-      alamat: data.alamat || fallback.alamat,
-      link_peta: data.link_peta || fallback.link_peta,
-      embed_peta: data.embed_peta || fallback.embed_peta,
+      alamat,
+      patokan: data.patokan || fallback.patokan,
+      link_peta,
+      embed_peta,
       instagram: data.instagram || fallback.instagram,
+      tiktok: data.tiktok || fallback.tiktok,
+      whatsapp: data.whatsapp || fallback.whatsapp,
       jam_buka: Array.isArray(data.jam_buka) ? data.jam_buka : [],
     };
   } catch (err) {

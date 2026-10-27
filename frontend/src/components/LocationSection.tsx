@@ -49,7 +49,9 @@ export function LocationSection() {
             style={{ "--d": "90ms" } as React.CSSProperties}
             className="text-[15px] sm:text-[17px] text-[#5F493C] font-sans max-w-md leading-relaxed"
           >
-            Berada di pusat denyut kreatif Seturan, Sleman, Yogyakarta. Singgahlah untuk menikmati seduhan berkualitas, suasana tenang, dan ruang kolaboratif.
+            {CAFE_INFO.patokan
+              ? `${CAFE_INFO.patokan}. Singgahlah untuk menikmati seduhan berkualitas, suasana tenang, dan ruang kolaboratif.`
+              : `Berada di ${CAFE_INFO.alamat}. Singgahlah untuk menikmati seduhan berkualitas dan ruang kolaboratif.`}
           </p>
         </div>
 
@@ -81,7 +83,7 @@ export function LocationSection() {
                   {CAFE_INFO.alamat}
                 </p>
                 <p className="font-mono text-[12px] text-[#C7B8AE] mt-2 leading-normal">
-                  Patokan: {CAFE_INFO.patokan}
+                  Patokan: {CAFE_INFO.patokan || "Dekat kampus UNNES"}
                 </p>
               </div>
             </div>
@@ -210,7 +212,7 @@ export function LocationSection() {
               {/* Responsive Iframe Container */}
               <div className="relative flex-1 w-full min-h-[340px] bg-[#472F1D]">
                 <iframe
-                  title="Peta Lokasi Kontrakan Coffee Yogyakarta"
+                  title={`Peta Lokasi ${CAFE_INFO.nama}`}
                   src={CAFE_INFO.googleMapsEmbed}
                   width="100%"
                   height="100%"
@@ -224,7 +226,7 @@ export function LocationSection() {
                 {/* Pin Location Overlay Chip */}
                 <div className="absolute top-4 left-4 bg-[#5F493C]/90 backdrop-blur-md text-[#EEE6D7] px-3.5 py-1.5 text-[11px] sm:text-[12px] font-mono border border-[#472F1D] sharp-edges shadow-lg flex items-center gap-2">
                   <MapPin className="w-3.5 h-3.5 text-[#C7B8AE]" />
-                  <span className="font-bold">Seturan, Depok, Sleman</span>
+                  <span className="font-bold">{CAFE_INFO.alamat ? CAFE_INFO.alamat.split(",").slice(1, 3).join(",").trim() || CAFE_INFO.alamat.split(",")[0] : "Sekaran, Gunungpati, Semarang"}</span>
                 </div>
 
                 {/* Bottom Navigation Button Overlay */}
