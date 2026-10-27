@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
@@ -30,6 +31,21 @@ app.use("/api", apiRouter);
 // Serve Decap CMS static admin & public images
 const adminDir = path.join(__dirname, "../public/admin");
 const imagesDir = path.join(__dirname, "../public/images");
+
+// Dynamic Decap config for LAN/IP access
+app.get("/admin/config.yml", (req, res) => {
+  const configPath = path.join(adminDir, "config.yml");
+  if (!fs.existsSync(configPath)) {
+    res.status(404).send("Config not found");
+    return;
+  }
+  let content = fs.readFileSync(configPath, "utf8");
+  const host = req.hostname || "localhost";
+  content = content.replace("http://localhost:8081/api/v1", `http://${host}:8081/api/v1`);
+  res.setHeader("Content-Type", "text/yaml; charset=utf-8");
+  res.send(content);
+});
+
 app.use("/admin", express.static(adminDir));
 app.use("/images", express.static(imagesDir));
 
@@ -60,6 +76,14 @@ export const server = app.listen(PORT, () => {
   console.log(`📡 REST API Base: http://localhost:${PORT}/api`);
   console.log(`⚙️  Decap CMS Admin: http://localhost:${PORT}/admin`);
   console.log("==============================================");
+});
+
+server.on("error", (err: NodeJS.ErrnoException) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`\n❌ Port ${PORT} sedang dipakai oleh proses lain!`);
+    console.error(`👉 Solusi: Matikan proses tersebut dengan: fuser -k ${PORT}/tcp atau npx kill-port ${PORT}\n`);
+    process.exit(1);
+  }
 });
 
 export default app;

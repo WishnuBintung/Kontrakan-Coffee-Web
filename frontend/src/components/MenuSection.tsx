@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { Search, X, ArrowUpRight, Sparkles, SlidersHorizontal, Filter } from "lucide-react";
-import { MENU_ITEMS, formatPriceRupiah, CafeMenuItem } from "@/lib/cafeData";
+import { formatPriceRupiah, CafeMenuItem } from "@/lib/cafeData";
+import { useMenuData } from "@/hooks/useCafeData";
 import { MenuDetailModal } from "./MenuDetailModal";
 import { SplitWords } from "./EditorialMotion";
 
@@ -20,39 +21,7 @@ export function MenuSection() {
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc" | "name-asc">("default");
   const [selectedItem, setSelectedItem] = useState<CafeMenuItem | null>(null);
 
-  const filteredItems = useMemo(() => {
-    let items = [...MENU_ITEMS];
-
-    // Filter by Category or Recommended
-    if (activeCategory === "rekomendasi") {
-      items = items.filter((item) => item.rekomendasi);
-    } else if (activeCategory !== "semua") {
-      items = items.filter((item) => item.kategori === activeCategory);
-    }
-
-    // Filter by Search Query
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      items = items.filter(
-        (item) =>
-          item.nama.toLowerCase().includes(q) ||
-          item.deskripsi.toLowerCase().includes(q) ||
-          (item.specs && item.specs.toLowerCase().includes(q)) ||
-          (item.rasa && item.rasa.some((r) => r.toLowerCase().includes(q)))
-      );
-    }
-
-    // Sort items
-    if (sortBy === "price-asc") {
-      items.sort((a, b) => a.harga - b.harga);
-    } else if (sortBy === "price-desc") {
-      items.sort((a, b) => b.harga - a.harga);
-    } else if (sortBy === "name-asc") {
-      items.sort((a, b) => a.nama.localeCompare(b.nama));
-    }
-
-    return items;
-  }, [activeCategory, searchQuery, sortBy]);
+  const { items: filteredItems } = useMenuData(activeCategory, searchQuery, sortBy);
 
   return (
     <>

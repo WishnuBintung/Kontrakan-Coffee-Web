@@ -13,6 +13,16 @@ const frontend = spawn(`${npmCmd} run dev --workspace=frontend`, {
   shell: true,
 });
 
+const cms = spawn(`${npmCmd} run cms --workspace=backend`, {
+  stdio: "inherit",
+  shell: true,
+  env: {
+    ...process.env,
+    BIND_HOST: "0.0.0.0",
+    ORIGIN: "*",
+  },
+});
+
 function cleanup() {
   if (backend && !backend.killed) {
     try {
@@ -22,6 +32,11 @@ function cleanup() {
   if (frontend && !frontend.killed) {
     try {
       frontend.kill("SIGTERM");
+    } catch {}
+  }
+  if (cms && !cms.killed) {
+    try {
+      cms.kill("SIGTERM");
     } catch {}
   }
 }

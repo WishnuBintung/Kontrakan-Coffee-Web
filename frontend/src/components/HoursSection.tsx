@@ -2,22 +2,26 @@
 
 import React, { useState, useEffect } from "react";
 import { Clock, Calendar, ArrowUpRight, Coffee, Wifi, Zap } from "lucide-react";
-import { CAFE_INFO, getOpenStatusWIB } from "@/lib/cafeData";
+import { getOpenStatusWIB } from "@/lib/cafeData";
+import { useStoreStatus, useCafeInfo } from "@/hooks/useCafeData";
 
 export function HoursSection() {
-  const [storeStatus, setStoreStatus] = useState(() => getOpenStatusWIB());
+  const localInitial = getOpenStatusWIB();
+  const [storeStatus, setStoreStatus] = useState(localInitial);
   const [isMounted, setIsMounted] = useState(false);
+  const { status: liveStatus } = useStoreStatus();
+  const cafeInfo = useCafeInfo();
 
   useEffect(() => {
     setIsMounted(true);
-    setStoreStatus(getOpenStatusWIB());
-
-    // Update status every 30 seconds
-    const timer = setInterval(() => {
-      setStoreStatus(getOpenStatusWIB());
-    }, 30000);
-    return () => clearInterval(timer);
   }, []);
+
+  // Sync storeStatus with live status from backend if available
+  const isOpen = liveStatus.isOpen ?? storeStatus.isOpen;
+  const badgeText = liveStatus.pesanStatus ? (liveStatus.isOpen ? "BUKA SEKARANG" : "SEDANG TUTUP") : storeStatus.badgeText;
+  const statusText = liveStatus.pesanStatus || storeStatus.statusText;
+  const currentTime = liveStatus.sekarangJam || storeStatus.currentTimeStr;
+  const currentDay = liveStatus.hariIni || storeStatus.todayName;
 
   return (
     <section
@@ -63,12 +67,12 @@ export function HoursSection() {
             <div className="relative flex items-center justify-center shrink-0">
               <span
                 className={`animate-ping absolute inline-flex h-8 w-8 rounded-full opacity-75 ${
-                  storeStatus.isOpen ? "bg-[#C7B8AE]" : "bg-[#5F493C]"
+                  isOpen ? "bg-[#C7B8AE]" : "bg-[#5F493C]"
                 }`}
               />
               <span
                 className={`relative inline-flex rounded-full h-4 w-4 ${
-                  storeStatus.isOpen ? "bg-[#C7B8AE]" : "bg-[#5F493C]"
+                  isOpen ? "bg-[#C7B8AE]" : "bg-[#5F493C]"
                 }`}
               />
             </div>
@@ -79,14 +83,14 @@ export function HoursSection() {
                   suppressHydrationWarning
                   className="font-mono text-[13px] sm:text-[14px] font-bold uppercase tracking-wider text-[#C7B8AE]"
                 >
-                  {isMounted ? storeStatus.badgeText : "STATUS OPERASIONAL"}
+                  {isMounted ? badgeText : "STATUS OPERASIONAL"}
                 </span>
                 <span
                   suppressHydrationWarning
                   className="font-mono text-[12px] text-[#EEE6D7]/60"
                 >
                   {isMounted
-                    ? `(Pukul ${storeStatus.currentTimeStr} WIB)`
+                    ? `(Pukul ${currentTime} WIB)`
                     : "(Zona Waktu WIB)"}
                 </span>
               </div>
@@ -95,7 +99,7 @@ export function HoursSection() {
                 className="font-sans text-[15px] sm:text-[17px] text-[#EEE6D7] font-medium mt-0.5"
               >
                 {isMounted
-                  ? storeStatus.statusText
+                  ? statusText
                   : "Buka setiap hari • Cek jadwal lengkap di bawah"}
               </p>
             </div>
@@ -125,10 +129,10 @@ export function HoursSection() {
             </div>
 
             <div className="divide-y divide-[#5F493C]">
-              {CAFE_INFO.jamBuka.map((item, idx) => {
+              {cafeInfo.jamBuka.map((item, idx) => {
                 const isToday =
                   isMounted &&
-                  item.hari.toLowerCase() === storeStatus.todayName.toLowerCase();
+                  item.hari.toLowerCase() === currentDay.toLowerCase();
                 return (
                   <div
                     key={item.hari}

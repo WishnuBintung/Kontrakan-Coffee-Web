@@ -4,7 +4,8 @@
 import React, { useState, useEffect } from "react";
 import { Maximize2, X, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { GALLERY_ITEMS, CafeGalleryItem } from "@/lib/cafeData";
+import { CafeGalleryItem } from "@/lib/cafeData";
+import { useGalleryData } from "@/hooks/useCafeData";
 
 const GALLERY_CATEGORIES = [
   { id: "semua", label: "Semua Sudut" },
@@ -17,11 +18,16 @@ const GALLERY_CATEGORIES = [
 export function GallerySection() {
   const [activeCategory, setActiveCategory] = useState("semua");
   const [selectedPhoto, setSelectedPhoto] = useState<CafeGalleryItem | null>(null);
+  const galleryItems = useGalleryData();
 
   const filteredPhotos =
     activeCategory === "semua"
-      ? GALLERY_ITEMS
-      : GALLERY_ITEMS.filter((item) => item.kategori === activeCategory);
+      ? galleryItems
+      : galleryItems.filter(
+          (item) =>
+            item.kategori === activeCategory ||
+            (activeCategory === "Sudut Favorit" && item.sudut_favorit)
+        );
 
   // Keyboard navigation for lightbox
   useEffect(() => {

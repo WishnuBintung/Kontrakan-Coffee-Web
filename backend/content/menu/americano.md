@@ -1,7 +1,7 @@
 ---
 nama: Americano
 kategori: kopi
-harga: 15000
+harga: 20029
 foto: /images/placeholder-coffee.svg
 ukuran:
   - Regular

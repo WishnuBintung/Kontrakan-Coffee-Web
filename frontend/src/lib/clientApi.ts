@@ -1,0 +1,209 @@
+// frontend/src/lib/clientApi.ts
+// Pure browser-compatible API client for Kontrakan Coffee REST API
+
+import {
+  MENU_ITEMS,
+  GALLERY_ITEMS,
+  CAFE_INFO,
+  CafeMenuItem,
+  CafeGalleryItem,
+  CafeInfo,
+} from "./cafeData";
+
+export interface ApiStatusToko {
+  isOpen: boolean;
+  pesanStatus: string;
+  jamHariIni?: {
+    hari: string;
+    buka: string;
+    tutup: string;
+    libur: boolean;
+  };
+  hariIni: string;
+  sekarangJam: string;
+}
+
+export interface ApiKategori {
+  id: string;
+  nama: string;
+  urutan: number;
+}
+
+/**
+ * Mendapatkan URL basis API backend secara dinamis:
+ * 1. Jika NEXT_PUBLIC_API_URL didefinisikan, gunakan itu.
+ * 2. Jika di browser, arahkan ke hostname yang sama pada port 5000 (mendukung localhost dan IP LAN HP seperti 192.168.x.x:5000).
+ * 3. Default fallback ke http://localhost:5000/api.
+ */
+export function getBackendApiUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+  }
+  if (typeof window !== "undefined") {
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    return `${protocol}//${hostname}:5000/api`;
+  }
+  return "http://localhost:5000/api";
+}
+
+async function requestWithTimeout<T>(
+  url: string,
+  timeoutMs = 4000
+): Promise<T | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { Accept: "application/json" },
+    });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data ?? null;
+  } catch {
+    clearTimeout(timer);
+    return null;
+  }
+}
+
+/**
+ * Mengambil daftar menu dari backend /api/menu
+ * Fallback ke MENU_ITEMS lokal jika backend offline.
+ */
+export async function getClientMenuItems(): Promise<CafeMenuItem[]> {
+  const apiUrl = getBackendApiUrl();
+  const data = await requestWithTimeout<any[]>(`${apiUrl}/menu`);
+
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return MENU_ITEMS;
+  }
+
+  // Normalisasi data dari backend agar kompatibel dengan CafeMenuItem
+  return data.map((item) => ({
+    id: item.id || item.slug,
+    nama: item.nama,
+    kategori: item.kategori,
+    harga: Number(item.harga) || 0,
+    deskripsi: item.deskripsi || "",
+    foto: item.foto || "/images/placeholder-coffee.svg",
+    ukuran: Array.isArray(item.ukuran) ? item.ukuran : undefined,
+    rasa: Array.isArray(item.rasa) ? item.rasa : undefined,
+    rekomendasi: Boolean(item.rekomendasi),
+    badge: item.badge || (item.rekomendasi ? "Pilihan Barista" : undefined),
+    specs: item.specs || (item.deskripsi_panjang ? item.deskripsi_panjang.slice(0, 100) : undefined),
+  }));
+}
+
+/**
+ * Mengambil daftar kategori menu dari backend /api/kategori
+ */
+export async function getClientKategori(): Promise<ApiKategori[]> {
+  const apiUrl = getBackendApiUrl();
+  const data = await requestWithTimeout<ApiKategori[]>(`${apiUrl}/kategori`);
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return [
+      { id: "kopi", nama: "Kopi Atelier", urutan: 1 },
+      { id: "non-kopi", nama: "Non-Kopi", urutan: 2 },
+      { id: "camilan", nama: "Camilan & Pastry", urutan: 3 },
+    ];
+  }
+  return data;
+}
+
+/**
+ * Mengambil status operasional toko real-time WIB dari backend /api/status-toko
+ */
+export async function getClientStatusToko(): Promise<ApiStatusToko | null> {
+  const apiUrl = getBackendApiUrl();
+  return requestWithTimeout<ApiStatusToko>(`${apiUrl}/status-toko`, 3000);
+}
+
+/**
+ * Mengambil informasi toko & jam buka dari backend /api/info-toko
+ * Fallback ke CAFE_INFO lokal.
+ */
+export async function getClientInfoToko(): Promise<CafeInfo> {
+  const apiUrl = getBackendApiUrl();
+  const data = await requestWithTimeout<any>(`${apiUrl}/info-toko`, 3000);
+
+  if (!data) {
+    return CAFE_INFO;
+  }
+
+  return {
+    ...CAFE_INFO,
+    nama: data.nama_toko || CAFE_INFO.nama,
+    tagline: data.tagline || CAFE_INFO.tagline,
+    alamat: data.alamat || CAFE_INFO.alamat,
+    patokan: data.patokan || CAFE_INFO.patokan,
+    googleMapsUrl: data.link_peta || CAFE_INFO.googleMapsUrl,
+    googleMapsEmbed: data.embed_peta || CAFE_INFO.googleMapsEmbed,
+    instagram: data.instagram ? `https://instagram.com/${data.instagram.replace("@", "")}` : CAFE_INFO.instagram,
+    instagramHandle: data.instagram ? (data.instagram.startsWith("@") ? data.instagram : `@${data.instagram}`) : CAFE_INFO.instagramHandle,
+    whatsapp: data.whatsapp || CAFE_INFO.whatsapp,
+    whatsappDisplay: data.whatsapp ? `+${data.whatsapp.slice(0, 2)} ${data.whatsapp.slice(2, 5)}-${data.whatsapp.slice(5, 9)}-${data.whatsapp.slice(9)}` : CAFE_INFO.whatsappDisplay,
+    jamBuka: Array.isArray(data.jam_buka)
+      ? data.jam_buka.map((j: any) => ({
+          hari: j.hari,
+          buka: j.buka,
+          tutup: j.tutup,
+          libur: Boolean(j.libur),
+          catatan: j.catatan || (j.libur ? "Tutup / Libur Operasional" : undefined),
+        }))
+      : CAFE_INFO.jamBuka,
+  };
+}
+
+/**
+ * Mengambil galeri foto dari backend /api/galeri
+ * Fallback ke GALLERY_ITEMS lokal.
+ */
+export async function getClientGaleri(onlyFavorites = false): Promise<CafeGalleryItem[]> {
+  const apiUrl = getBackendApiUrl();
+  const query = onlyFavorites ? "?favorit=true" : "";
+  const data = await requestWithTimeout<any[]>(`${apiUrl}/galeri${query}`, 3000);
+
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return GALLERY_ITEMS;
+  }
+
+  return data.map((item, idx) => {
+    // Cari kecocokan data lokal agar mendapatkan gambar fotografi beresolusi tinggi
+    const matchingLocal = GALLERY_ITEMS.find(
+      (g) =>
+        g.id === item.id ||
+        g.id === item.slug ||
+        g.judul.toLowerCase() === (item.judul || "").toLowerCase()
+    );
+
+    const isMissingUpload =
+      item.gambar &&
+      item.gambar.includes("/uploads/") &&
+      !item.gambar.startsWith("http");
+    const isPlaceholder =
+      !item.gambar || item.gambar === "/images/placeholder-coffee.svg";
+
+    // Jika gambar di backend masih berupa upload kosong atau placeholder, gunakan gambar fotografi lokal yang indah
+    const gambar =
+      (isMissingUpload || isPlaceholder) && matchingLocal
+        ? matchingLocal.gambar
+        : item.gambar || matchingLocal?.gambar || "/images/bg-hero.jpg";
+
+    return {
+      id: item.id || `galeri-${idx}`,
+      judul: item.judul || matchingLocal?.judul || "Suasana Kafe",
+      deskripsi:
+        item.deskripsi ||
+        matchingLocal?.deskripsi ||
+        "Sudut nyaman untuk rehat dan bercengkerama.",
+      gambar,
+      sudut_favorit: Boolean(item.sudut_favorit),
+      kategori: item.kategori || matchingLocal?.kategori || "Atelier",
+      tag: item.tag || (item.sudut_favorit ? "Spot Favorit" : matchingLocal?.tag || "Area"),
+    };
+  });
+}
+

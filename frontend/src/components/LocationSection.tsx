@@ -15,7 +15,8 @@ import {
   Car,
   Sparkles,
 } from "lucide-react";
-import { CAFE_INFO } from "@/lib/cafeData";
+import { CAFE_INFO as INITIAL_CAFE_INFO } from "@/lib/cafeData";
+import { useCafeInfo } from "@/hooks/useCafeData";
 
 function InstagramIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -36,6 +37,7 @@ function InstagramIcon({ className = "w-5 h-5" }: { className?: string }) {
 }
 
 export function LocationSection() {
+  const CAFE_INFO = useCafeInfo();
   const [copied, setCopied] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 

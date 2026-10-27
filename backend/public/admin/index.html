@@ -5,23 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Admin CMS — Kopi Senja</title>
-    <!-- Netlify Identity Widget (Hanya dimuat di production/non-localhost) -->
-    <script>
-      if (
-        window.location.hostname !== "localhost" &&
-        window.location.hostname !== "127.0.0.1"
-      ) {
-        var s = document.createElement("script");
-        s.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
-        document.head.appendChild(s);
-      } else {
-        // Bersihkan cache Netlify Identity lama di browser saat berjalan di localhost
-        try {
-          localStorage.removeItem("netlifySiteURL");
-          localStorage.removeItem("gotrue.user");
-        } catch (e) {}
-      }
-    </script>
     <style>
       /* Styling header admin */
       body {
@@ -32,6 +15,50 @@
   <body>
     <!-- Decap CMS Script -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <!-- Auto-Login & No-Login Script untuk Local Development -->
+    <script>
+      // 1. Bersihkan token lama Netlify Identity agar tidak meminta autentikasi cloud
+      try {
+        localStorage.removeItem("netlifySiteURL");
+        localStorage.removeItem("gotrue.user");
+      } catch (e) {}
+
+      // 2. Auto-login lokal otomatis: Langsung klik tombol login proxy tanpa perlu input kredensial
+      var autoLoginTriggered = false;
+      function tryAutoLogin() {
+        if (autoLoginTriggered) return true;
+        var buttons = document.querySelectorAll("button");
+        for (var i = 0; i < buttons.length; i++) {
+          var text = (buttons[i].textContent || "").trim().toLowerCase();
+          if (text.includes("login") || text.includes("masuk") || text.includes("local")) {
+            autoLoginTriggered = true;
+            buttons[i].click();
+            return true;
+          }
+        }
+        return false;
+      }
+
+      var autoObserver = new MutationObserver(function() {
+        if (tryAutoLogin()) {
+          autoObserver.disconnect();
+        }
+      });
+      autoObserver.observe(document.documentElement, { childList: true, subtree: true });
+
+      var autoTimer = setInterval(function() {
+        if (tryAutoLogin()) {
+          clearInterval(autoTimer);
+          autoObserver.disconnect();
+        }
+      }, 100);
+
+      setTimeout(function() {
+        clearInterval(autoTimer);
+        autoObserver.disconnect();
+      }, 7000);
+    </script>
 
     <!-- Custom Decap CMS Previews -->
     <script>

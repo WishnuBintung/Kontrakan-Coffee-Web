@@ -6,9 +6,12 @@ import { CircularGallery, CircularGalleryRef } from "./CircularGallery";
 import { MenuDetailModal } from "./MenuDetailModal";
 import { PhotoFrameTemplate } from "./PhotoFrameTemplate";
 import { getRecommendedItems, formatPriceRupiah, CafeMenuItem } from "@/lib/cafeData";
+import { useMenuData } from "@/hooks/useCafeData";
 
 export function RecommendedSection() {
-  const recommendedItems = getRecommendedItems();
+  const { allItems } = useMenuData();
+  const liveRecommended = allItems.filter((item) => item.rekomendasi);
+  const recommendedItems = liveRecommended.length > 0 ? liveRecommended : getRecommendedItems();
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedItem, setSelectedItem] = useState<CafeMenuItem | null>(null);
   const galleryRef = useRef<CircularGalleryRef>(null);
