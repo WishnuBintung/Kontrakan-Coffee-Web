@@ -25,11 +25,11 @@ export function NoticeBanner() {
     >
       <a
         href="#promo"
-        className="max-w-full truncate transition-colors hover:text-sunshine"
+        className="max-w-full truncate transition-colors hover:text-latte"
       >
         {active ? (
           <>
-            <span className="font-medium text-sunshine">{active.judul}</span>
+            <span className="font-medium text-latte">{active.judul}</span>
             <span className="hidden sm:inline"> — {active.deskripsi}</span>
           </>
         ) : (

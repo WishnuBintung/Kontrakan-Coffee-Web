@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#23160C",
+  themeColor: "#543310",
   width: "device-width",
   initialScale: 1,
 };
@@ -43,7 +43,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className="bg-cream text-coffee antialiased min-h-screen selection:bg-sunshine selection:text-coffee font-sans"
+        className="bg-cream text-coffee antialiased min-h-screen selection:bg-latte selection:text-coffee font-sans"
         suppressHydrationWarning
       >
         {children}

@@ -86,36 +86,36 @@ export function LocationSection() {
               id="jam-buka"
               data-rev
               style={{ "--d": "100ms" } as React.CSSProperties}
-              className="overflow-hidden rounded-[0.5rem] bg-roast"
+              className="overflow-hidden rounded-[0.5rem] border border-coffee/20 bg-cream-surface shadow-sm"
             >
               {/* Header Jadwal (Dropdown Toggle Button) */}
               <button
                 type="button"
                 onClick={() => setIsScheduleDropdownOpen(!isScheduleDropdownOpen)}
                 aria-expanded={isScheduleDropdownOpen}
-                className="flex w-full cursor-pointer items-center justify-between border-b border-cream/15 p-4 sm:p-5 text-left transition-colors hover:bg-coffee/40"
+                className="flex w-full cursor-pointer items-center justify-between border-b border-coffee/15 p-4 sm:p-5 text-left transition-colors hover:bg-latte/20"
               >
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-sunshine" />
-                  <span className="text-[15px] font-medium uppercase tracking-wide text-sunshine">
+                  <Calendar className="h-4 w-4 text-coffee" />
+                  <span className="text-[15px] font-medium uppercase tracking-wide text-coffee">
                     Jadwal Operasional
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-xs sm:text-sm uppercase text-cream/75">
+                <div className="flex items-center gap-2 text-xs sm:text-sm uppercase text-coffee/70">
                   <span>{isScheduleDropdownOpen ? "Tutup Jadwal" : "Lihat Jadwal 7 Hari"}</span>
                   <ChevronDown
-                    className={`h-4 w-4 text-sunshine transition-transform duration-300 ${
+                    className={`h-4 w-4 text-coffee transition-transform duration-300 ${
                       isScheduleDropdownOpen ? "rotate-180" : ""
                     }`}
                   />
                 </div>
               </button>
 
-              {/* Status Bar Ringkas (div/div telah dihapus, space kosong dihilangkan) */}
-              <div className="border-b border-cream/15 bg-coffee/50 px-4 py-3 sm:px-5">
+              {/* Status Bar Ringkas */}
+              <div className="border-b border-coffee/15 bg-latte/15 px-4 py-3 sm:px-5">
                 <p
                   suppressHydrationWarning
-                  className="text-[14px] font-medium text-cream/90"
+                  className="text-[14px] font-medium text-coffee"
                 >
                   {isMounted ? statusText : "Buka setiap hari"}
                 </p>
@@ -123,7 +123,7 @@ export function LocationSection() {
 
               {/* 7-Day Schedule List (Tampil saat Dropdown Dibuka) */}
               {isScheduleDropdownOpen && (
-                <div className="flex-1 divide-y divide-cream/10 animate-in fade-in duration-300">
+                <div className="flex-1 divide-y divide-coffee/10 animate-in fade-in duration-300">
                   {CAFE_INFO.jamBuka.map((item) => {
                     const isToday =
                       isMounted && item.hari.toLowerCase() === currentDay.toLowerCase();
@@ -131,7 +131,7 @@ export function LocationSection() {
                       <div
                         key={item.hari}
                         className={`flex items-center justify-between gap-2 px-4 py-2.5 transition-colors sm:px-5 sm:py-3 ${
-                          isToday ? "bg-sunshine text-coffee" : "hover:bg-coffee/40"
+                          isToday ? "bg-latte text-coffee font-semibold" : "hover:bg-cream/60"
                         }`}
                       >
                         {/* Hari & Badge Hari Ini */}
@@ -140,7 +140,7 @@ export function LocationSection() {
                             {item.hari}
                           </span>
                           {isToday && (
-                            <span className="rounded-[0.2rem] bg-coffee px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sunshine">
+                            <span className="rounded-[0.2rem] bg-coffee px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cream">
                               Hari Ini
                             </span>
                           )}
@@ -153,7 +153,7 @@ export function LocationSection() {
                           </span>
                           <span
                             className={`mt-0.5 block text-[11px] leading-none ${
-                              isToday ? "text-coffee/70" : "text-cream/60"
+                              isToday ? "text-coffee/75" : "text-coffee/60"
                             }`}
                           >
                             {item.libur ? "Tutup" : "WIB"}
@@ -173,20 +173,20 @@ export function LocationSection() {
             style={{ "--d": "120ms" } as React.CSSProperties}
             className="flex min-h-[380px] flex-col sm:min-h-[460px] lg:col-span-6 lg:min-h-[580px]"
           >
-            <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] bg-roast">
+            <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] border border-coffee/20 bg-cream-surface shadow-sm">
               {/* Maps Frame Top Bar */}
-              <div className="flex items-center justify-between border-b border-cream/15 p-3.5 text-cream sm:p-4">
+              <div className="flex items-center justify-between border-b border-coffee/15 p-3.5 text-coffee sm:p-4">
                 <div className="flex items-center gap-2">
-                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-sunshine" />
-                  <span className="text-[13px] font-medium uppercase tracking-wider">
+                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-latte" />
+                  <span className="text-[13px] font-medium uppercase tracking-wider text-coffee">
                     Peta Lokasi
                   </span>
                 </div>
-                <span className="text-[12px] uppercase text-cream/60">Tampilan interaktif</span>
+                <span className="text-[12px] uppercase text-coffee/60">Tampilan interaktif</span>
               </div>
 
               {/* Responsive Iframe Container */}
-              <div className="relative min-h-[340px] w-full flex-1 bg-coffee">
+              <div className="relative min-h-[340px] w-full flex-1 bg-cream">
                 <iframe
                   title={`Peta Lokasi ${CAFE_INFO.nama}`}
                   src={CAFE_INFO.googleMapsEmbed}
@@ -197,6 +197,7 @@ export function LocationSection() {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   className="h-full w-full grayscale-[25%] contrast-[105%] transition-all duration-500 hover:grayscale-0"
+                  suppressHydrationWarning
                 />
               </div>
             </div>

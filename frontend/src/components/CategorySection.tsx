@@ -50,19 +50,19 @@ export function CategorySection() {
   return (
     <section
       id="kategori"
-      className="w-full bg-coffee px-4 pb-8 pt-16 text-cream sm:px-6 sm:pt-24"
+      className="w-full bg-cream px-4 pb-8 pt-16 text-coffee sm:px-6 sm:pt-24"
     >
       <div className="mx-auto max-w-[90rem]">
         <div
           data-rev
-          className="mb-2 rounded-[0.75rem] bg-roast px-6 py-8 sm:px-8 sm:py-10"
+          className="mb-3 rounded-[0.75rem] border border-coffee/15 bg-cream-surface px-6 py-8 sm:px-8 sm:py-10"
         >
-          <h2 className="font-display text-[clamp(2.4rem,5.6vw,5rem)] text-sunshine">
+          <h2 className="font-display text-[clamp(2.4rem,5.6vw,5rem)] text-coffee">
             Mau Ngopi Apa Hari Ini?
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           {cards.map((card, idx) => (
             <button
               key={card.id}
@@ -70,21 +70,21 @@ export function CategorySection() {
               onClick={() => pick(card.id)}
               data-rev
               style={{ "--d": `${idx * 80}ms` } as React.CSSProperties}
-              className="group flex min-h-[16rem] sm:min-h-[18rem] flex-col justify-between overflow-hidden rounded-[0.5rem] bg-sunshine p-6 text-left text-coffee transition-all duration-300 hover:bg-sunshine-light hover:-translate-y-1 sm:p-8"
+              className="group flex min-h-[16rem] sm:min-h-[18rem] flex-col justify-between overflow-hidden rounded-[0.5rem] border border-coffee/15 bg-cream-surface p-6 text-left text-coffee transition-all duration-300 hover:border-coffee/30 hover:bg-latte/25 hover:-translate-y-1 sm:p-8"
               aria-label={`${card.title}: ${card.cta}`}
             >
               <div>
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="font-display text-5xl sm:text-6xl">{card.title}</h3>
-                  <span className="mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.2rem] bg-coffee text-sunshine transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+                  <h3 className="font-display text-5xl sm:text-6xl text-coffee">{card.title}</h3>
+                  <span className="mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.2rem] bg-coffee text-cream transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
                     <ArrowUpRight className="h-5 w-5" />
                   </span>
                 </div>
 
-                <p className="mt-4 max-w-sm text-lg text-coffee/90">{card.blurb}</p>
+                <p className="mt-4 max-w-sm text-lg text-coffee/80">{card.blurb}</p>
               </div>
 
-              <div className="mt-8 flex items-center justify-between border-t border-coffee/20 pt-4">
+              <div className="mt-8 flex items-center justify-between border-t border-coffee/15 pt-4">
                 <span className="tag">
                   {card.count} menu
                 </span>

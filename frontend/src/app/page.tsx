@@ -19,11 +19,11 @@ export default function Home() {
   useEditorialChoreography();
 
   return (
-    <main className="relative min-h-screen bg-cream text-coffee selection:bg-sunshine selection:text-coffee">
+    <main className="relative min-h-screen bg-cream text-coffee selection:bg-latte selection:text-coffee">
       {/* Announcement banner + fixed header */}
       <Navbar />
 
-      {/* 1. HERO — full-bleed photo with oversized sunshine headline */}
+      {/* 1. HERO — full-bleed photo with oversized headline */}
       <HeroSection />
 
       {/* 2. MENU CATEGORY PICKER ("Where does your journey begin?") */}

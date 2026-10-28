@@ -80,10 +80,10 @@ export function PromoSection() {
         {status === "error" && (
           <div
             data-rev
-            className="flex w-full flex-col items-center justify-center rounded-[0.25rem] border border-earth/25 bg-cream-light px-6 py-12 text-center text-coffee sm:px-10 sm:py-16"
+            className="flex w-full flex-col items-center justify-center rounded-[0.25rem] border border-coffee/20 bg-cream-surface px-6 py-12 text-center text-coffee sm:px-10 sm:py-16"
           >
             <div className="mx-auto max-w-lg space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full bg-earth/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-earth-dark">
+              <div className="inline-flex items-center gap-2 rounded-full bg-coffee/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-coffee">
                 <AlertCircle className="h-4 w-4" />
                 <span>Koneksi CMS Terputus</span>
               </div>
@@ -154,7 +154,7 @@ export function PromoSection() {
               <div className="w-full">
                 {promos.map((item) => {
                   const isEvent = item.tipe === "kegiatan";
-                  const surface = isEvent ? "bg-latte" : "bg-sunshine";
+                  const surface = isEvent ? "bg-latte" : "bg-cream-surface border border-coffee/15";
                   return (
                     <article
                       key={item.id}
@@ -236,7 +236,7 @@ export function PromoSection() {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {promos.map((item, idx) => {
                   const isEvent = item.tipe === "kegiatan";
-                  const surface = idx % 3 === 1 ? "bg-latte" : "bg-sunshine";
+                  const surface = idx % 2 === 1 ? "bg-latte" : "bg-cream-surface border border-coffee/15";
                   return (
                     <article
                       key={item.id}

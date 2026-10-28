@@ -81,8 +81,8 @@ export interface StaggeredMenuProps {
 
 export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   position = "right",
-  // Kontrakan Coffee 3-layer architecture: Sunshine -> Earth accent -> Coffee panel
-  colors = ["#fcbf27", "#ed612f", "#23160c"],
+  // Kontrakan Coffee 3-layer architecture: Latte -> Roast -> Espresso panel
+  colors = ["#AF8F6F", "#74512D", "#543310"],
   items = [
     { label: "Works", ariaLabel: "View selected architectural coffee works", link: "#works" },
     { label: "Manifesto", ariaLabel: "Read our spatial coffee manifesto", link: "#manifesto" },
@@ -98,10 +98,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   className,
   logo,
   desktopNav,
-  menuButtonColor = "#2c1c0f",
-  openMenuButtonColor = "#2c1c0f",
+  menuButtonColor = "#543310",
+  openMenuButtonColor = "#543310",
   changeMenuColorOnOpen = true,
-  accentColor = "#fcbf27",
+  accentColor = "#AF8F6F",
   isFixed = true,
   closeOnClickAway = true,
   onMenuOpen,
@@ -494,9 +494,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               onClick={toggleMenu}
               className={cn(
                 "sm-toggle relative w-10 h-10 rounded-[0.25rem] flex items-center justify-center",
-                "bg-earth text-coffee hover:bg-sunshine",
+                "bg-latte text-coffee hover:bg-coffee hover:text-cream",
                 "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer group",
-                open && "bg-sunshine"
+                open && "bg-cream text-coffee"
               )}
               aria-expanded={open}
               aria-label={open ? "Close Navigation Menu" : "Open Navigation Menu"}
@@ -549,7 +549,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                       className="group relative flex items-baseline justify-start no-underline text-left"
                       aria-label={item.ariaLabel}
                     >
-                      <span className="sm-panel-itemLabel inline-block font-display text-5xl sm:text-6xl text-cream uppercase transition-colors duration-300 group-hover:text-sunshine">
+                      <span className="sm-panel-itemLabel inline-block font-display text-5xl sm:text-6xl text-cream uppercase transition-colors duration-300 group-hover:text-latte">
                         {item.label}
                       </span>
                     </a>
@@ -568,7 +568,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                         href={social.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="sm-socials-link font-sans text-[15px] font-medium text-cream no-underline hover:text-sunshine transition-colors py-1 inline-block"
+                        className="sm-socials-link font-sans text-[15px] font-medium text-cream no-underline hover:text-latte transition-colors py-1 inline-block"
                       >
                         {social.label}
                       </a>

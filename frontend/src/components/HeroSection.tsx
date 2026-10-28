@@ -24,8 +24,8 @@ export function HeroSection() {
             }
           }}
         />
-        <div className="absolute inset-0 bg-coffee/70 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-gradient-to-t from-coffee-darker/90 via-coffee/35 to-coffee/10" />
+        <div className="absolute inset-0 bg-coffee/40 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-t from-coffee-darker/80 via-coffee/25 to-transparent" />
       </div>
 
       <div className="mx-auto w-full max-w-[90rem] px-5 pb-8 pt-16 sm:px-6 sm:pb-14 sm:pt-24">
@@ -33,7 +33,7 @@ export function HeroSection() {
         <p
           data-rev
           style={{ "--d": "60ms" } as React.CSSProperties}
-          className="eyebrow mb-2 sm:mb-3 text-xs sm:text-2xl uppercase tracking-widest text-sunshine-light sm:tracking-normal sm:text-latte-light"
+          className="eyebrow mb-2 sm:mb-3 text-xs sm:text-2xl uppercase tracking-widest text-latte-light sm:tracking-normal sm:text-latte"
         >
           Kopi spesialti · Ruang nongkrong &amp; nugas
         </p>
@@ -42,7 +42,7 @@ export function HeroSection() {
         <h1
           data-rev
           style={{ "--d": "140ms" } as React.CSSProperties}
-          className="font-display text-[2.6rem] sm:text-[clamp(3.4rem,11.2vw,10.5rem)] leading-[1.08] sm:leading-none text-sunshine"
+          className="font-display text-[2.6rem] sm:text-[clamp(3.4rem,11.2vw,10.5rem)] leading-[1.08] sm:leading-none text-cream"
         >
           Kopi Enak.
           <br className="sm:hidden" /> Nongkrong Betah.

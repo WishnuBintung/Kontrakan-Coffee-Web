@@ -292,7 +292,7 @@ export function MenuSection() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Cari menu kopi, espresso, coklat, camilan..."
-                      className="w-full rounded-[0.2rem] border border-coffee/40 bg-cream py-3 pl-10 pr-10 text-[15px] text-coffee placeholder-coffee/55 transition-colors focus:border-coffee focus:outline-none focus:ring-2 focus:ring-sunshine"
+                      className="w-full rounded-[0.2rem] border border-coffee/40 bg-cream py-3 pl-10 pr-10 text-[15px] text-coffee placeholder-coffee/55 transition-colors focus:border-coffee focus:outline-none focus:ring-2 focus:ring-latte"
                       aria-label="Cari menu kafe"
                       suppressHydrationWarning
                     />
@@ -316,7 +316,7 @@ export function MenuSection() {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as SortKey)}
-                      className="cursor-pointer rounded-[0.2rem] border border-coffee bg-transparent px-3.5 py-3 text-sm font-medium uppercase text-coffee transition-colors hover:bg-coffee hover:text-sunshine focus:outline-none focus:ring-2 focus:ring-sunshine"
+                      className="cursor-pointer rounded-[0.2rem] border border-coffee bg-transparent px-3.5 py-3 text-sm font-medium uppercase text-coffee transition-colors hover:bg-coffee hover:text-cream focus:outline-none focus:ring-2 focus:ring-latte"
                       aria-label="Urutkan menu berdasarkan"
                     >
                       <option value="default">Rekomendasi Kafe</option>
@@ -346,8 +346,8 @@ export function MenuSection() {
               </div>
 
               {/* Pemberitahuan Khusus Mobile */}
-              <div className="mb-4 flex items-center gap-2.5 rounded-[0.25rem] border border-earth/35 bg-earth/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-earth-dark sm:hidden">
-                <Sparkles className="h-4 w-4 shrink-0 text-earth" />
+              <div className="mb-4 flex items-center gap-2.5 rounded-[0.25rem] border border-latte/40 bg-latte/20 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-coffee sm:hidden">
+                <Sparkles className="h-4 w-4 shrink-0 text-roast" />
                 <span>Tekan menu untuk melihat detail &amp; foto</span>
               </div>
 
@@ -355,7 +355,7 @@ export function MenuSection() {
               {filteredItems.length > 0 ? (
                 <div
                   onMouseLeave={handleMenuContainerMouseLeave}
-                  className="relative rounded-[0.5rem] border border-coffee/15 bg-cream p-6 sm:p-10 shadow-[0_4px_20px_-4px_rgba(44,28,15,0.08)]"
+                  className="relative rounded-[0.5rem] border border-coffee/15 bg-cream p-6 sm:p-10 shadow-[0_4px_20px_-4px_rgba(84,51,16,0.08)]"
                 >
                   {/* Kolom Kategori Menu dengan Logika Truncation (5.5 Baris Terpotong Transparan) */}
                   <div
@@ -391,10 +391,10 @@ export function MenuSection() {
                               aria-label={`Lihat detail ${item.nama}`}
                               className="group relative flex items-baseline justify-between py-1.5 px-2 -mx-2 rounded-[0.2rem] transition-colors hover:bg-coffee/10 cursor-pointer select-none"
                             >
-                              <span className="font-medium text-[15px] sm:text-[16px] text-coffee group-hover:text-earth-dark transition-colors shrink-0">
+                              <span className="font-medium text-[15px] sm:text-[16px] text-coffee group-hover:text-roast transition-colors shrink-0">
                                 {item.nama.toLowerCase()}
                                 {item.rekomendasi && (
-                                  <span className="ml-1 text-xs text-earth font-bold" title="Andalan Kafe">
+                                  <span className="ml-1 text-xs text-roast font-bold" title="Andalan Kafe">
                                     ★
                                   </span>
                                 )}

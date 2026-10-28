@@ -59,7 +59,7 @@ export function PhotoFrameTemplate({
       {/* LAYER 2: Fallback frame while photo is missing / error */}
       {!hasValidPhoto && (
         <div className="halftone absolute inset-0 flex flex-col items-center justify-center gap-2 bg-latte p-4 text-center text-coffee">
-          <div className="flex h-12 w-12 items-center justify-center rounded-[0.25rem] bg-sunshine">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[0.25rem] bg-cream text-coffee">
             <Coffee className="h-6 w-6" />
           </div>
           <h4 className="font-display line-clamp-1 max-w-xs text-2xl">{title}</h4>

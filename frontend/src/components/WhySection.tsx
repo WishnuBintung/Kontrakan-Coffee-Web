@@ -32,9 +32,9 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 const SURFACES = [
-  "bg-sunshine text-coffee",
-  "bg-cream text-coffee",
+  "bg-cream-surface border border-coffee/20 text-coffee",
   "bg-latte text-coffee",
+  "bg-cream border border-coffee/20 text-coffee",
 ];
 
 /**
@@ -59,31 +59,31 @@ export function WhySection() {
       id="fasilitas"
       className="relative isolate w-full overflow-clip px-4 pb-24 pt-20 sm:px-6 sm:pt-28"
     >
-      {/* Photo backdrop with coffee wash */}
-      <div className="absolute inset-0 -z-10 bg-coffee">
+      {/* Photo backdrop with warm cream wash */}
+      <div className="absolute inset-0 -z-10 bg-cream">
         {backdrop && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={backdrop}
             alt=""
             aria-hidden="true"
-            className="h-full w-full object-cover opacity-60"
+            className="h-full w-full object-cover opacity-15"
             loading="lazy"
           />
         )}
-        <div className="absolute inset-0 bg-coffee/55" />
+        <div className="absolute inset-0 bg-cream/70" />
       </div>
 
       <div className="mx-auto max-w-5xl">
         <h2
           data-rev
-          className="font-display mb-10 text-[clamp(2.6rem,6vw,5.5rem)] text-sunshine sm:mb-14"
+          className="font-display mb-10 text-[clamp(2.6rem,6vw,5.5rem)] text-coffee sm:mb-14"
         >
           {whyData.judul || "Betah Berjam-jam. Kenapa Kontrakan?"}
         </h2>
 
         {whyData.deskripsi && (
-          <p className="mb-8 max-w-2xl text-lg text-cream/90 -mt-6">
+          <p className="mb-8 max-w-2xl text-lg text-coffee/80 -mt-6">
             {whyData.deskripsi}
           </p>
         )}
@@ -95,7 +95,7 @@ export function WhySection() {
               <article
                 key={`${f.title}-${i}`}
                 style={{ "--i": i } as React.CSSProperties}
-                className={`stack-card relative flex min-h-[22rem] flex-col justify-between overflow-hidden rounded-[0.25rem] p-6 shadow-[0_-8px_24px_-12px_rgba(17,11,6,0.45)] sm:p-10 ${SURFACES[i % SURFACES.length]}`}
+                className={`stack-card relative flex min-h-[22rem] flex-col justify-between overflow-hidden rounded-[0.25rem] p-6 shadow-[0_8px_30px_rgba(84,51,16,0.08)] sm:p-10 ${SURFACES[i % SURFACES.length]}`}
               >
                 {/* Watermark icon (Bettr's faded illustration) */}
                 <Icon
@@ -111,7 +111,7 @@ export function WhySection() {
                 </div>
 
                 <div className="relative mt-16 max-w-md">
-                  <div className="rule-dashed mb-4 text-coffee" aria-hidden="true" />
+                  <div className="rule-dashed mb-4 text-coffee/30" aria-hidden="true" />
                   <p className="text-lg">{f.desc}</p>
                 </div>
               </article>
