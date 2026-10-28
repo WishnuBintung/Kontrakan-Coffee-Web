@@ -22,7 +22,7 @@ export function GallerySection() {
               Sudut Favorit
             </span>
             <h2 className="font-display text-[clamp(2.6rem,6vw,5.5rem)]">
-              Intip Suasananya.
+              Galeri kami
             </h2>
           </div>
 

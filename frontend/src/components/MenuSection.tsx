@@ -186,7 +186,7 @@ export function MenuSection() {
           <div className="mb-8 flex flex-col justify-between gap-6 sm:mb-12 md:flex-row md:items-end">
             <div data-rev style={{ "--d": "40ms" } as React.CSSProperties}>
               <h2 className="font-display text-[clamp(2.6rem,6vw,5.5rem)]">
-                Menu Digital, Siap Dipilih.
+                Menu Kami
               </h2>
             </div>
             <p className="max-w-md text-lg text-coffee/80">

@@ -46,7 +46,7 @@ export function PromoSection() {
         <div className="mb-10 flex flex-col justify-between gap-6 sm:mb-14 md:flex-row md:items-end">
           <div data-rev style={{ "--d": "40ms" } as React.CSSProperties}>
             <h2 className="font-display text-[clamp(2.6rem,6vw,5.5rem)]">
-              Promo &amp; Agenda Spesial.
+              Informasi Promo
             </h2>
             <p className="mt-4 max-w-xl text-lg text-coffee/80">
               Diskon kopi sore hari, paket nongkrong hemat pelajar &amp;

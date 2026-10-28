@@ -37,7 +37,7 @@ export function LocationSection() {
         <div className="mb-10 flex flex-col justify-between gap-6 sm:mb-14 md:flex-row md:items-end">
           <div data-rev style={{ "--d": "40ms" } as React.CSSProperties}>
             <h2 className="font-display text-[clamp(2.6rem,6vw,5.5rem)] text-sunshine">
-              Mampir, Yuk. Ini Lokasinya.
+              Location
             </h2>
           </div>
 
