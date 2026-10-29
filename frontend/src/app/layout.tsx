@@ -7,6 +7,16 @@ export const metadata: Metadata = {
   title: "Kontrakan Coffee — Kopi Enak, Nongkrong Betah",
   description:
     "Kontrakan Coffee: kopi spesialti, menu non-kopi dan camilan, promo senja, serta ruang nongkrong dan nugas yang nyaman dengan Wi-Fi kencang dan stopkontak di tiap meja.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      { url: "/icon-32x32.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
   openGraph: {
     title: "Kontrakan Coffee — Kopi Enak, Nongkrong Betah",
     description:
@@ -44,11 +54,21 @@ export default function RootLayout({
         />
       </head>
       <body
-        className="bg-cream text-coffee antialiased min-h-screen selection:bg-sunshine selection:text-coffee font-sans"
+        className="bg-cream text-coffee antialiased min-h-[100svh] selection:bg-sunshine selection:text-coffee font-sans"
         suppressHydrationWarning
       >
         <Script id="identity-redirect" strategy="beforeInteractive">
-          {`if (/(invite|recovery|confirmation)_token=/.test(location.hash)) location.replace('/admin/' + location.hash);`}
+          {`
+            if (window.netlifyIdentity) {
+              window.netlifyIdentity.on("init", function(user) {
+                if (!user) {
+                  window.netlifyIdentity.on("login", function() {
+                    document.location.href = "/admin/";
+                  });
+                }
+              });
+            }
+          `}
         </Script>
         {children}
       </body>
