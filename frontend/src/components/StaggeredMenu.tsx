@@ -5,7 +5,8 @@
  * 
  * A high-end navigation menu with staggered entrance animations, 
  * multiple background layers, and customizable social links.
- * Powered by GSAP and styled with the Kontrakan Coffee design system tokens.
+ * Powered by GSAP and styled with the Kontrakan Coffee design system tokens
+ * (sunshine / coffee / earth — adapted from the bettr.academy reference).
  */
 
 import React, {
@@ -71,12 +72,17 @@ export interface StaggeredMenuProps {
   shrinkOnScroll?: boolean;
   /** Scroll distance threshold in pixels to trigger shrinking header */
   scrollThreshold?: number;
+  /**
+   * Distance in px the fixed header sits below the viewport top at scroll 0
+   * (e.g. an announcement banner). It slides up to 0 as the page scrolls.
+   */
+  topOffset?: number;
 }
 
 export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   position = "right",
-  // Kontrakan Coffee 3-layer architecture: Deep Espresso -> Latte Taupe shimmer -> Roasted Mocha surface
-  colors = ["#472F1D", "#C7B8AE", "#5F493C"],
+  // Kontrakan Coffee 3-layer architecture: Sunshine -> Earth accent -> Coffee panel
+  colors = ["#fcbf27", "#ed612f", "#23160c"],
   items = [
     { label: "Works", ariaLabel: "View selected architectural coffee works", link: "#works" },
     { label: "Manifesto", ariaLabel: "Read our spatial coffee manifesto", link: "#manifesto" },
@@ -92,16 +98,17 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   className,
   logo,
   desktopNav,
-  menuButtonColor = "#EEE6D7",
-  openMenuButtonColor = "#C7B8AE",
+  menuButtonColor = "#2c1c0f",
+  openMenuButtonColor = "#2c1c0f",
   changeMenuColorOnOpen = true,
-  accentColor = "#C7B8AE",
+  accentColor = "#fcbf27",
   isFixed = true,
   closeOnClickAway = true,
   onMenuOpen,
   onMenuClose,
   shrinkOnScroll = true,
   scrollThreshold = 80,
+  topOffset = 0,
 }) => {
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -110,6 +117,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const preLayersRef = useRef<HTMLDivElement | null>(null);
   const preLayerElsRef = useRef<HTMLElement[]>([]);
   const backdropRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
 
   const openTlRef = useRef<gsap.core.Timeline | null>(null);
   const closeTweenRef = useRef<gsap.core.Tween | null>(null);
@@ -372,7 +380,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   // Shrinking Sticky Header scroll listener with hysteresis
   useEffect(() => {
-    if (!shrinkOnScroll) return;
+    if (!shrinkOnScroll && !topOffset) return;
     let rafId: number | null = null;
     const upperThreshold = scrollThreshold;
     const lowerThreshold = Math.max(20, scrollThreshold - 36);
@@ -380,6 +388,11 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     const checkScroll = () => {
       rafId = null;
       const y = window.scrollY;
+      // Header rides below the announcement banner, then docks to the top edge
+      if (headerRef.current) {
+        headerRef.current.style.top = `${Math.max(0, topOffset - y)}px`;
+      }
+      if (!shrinkOnScroll) return;
       setIsScrolled((prev) => {
         if (!prev && y > upperThreshold) return true;
         if (prev && y < lowerThreshold) return false;
@@ -399,7 +412,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [shrinkOnScroll, scrollThreshold]);
+  }, [shrinkOnScroll, scrollThreshold, topOffset]);
 
   return (
     <div
@@ -414,7 +427,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         ref={backdropRef}
         onClick={open ? toggleMenu : undefined}
         className={cn(
-          "fixed inset-0 bg-[#472F1D]/50 backdrop-blur-[2px] transition-opacity duration-500 z-[15] touch-none",
+          "fixed inset-0 bg-coffee-darker/60 backdrop-blur-[2px] transition-opacity duration-500 z-[15] touch-none",
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         aria-hidden="true"
@@ -445,21 +458,23 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
         {/* Global Navigation Bar / Shrinking Sticky Header */}
         <header
+          ref={headerRef}
+          style={{ top: topOffset }}
           className={cn(
-            "fixed top-0 left-0 w-full z-[30] px-6 transition-[padding,height,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-auto flex items-center",
-            "bg-[#5F493C]/90 backdrop-blur-md border-b border-[#472F1D]",
+            "fixed left-0 w-full z-[30] px-6 transition-[padding,height,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-auto flex items-center",
+            "bg-coffee-dark",
             (shrinkOnScroll && isScrolled) || open
-              ? "h-16 py-3 shadow-md shadow-black/15"
-              : "h-20 py-5 shadow-none"
+              ? "h-16 py-2 shadow-md shadow-black/20"
+              : "h-20 py-4 shadow-none"
           )}
         >
-          <nav className="max-w-7xl mx-auto w-full flex items-center justify-between text-[#EEE6D7]">
+          <nav className="mx-auto flex w-full max-w-[90rem] items-center justify-between text-cream">
             {/* Logo / Brand Wordmark */}
             <div className="flex items-center">
               {logo || (
                 <a
                   href="#"
-                  className="text-[18px] font-bold tracking-tight uppercase hover:text-[#C7B8AE] transition-colors font-sans text-[#EEE6D7]"
+                  className="text-[18px] font-bold tracking-tight uppercase hover:text-sunshine transition-colors font-sans text-cream"
                 >
                   KONTRAKAN COFFEE
                 </a>
@@ -468,21 +483,20 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
             {/* Desktop Navigation Links (Optional center slot) */}
             {desktopNav && (
-              <div className="hidden md:flex items-center gap-12">
+              <div className="ml-auto mr-8 hidden md:flex items-center gap-10">
                 {desktopNav}
               </div>
             )}
 
-            {/* 3-Line Hamburger Toggle Button with Rounded Square (Retained as requested) */}
+            {/* 3-Line Hamburger Toggle Button — earth-orange square, like Bettr's header action */}
             <button
               ref={toggleBtnRef}
               onClick={toggleMenu}
               className={cn(
-                "sm-toggle relative w-11 h-11 rounded-xl flex items-center justify-center",
-                "bg-[#472F1D]/75 border border-[#C7B8AE]/45 hover:border-[#C7B8AE] hover:bg-[#472F1D]",
-                "text-[#EEE6D7] hover:text-[#C7B8AE] shadow-sm",
-                "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none cursor-pointer group",
-                open && "bg-[#472F1D] border-[#C7B8AE] text-[#C7B8AE]"
+                "sm-toggle relative w-10 h-10 rounded-[0.25rem] flex items-center justify-center",
+                "bg-earth text-coffee hover:bg-sunshine",
+                "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer group",
+                open && "bg-sunshine"
               )}
               aria-expanded={open}
               aria-label={open ? "Close Navigation Menu" : "Open Navigation Menu"}
@@ -515,7 +529,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         <aside
           ref={panelRef}
           className={cn(
-            "staggered-menu-panel absolute top-0 bottom-0 z-[25] pointer-events-auto flex flex-col pt-28 pb-12 pl-6 pr-6 sm:pl-9 sm:pr-10 overflow-y-auto overscroll-contain w-[100vw] sm:w-[60vw] md:w-[48vw] lg:w-[36vw] border-l border-[#472F1D] shadow-2xl sharp-edges will-change-transform",
+            "staggered-menu-panel absolute top-0 bottom-0 z-[25] pointer-events-auto flex flex-col pt-28 pb-12 pl-6 pr-6 sm:pl-9 sm:pr-10 overflow-y-auto overscroll-contain w-[100vw] sm:w-[60vw] md:w-[48vw] lg:w-[36vw] shadow-2xl will-change-transform",
             position === "left" ? "left-0" : "right-0"
           )}
           style={{ background: colors[colors.length - 1] }}
@@ -535,7 +549,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                       className="group relative flex items-baseline justify-start no-underline text-left"
                       aria-label={item.ariaLabel}
                     >
-                      <span className="sm-panel-itemLabel inline-block font-sans font-black text-4xl sm:text-5xl text-[#EEE6D7] uppercase tracking-[-0.03em] transition-colors duration-300 group-hover:text-[#C7B8AE]">
+                      <span className="sm-panel-itemLabel inline-block font-display text-5xl sm:text-6xl text-cream uppercase transition-colors duration-300 group-hover:text-sunshine">
                         {item.label}
                       </span>
                     </a>
@@ -546,7 +560,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
             {/* Social Links & Legal Bottom Section */}
             {displaySocials && socialItems.length > 0 && (
-              <div className="mt-auto pt-8 border-t border-[#472F1D] w-full text-left">
+              <div className="mt-auto pt-8 border-t border-cream/20 w-full text-left">
                 <ul className="flex flex-wrap gap-x-6 gap-y-2 list-none p-0 m-0">
                   {socialItems.map((social, i) => (
                     <li key={i}>
@@ -554,7 +568,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                         href={social.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="sm-socials-link font-sans text-[15px] font-medium text-[#EEE6D7] no-underline hover:text-[#C7B8AE] transition-colors py-1 inline-block"
+                        className="sm-socials-link font-sans text-[15px] font-medium text-cream no-underline hover:text-sunshine transition-colors py-1 inline-block"
                       >
                         {social.label}
                       </a>
@@ -562,9 +576,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                   ))}
                 </ul>
 
-                {/* Micro Atelier Tag */}
-                <div className="mt-8 pt-4 border-t border-[#472F1D]/60 flex flex-col sm:flex-row justify-between text-[11px] font-mono text-[#EEE6D7]/60 gap-1 tracking-wider">
-                  <span>SPATIAL ATELIER &amp; ROASTERY</span>
+                {/* Micro tag */}
+                <div className="mt-8 pt-4 border-t border-cream/10 flex flex-col sm:flex-row justify-between text-[11px] uppercase text-cream/60 gap-1 tracking-wider">
+                  <span>KOPI SPESIALTI &amp; RUANG NONGKRONG</span>
                   <span>© 2026 KONTRAKAN COFFEE</span>
                 </div>
               </div>

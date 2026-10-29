@@ -276,7 +276,7 @@ erDiagram
    - `judul` (string): Judul kampanye promo atau nama kegiatan live music.
    - `tipe` (enum): `"promo"` untuk diskon/paket menu, `"kegiatan"` untuk event/pertunjukan musik.
    - `deskripsi` (string): Rincian ketentuan promo atau jadwal acara.
-   - `tanggal_mulai` & `tanggal_selesai` (date string `YYYY-MM-DD`): Masa berlaku.
+   - `tanggal_selesai` (date string `YYYY-MM-DD`): Tanggal berakhir masa berlaku promo (satu-satunya input tanggal di CMS, ditampilkan di web sebagai "Berakhir sampai" dengan format hari, tanggal, dan bulan).
    - `gambar` (string, opsional): Banner promo visual.
    - `aktif` (boolean): Status publikasi.
 

@@ -1,11 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, X, ArrowUpRight, Sparkles, SlidersHorizontal, Filter } from "lucide-react";
-import { formatPriceRupiah, CafeMenuItem } from "@/lib/cafeData";
+import React, { useEffect, useState, useMemo } from "react";
+import {
+  Search,
+  X,
+  Sparkles,
+  SlidersHorizontal,
+  Filter,
+  AlertCircle,
+  Loader2,
+  RefreshCw,
+  Coffee,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { CafeMenuItem } from "@/lib/cafeData";
 import { useMenuData } from "@/hooks/useCafeData";
+import { FloatingMenuCard } from "./FloatingMenuCard";
 import { MenuDetailModal } from "./MenuDetailModal";
 import { SplitWords } from "./EditorialMotion";
+
+/** Fired by category picker or external cards to pre-select a filter. */
+export const CATEGORY_EVENT = "kc:select-category";
+
+type SortKey = "default" | "price-asc" | "price-desc" | "name-asc";
 
 const CATEGORIES = [
   { id: "semua", label: "Semua Menu" },
@@ -15,274 +33,447 @@ const CATEGORIES = [
   { id: "rekomendasi", label: "Andalan Kafe ★" },
 ];
 
+const CMS_CATEGORY_NAMES: Record<string, string> = {
+  kopi: "Kopi",
+  "non-kopi": "Non-Kopi",
+  camilan: "Camilan",
+};
+
+/**
+ * Format harga ringkas untuk baris menu (misal: Rp 11.000 → 11k).
+ */
+function formatBoardPrice(price: number): string {
+  if (!price || isNaN(price)) return "0";
+  if (price >= 1000) {
+    const thousands = Math.round(price / 1000);
+    return `${thousands}k`;
+  }
+  return String(price);
+}
+
 export function MenuSection() {
   const [activeCategory, setActiveCategory] = useState("semua");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc" | "name-asc">("default");
+  const [sortBy, setSortBy] = useState<SortKey>("default");
+
+  // State card detail melayang (mengikuti kursor tanpa delay & tanpa backdrop gelap)
+  const [hoveredItem, setHoveredItem] = useState<CafeMenuItem | null>(null);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+
+  // State modal terkunci (saat pengguna klik/tap di mobile)
   const [selectedItem, setSelectedItem] = useState<CafeMenuItem | null>(null);
 
-  const { items: filteredItems } = useMenuData(activeCategory, searchQuery, sortBy);
+  // State ekspansi daftar (5.5 baris terpotong vs semua)
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const { items: filteredItems, status, refetch } = useMenuData(
+    activeCategory,
+    searchQuery,
+    sortBy
+  );
+
+  // Handler event navigasi kategori dari section lain
+  useEffect(() => {
+    const onPick = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail;
+      if (typeof id === "string" && CATEGORIES.some((c) => c.id === id)) {
+        setActiveCategory(id);
+        setSearchQuery("");
+      }
+    };
+    window.addEventListener(CATEGORY_EVENT, onPick);
+    return () => window.removeEventListener(CATEGORY_EVENT, onPick);
+  }, []);
+
+  // Pengelompokan dinamis murni berdasarkan kategori yang ada di CMS (Kopi, Non-Kopi, Camilan)
+  const categorizedMenu = useMemo(() => {
+    const groups: { [key: string]: { id: string; title: string; items: CafeMenuItem[] } } = {};
+
+    // Urutan kategori baku CMS: Kopi, Non-Kopi, Camilan
+    const defaultOrder = ["kopi", "non-kopi", "camilan"];
+    defaultOrder.forEach((key) => {
+      groups[key] = {
+        id: key,
+        title: CMS_CATEGORY_NAMES[key] || key,
+        items: [],
+      };
+    });
+
+    filteredItems.forEach((item) => {
+      const cat = (item.kategori || "kopi").toLowerCase();
+      if (!groups[cat]) {
+        groups[cat] = {
+          id: cat,
+          title: cat.charAt(0).toUpperCase() + cat.slice(1).replace("-", " "),
+          items: [],
+        };
+      }
+      groups[cat].items.push(item);
+    });
+
+    // Kembalikan hanya kategori yang memiliki menu terdaftar
+    return Object.values(groups).filter((g) => g.items.length > 0);
+  }, [filteredItems]);
+
+  // Cek apakah terdapat kolom yang memiliki lebih dari 5 item
+  const hasLongList = useMemo(() => {
+    return categorizedMenu.some((group) => group.items.length > 5);
+  }, [categorizedMenu]);
+
+  // Kalkulasi posisi cerdas card melayang mengikuti kursor (Smart Collision Detection)
+  const CARD_WIDTH = 295;
+  const CARD_HEIGHT = 330;
+  const OFFSET = 18;
+
+  const updateCursorPosition = (clientX: number, clientY: number) => {
+    if (typeof window === "undefined") return;
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Logika Sisi Layar:
+    // Jika kursor berada di sisi kanan (clientX > viewportWidth / 2) atau card meluap ke kanan:
+    // Card muncul di sebelah KIRI kursor.
+    // Jika di sisi kiri, card muncul di sebelah KANAN kursor.
+    let x = clientX + OFFSET;
+    if (clientX > viewportWidth / 2 || x + CARD_WIDTH > viewportWidth - 14) {
+      x = clientX - CARD_WIDTH - OFFSET;
+    }
+
+    // Batas batas aman horizontal layar
+    if (x < 14) x = 14;
+    if (x + CARD_WIDTH > viewportWidth - 14) {
+      x = viewportWidth - CARD_WIDTH - 14;
+    }
+
+    // Batas aman vertikal layar
+    let y = clientY - 70;
+    if (y < 14) {
+      y = 14;
+    } else if (y + CARD_HEIGHT > viewportHeight - 14) {
+      y = viewportHeight - CARD_HEIGHT - 14;
+    }
+
+    setCursorPos({ x, y });
+  };
+
+  const handleItemMouseEnter = (item: CafeMenuItem, e: React.MouseEvent) => {
+    setHoveredItem(item);
+    updateCursorPosition(e.clientX, e.clientY);
+  };
+
+  const handleItemMouseMove = (e: React.MouseEvent) => {
+    updateCursorPosition(e.clientX, e.clientY);
+  };
+
+  const handleMenuContainerMouseLeave = () => {
+    setHoveredItem(null);
+  };
+
+  const handleItemClick = (item: CafeMenuItem) => {
+    setHoveredItem(null);
+    setSelectedItem(item);
+  };
 
   return (
     <>
       <section
         id="menu"
-        className="w-full bg-[#EEE6D7] text-[#472F1D] py-20 sm:py-28 px-4 sm:px-6 relative sharp-edges border-b border-[#C7B8AE]"
+        className="relative w-full bg-cream-light px-4 py-20 text-coffee sm:px-6 sm:py-28"
       >
-        <div className="max-w-7xl mx-auto">
-          {/* Header Section (Original Typography) */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
-            <div
-              data-rev
-              style={{ "--d": "40ms" } as React.CSSProperties}
-            >
-              <h2 className="text-[10vw] sm:text-[7vw] md:text-[5vw] lg:text-[4.5vw] leading-none tracking-[-0.03em] uppercase font-sans text-[#472F1D]">
-                <span className="font-black">DIGITAL </span>
-                <span className="font-thin italic text-[#5F493C]">MENU</span>
+        <div className="mx-auto max-w-[90rem]">
+          {/* Section Header */}
+          <div className="mb-8 flex flex-col justify-between gap-6 sm:mb-12 md:flex-row md:items-end">
+            <div data-rev style={{ "--d": "40ms" } as React.CSSProperties}>
+              <h2 className="font-display text-[clamp(2.6rem,6vw,5.5rem)]">
+                Menu Digital, Siap Dipilih.
               </h2>
             </div>
-            <p className="text-[15px] sm:text-[17px] text-[#5F493C] font-sans max-w-md leading-relaxed">
+            <p className="max-w-md text-lg text-coffee/80">
               <SplitWords
-                text="Jelajahi sajian kopi spesialti, minuman non-kopi segar, dan hidangan pastry artisan dalam daftar rapi. Ketuk baris menu untuk melihat detail ukuran dan varian."
-                staggerMs={26}
+                text="Jelajahi seduhan kopi spesialti, racikan non-kopi segar, dan kudapan artisan. Arahkan kursor atau ketuk menu untuk melihat foto dan detail lengkap."
+                staggerMs={22}
               />
             </p>
           </div>
 
-          {/* Controls: Search, Category Filters, and Sort Options */}
-          <div
-            data-rev
-            style={{ "--d": "90ms" } as React.CSSProperties}
-            className="space-y-4 mb-10 sm:mb-12"
-          >
-            {/* Top row: Search Bar & Sort Dropdown */}
-            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-              {/* Search input */}
-              <div className="relative flex-1 max-w-lg">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#5F493C]">
-                  <Search className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari kopi, espresso, matcha, camilan..."
-                  className="w-full pl-10 pr-10 py-3 bg-[#EEE6D7] border border-[#5F493C] text-[#472F1D] placeholder-[#5F493C]/75 font-sans text-[14px] sm:text-[15px] focus:outline-none focus:ring-1 focus:ring-[#472F1D] focus:border-[#472F1D] transition-all sharp-edges"
-                  aria-label="Cari menu kafe"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5F493C] hover:text-[#472F1D]"
-                    aria-label="Bersihkan pencarian"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              {/* Sort Selector */}
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="flex items-center gap-1.5 font-mono text-[12px] text-[#5F493C] uppercase">
-                  <SlidersHorizontal className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Urutkan:</span>
-                </div>
-                <select
-                  value={sortBy}
-                  onChange={(e) =>
-                    setSortBy(
-                      e.target.value as "default" | "price-asc" | "price-desc" | "name-asc"
-                    )
-                  }
-                  className="bg-[#5F493C] text-[#EEE6D7] font-mono text-[12px] sm:text-[13px] px-3.5 py-3 border border-[#472F1D] focus:outline-none focus:border-[#C7B8AE] cursor-pointer sharp-edges uppercase"
-                  aria-label="Urutkan menu berdasarkan"
-                >
-                  <option value="default">Rekomendasi Atelier</option>
-                  <option value="price-asc">Harga Terendah</option>
-                  <option value="price-desc">Harga Tertinggi</option>
-                  <option value="name-asc">Nama Menu A-Z</option>
-                </select>
+          {/* State 1: Sedang Memuat Data dari CMS */}
+          {status === "loading" && (
+            <div
+              data-rev
+              className="flex min-h-[260px] w-full items-center justify-center rounded-[0.25rem] border border-coffee/10 bg-latte/20 p-8 text-center text-coffee/60"
+            >
+              <div className="inline-flex items-center gap-3 text-[17px] font-medium">
+                <Loader2 className="h-5 w-5 animate-spin text-coffee/70" />
+                <span>Memuat katalog menu dari CMS...</span>
               </div>
             </div>
+          )}
 
-            {/* Category Filter Chips - Mobile Scrollable */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-              {CATEGORIES.map((cat) => {
-                const isActive = activeCategory === cat.id;
-                return (
+          {/* State 2: CMS Tidak Terhubung / Gagal Koneksi (Error) */}
+          {status === "error" && (
+            <div
+              data-rev
+              className="flex w-full flex-col items-center justify-center rounded-[0.25rem] border border-earth/25 bg-cream px-6 py-12 text-center text-coffee sm:px-10 sm:py-16"
+            >
+              <div className="mx-auto max-w-lg space-y-4">
+                <div className="inline-flex items-center gap-2 rounded-full bg-earth/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-earth-dark">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Koneksi CMS Terputus</span>
+                </div>
+                <h3 className="font-display text-[clamp(2rem,3.2vw,2.8rem)] text-coffee">
+                  Sistem Tidak Dapat Terhubung ke CMS
+                </h3>
+                <p className="text-[17px] leading-relaxed text-coffee/80 sm:text-lg">
+                  Sistem tidak dapat terhubung ke server CMS untuk memuat katalog menu. Pastikan server backend sedang aktif atau coba muat ulang halaman.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                   <button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
-                    className={`whitespace-nowrap px-4 py-2.5 font-mono text-[12px] sm:text-[13px] uppercase tracking-wider transition-all sharp-edges shrink-0 flex items-center gap-2 border cursor-pointer ${
-                      isActive
-                        ? "bg-[#5F493C] text-[#EEE6D7] border-[#5F493C] shadow-md"
-                        : "bg-transparent text-[#5F493C] border-[#C7B8AE] hover:border-[#5F493C] hover:text-[#472F1D]"
+                    type="button"
+                    onClick={() => refetch()}
+                    className="btn btn-earth inline-flex cursor-pointer items-center gap-2 px-6 py-2.5"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Coba Muat Ulang
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* State 3: Terhubung ke CMS tetapi Menu Kosong (Array === 0) */}
+          {status === "empty" && (
+            <div
+              data-rev
+              className="flex w-full flex-col items-center justify-center rounded-[0.25rem] border border-coffee/15 bg-latte/30 px-6 py-12 text-center text-coffee sm:px-10 sm:py-16"
+            >
+              <div className="mx-auto max-w-lg space-y-4">
+                <div className="inline-flex items-center gap-2 rounded-full bg-coffee/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-coffee">
+                  <Coffee className="h-4 w-4" />
+                  <span>Katalog Menu Digital</span>
+                </div>
+                <h3 className="font-display text-[clamp(2rem,3.2vw,2.8rem)] text-coffee">
+                  Menu Belum Dimasukkan
+                </h3>
+                <p className="text-[17px] leading-relaxed text-coffee/80 sm:text-lg">
+                  Saat ini belum terdapat menu yang dimasukkan ke dalam sistem CMS. Silakan periksa kembali nanti atau tanyakan ketersediaan seduhan langsung kepada barista kami.
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => refetch()}
+                    className="btn btn-earth inline-flex cursor-pointer items-center gap-2 px-6 py-2.5"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Periksa Pembaruan
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* State 4: Ada Menu Aktif dari CMS */}
+          {status === "success" && (
+            <>
+              {/* Kontrol Pencarian, Filter Kategori & Sort */}
+              <div
+                data-rev
+                style={{ "--d": "90ms" } as React.CSSProperties}
+                className="mb-8 space-y-4"
+              >
+                <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+                  {/* Input pencarian */}
+                  <div className="relative max-w-lg flex-1">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-coffee/70">
+                      <Search className="h-4 w-4" />
+                    </div>
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Cari menu kopi, espresso, coklat, camilan..."
+                      className="w-full rounded-[0.2rem] border border-coffee/40 bg-cream py-3 pl-10 pr-10 text-[15px] text-coffee placeholder-coffee/55 transition-colors focus:border-coffee focus:outline-none focus:ring-2 focus:ring-sunshine"
+                      aria-label="Cari menu kafe"
+                      suppressHydrationWarning
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery("")}
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-coffee/70 hover:text-coffee"
+                        aria-label="Bersihkan pencarian"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Pengurutan */}
+                  <div className="flex shrink-0 items-center gap-2">
+                    <div className="flex items-center gap-1.5 text-sm font-medium uppercase text-coffee/70">
+                      <SlidersHorizontal className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Urutkan:</span>
+                    </div>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as SortKey)}
+                      className="cursor-pointer rounded-[0.2rem] border border-coffee bg-transparent px-3.5 py-3 text-sm font-medium uppercase text-coffee transition-colors hover:bg-coffee hover:text-sunshine focus:outline-none focus:ring-2 focus:ring-sunshine"
+                      aria-label="Urutkan menu berdasarkan"
+                    >
+                      <option value="default">Rekomendasi Kafe</option>
+                      <option value="price-asc">Harga Terendah</option>
+                      <option value="price-desc">Harga Tertinggi</option>
+                      <option value="name-asc">Nama Menu A-Z</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Filter Kategori Chips */}
+                <div className="no-scrollbar -mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 pt-1 sm:mx-0 sm:px-0">
+                  {CATEGORIES.map((cat) => {
+                    const isActive = activeCategory === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => setActiveCategory(cat.id)}
+                        aria-pressed={isActive}
+                        className={`btn btn-sm shrink-0 ${isActive ? "btn-coffee" : "btn-outline"}`}
+                      >
+                        {cat.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Pemberitahuan Khusus Mobile */}
+              <div className="mb-4 flex items-center gap-2.5 rounded-[0.25rem] border border-earth/35 bg-earth/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-earth-dark sm:hidden">
+                <Sparkles className="h-4 w-4 shrink-0 text-earth" />
+                <span>Tekan menu untuk melihat detail &amp; foto</span>
+              </div>
+
+              {/* DAFTAR MENU MURNI (Hanya List Menu, Tanpa Ornamen Poster/Dekorasi) */}
+              {filteredItems.length > 0 ? (
+                <div
+                  onMouseLeave={handleMenuContainerMouseLeave}
+                  className="relative rounded-[0.5rem] border border-coffee/15 bg-cream p-6 sm:p-10 shadow-[0_4px_20px_-4px_rgba(44,28,15,0.08)]"
+                >
+                  {/* Kolom Kategori Menu dengan Logika Truncation (5.5 Baris Terpotong Transparan) */}
+                  <div
+                    className={`relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 transition-all duration-300 ease-out ${
+                      hasLongList && !isExpanded
+                        ? "max-h-[252px] overflow-hidden [mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)]"
+                        : "max-h-none"
                     }`}
                   >
-                    <span className="font-semibold">{cat.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+                    {categorizedMenu.map((group) => (
+                      <div key={group.id} className="space-y-3">
+                        {/* Judul Kategori Sesuai CMS */}
+                        <h3 className="font-display text-xl sm:text-2xl font-bold tracking-wider text-coffee uppercase border-b border-coffee/15 pb-2">
+                          {group.title}
+                        </h3>
 
-          {/* Results Summary Bar */}
-          <div className="flex items-center justify-between pb-4 mb-2 border-b border-[#C7B8AE] font-mono text-[12px] text-[#5F493C] uppercase">
-            <span>
-              Menampilkan {filteredItems.length} menu{" "}
-              {activeCategory !== "semua" ? `kategori ${activeCategory}` : ""}
-            </span>
-            {searchQuery && (
-              <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setActiveCategory("semua");
-                }}
-                className="text-[#472F1D] font-bold underline hover:text-[#5F493C]"
-              >
-                Reset Filter
-              </button>
-            )}
-          </div>
+                        {/* List Menu dengan Dotted Leader */}
+                        <ul className="list-none p-0 space-y-1">
+                          {group.items.map((item) => (
+                            <li
+                              key={item.id}
+                              onMouseEnter={(e) => handleItemMouseEnter(item, e)}
+                              onMouseMove={handleItemMouseMove}
+                              onClick={() => handleItemClick(item)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  handleItemClick(item);
+                                }
+                              }}
+                              aria-label={`Lihat detail ${item.nama}`}
+                              className="group relative flex items-baseline justify-between py-1.5 px-2 -mx-2 rounded-[0.2rem] transition-colors hover:bg-coffee/10 cursor-pointer select-none"
+                            >
+                              <span className="font-medium text-[15px] sm:text-[16px] text-coffee group-hover:text-earth-dark transition-colors shrink-0">
+                                {item.nama.toLowerCase()}
+                                {item.rekomendasi && (
+                                  <span className="ml-1 text-xs text-earth font-bold" title="Andalan Kafe">
+                                    ★
+                                  </span>
+                                )}
+                              </span>
 
-          {/* Table Column Headers (Desktop >=700px) */}
-          <div className="hidden md:grid grid-cols-[52px_minmax(200px,1.3fr)_minmax(240px,2fr)_auto] gap-5 py-3 border-b-2 border-[#472F1D] font-mono text-[11px] uppercase tracking-widest text-[#5F493C] font-semibold">
-            <span>NO.</span>
-            <span>NAMA MENU &amp; KATEGORI</span>
-            <span>DESKRIPSI &amp; KOMPOSISI</span>
-            <span className="text-right">HARGA</span>
-          </div>
+                              {/* Garis titik-titik pemisah (dotted leader line) */}
+                              <span
+                                className="mx-2 flex-1 border-b border-dotted border-coffee/40 relative -top-1"
+                                aria-hidden="true"
+                              />
 
-          {/* Clean Ruled List Without Images (Prompt Layout + Original Typography) */}
-          {filteredItems.length > 0 ? (
-            <div className="divide-y divide-[#C7B8AE] border-b-2 border-[#472F1D]">
-              {filteredItems.map((item, idx) => {
-                const indexStr = String(idx + 1).padStart(2, "0");
-                return (
-                  <div
-                    key={item.id}
-                    data-rev
-                    style={{ "--d": `${Math.min(idx * 45, 360)}ms` } as React.CSSProperties}
-                    onClick={() => setSelectedItem(item)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setSelectedItem(item);
-                      }
-                    }}
-                    aria-label={`Lihat detail menu ${item.nama}`}
-                    className="group py-5 sm:py-6 px-3 sm:px-4 -mx-3 sm:-mx-4 hover:bg-[#5F493C] hover:text-[#EEE6D7] transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer sharp-edges"
-                  >
-                    <div className="menu-ruled-row">
-                      {/* Col 1: Index Numeral */}
-                      <span className="hidden md:inline-block font-mono text-[13px] font-bold text-[#5F493C] group-hover:text-[#C7B8AE] transition-colors duration-400 tracking-widest">
-                        {indexStr}
-                      </span>
-
-                      {/* Col 2: Menu Name, Badges & Sizes */}
-                      <div className="space-y-1.5">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="md:hidden font-mono text-[12px] font-bold text-[#5F493C] group-hover:text-[#C7B8AE] mr-1">
-                            {indexStr}.
-                          </span>
-                          <h3 className="font-sans font-black text-xl sm:text-2xl text-[#472F1D] uppercase tracking-[-0.02em] leading-snug group-hover:text-[#EEE6D7] group-hover:translate-x-1 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]">
-                            {item.nama}
-                          </h3>
-                          {item.rekomendasi && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#C7B8AE] text-[#472F1D] font-mono text-[10px] font-bold uppercase tracking-widest sharp-edges">
-                              <Sparkles className="w-2.5 h-2.5" />
-                              <span>REKOMENDASI</span>
-                            </span>
-                          )}
-                          {item.badge && !item.rekomendasi && (
-                            <span className="px-2 py-0.5 border border-[#5F493C]/40 text-[#5F493C] group-hover:text-[#EEE6D7]/80 group-hover:border-[#EEE6D7]/30 font-mono text-[10px] uppercase tracking-wider sharp-edges">
-                              {item.badge}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-wider text-[#5F493C] group-hover:text-[#EEE6D7]/75">
-                          <span className="text-[#472F1D] group-hover:text-[#C7B8AE] font-semibold">
-                            {item.kategori}
-                          </span>
-                          {item.ukuran && item.ukuran.length > 0 && (
-                            <span>• {item.ukuran.join(" / ")}</span>
-                          )}
-                        </div>
+                              {/* Harga nominal terformat */}
+                              <span className="font-bold text-[15px] sm:text-[16px] text-coffee tabular-nums shrink-0">
+                                {formatBoardPrice(item.harga)}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-
-                      {/* Mobile Price Col (<700px) */}
-                      <div className="md:hidden text-right self-start">
-                        <span className="font-mono text-[16px] font-bold text-[#472F1D] group-hover:text-[#C7B8AE] whitespace-nowrap block">
-                          {formatPriceRupiah(item.harga)}
-                        </span>
-                        <span className="font-mono text-[10px] text-[#5F493C] group-hover:text-[#EEE6D7]/70 uppercase inline-flex items-center gap-0.5">
-                          <span>DETAIL</span>
-                          <ArrowUpRight className="w-3 h-3" />
-                        </span>
-                      </div>
-
-                      {/* Col 3: Description & Specs */}
-                      <div className="col-span-2 md:col-span-1 space-y-1 pt-1 md:pt-0">
-                        <p className="font-sans italic text-[14px] sm:text-[15px] text-[#472F1D]/85 group-hover:text-[#EEE6D7]/90 leading-relaxed">
-                          {item.deskripsi}
-                        </p>
-                        {item.specs && (
-                          <p className="font-mono text-[11px] text-[#5F493C] group-hover:text-[#C7B8AE] uppercase tracking-wider pt-0.5">
-                            {item.specs}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Col 4: Desktop Right-Aligned Price */}
-                      <div className="hidden md:flex items-center justify-end gap-4 text-right whitespace-nowrap">
-                        <div>
-                          <span className="font-mono text-[18px] sm:text-[20px] font-bold text-[#472F1D] group-hover:text-[#C7B8AE] transition-colors block">
-                            {formatPriceRupiah(item.harga)}
-                          </span>
-                          <span className="font-mono text-[10px] text-[#5F493C] group-hover:text-[#EEE6D7]/70 uppercase tracking-wider">
-                            TAP UNTUK DETAIL
-                          </span>
-                        </div>
-                        <div className="w-9 h-9 bg-[#C7B8AE] text-[#472F1D] flex items-center justify-center shrink-0 sharp-edges transition-transform duration-300 group-hover:scale-105">
-                          <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                );
-              })}
-            </div>
-          ) : (
-            /* Empty State */
-            <div className="text-center py-16 bg-[#5F493C]/10 border border-[#C7B8AE] p-8 sharp-edges">
-              <Filter className="w-10 h-10 text-[#5F493C] mx-auto mb-3" />
-              <h3 className="font-sans font-black text-2xl uppercase tracking-tight text-[#472F1D] mb-2">
-                Menu Tidak Ditemukan
-              </h3>
-              <p className="font-sans text-[15px] text-[#5F493C] max-w-md mx-auto mb-6">
-                Tidak ada menu yang cocok dengan kata kunci &ldquo;{searchQuery}&rdquo;. Silakan coba kata kunci lain atau reset filter.
-              </p>
-              <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setActiveCategory("semua");
-                }}
-                className="px-6 py-3 bg-[#5F493C] text-[#EEE6D7] font-mono text-[13px] uppercase tracking-wider hover:bg-[#472F1D] transition-colors sharp-edges cursor-pointer"
-              >
-                Tampilkan Semua Menu
-              </button>
-            </div>
+
+                  {/* Tombol Lihat Semua Menu / Tampilkan Lebih Sedikit */}
+                  {hasLongList && (
+                    <div className="mt-8 flex justify-center border-t border-coffee/10 pt-6">
+                      <button
+                        type="button"
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="btn btn-earth inline-flex cursor-pointer items-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-semibold uppercase tracking-wider shadow-sm transition-transform active:scale-95"
+                      >
+                        <span>
+                          {isExpanded ? "Tampilkan Lebih Sedikit" : "Lihat Semua Menu"}
+                        </span>
+                        {isExpanded ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Search / Filter Empty State */
+                <div className="rounded-[0.25rem] bg-latte-light p-8 py-16 text-center">
+                  <Filter className="mx-auto mb-3 h-10 w-10 text-coffee/70" />
+                  <h3 className="font-display mb-2 text-4xl">Menu Tidak Ditemukan</h3>
+                  <p className="mx-auto mb-6 max-w-md text-[17px] text-coffee/80">
+                    Tidak ada menu yang cocok dengan kata kunci &ldquo;{searchQuery}&rdquo;.
+                    Silakan coba kata kunci lain atau reset filter.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setActiveCategory("semua");
+                    }}
+                    className="btn btn-coffee"
+                  >
+                    Tampilkan Semua Menu
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
 
-      {/* Detail Modal */}
+      {/* Card Detail Melayang: Mengikuti kursor di desktop tanpa delay, tanpa backdrop gelap */}
+      <FloatingMenuCard
+        item={hoveredItem}
+        x={cursorPos.x}
+        y={cursorPos.y}
+      />
+
+      {/* Modal Detail Menu Terkunci: Dibuka saat pengguna klik/tap menu (misal di mobile) */}
       <MenuDetailModal
         item={selectedItem}
         onClose={() => setSelectedItem(null)}
+        triggerMode="click"
       />
     </>
   );

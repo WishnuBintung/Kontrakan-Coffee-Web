@@ -1,7 +1,6 @@
 ---
 judul: Promo Senja Ceria 20%
 tipe: promo
-tanggal_mulai: 2026-01-01
 tanggal_selesai: 2026-12-31
 gambar: https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1200&auto=format&fit=crop
 aktif: true

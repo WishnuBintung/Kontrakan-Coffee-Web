@@ -1,62 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Saira+Extra+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ */
+/* Design tokens — adapted from the bettr.academy design system        */
+/*   Palette:   sunshine (brand yellow) · coffee (ink) · cream/latte   */
+/*              (paper) · earth (orange action accent)                 */
+/*   Type:      heavy condensed Clarendon-style serif for headings     */
+/*              (Roboto Serif @ wdth 52 / wght 900 substitutes for     */
+/*              Bettr's proprietary "Jobclarendon"), Roboto for body   */
+/* ------------------------------------------------------------------ */
 @theme {
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-serif: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-condensed: "Saira Extra Condensed", "Plus Jakarta Sans", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: "Roboto Serif", Georgia, "Times New Roman", serif;
 
-  /* Layer 1: Primitive Tokens (4-Color Brand Palette) */
-  --color-oat-cream: #eee6d7;         /* Lightest: Primary Background & Light Text */
-  --color-latte-taupe: #c7b8ae;       /* Light-Medium: Accent, CTA, Badges & Soft Borders */
-  --color-roasted-mocha: #5f493c;     /* Medium-Dark: Secondary Surface, Cards & Muted Text */
-  --color-deep-espresso: #472f1d;     /* Darkest: Primary Text, Deep Containers & Dark Borders */
+  /* Primitives */
+  --color-sunshine: #fcbf27;
+  --color-sunshine-light: #fcd267;
+  --color-sunshine-lighter: #fef2d3;
+  --color-sunshine-dark: #c9981f;
 
-  /* Layer 2: Semantic Tokens (60-30-10 Distribution — .agents/skills/design-system & brand) */
-  --color-background: #eee6d7;        /* Dominant Canvas: 60-70% */
-  --color-surface: #5f493c;           /* Supporting Surface / Card: 20-30% */
-  --color-foreground: #472f1d;        /* Primary Typography on #EEE6D7 (WCAG AAA 10.07:1) */
-  --color-foreground-light: #eee6d7;  /* Typography on #5F493C & #472F1D */
-  --color-secondary: #5f493c;
-  --color-border: #c7b8ae;
-  --color-primary: #c7b8ae;           /* Accent / Interactive Action: 5-10% */
-  --color-accent: #c7b8ae;
-  --color-muted: #5f493c;
+  --color-coffee: #2c1c0f;
+  --color-coffee-dark: #23160c;
+  --color-coffee-darker: #110b06;
+  --color-coffee-light: #6b6057;
+
+  --color-cream: #f7f4ed;
+  --color-cream-light: #f9f7f2;
+  --color-cream-dark: #c5c3bd;
+
+  --color-latte: #edd5b7;
+  --color-latte-light: #f2e1cc;
+  --color-latte-dark: #bdaa92;
+
+  --color-earth: #ed612f;
+  --color-earth-dark: #bd4d25;
+
+  --color-field: #4c5929;
+
+  /* Raised surface on the dark coffee scheme (Bettr "scheme 4" foreground) */
+  --color-roast: #413225;
+
+  --radius-bettr: 0.25rem;
+  --radius-bettr-lg: 0.75rem;
 }
 
 :root {
-  /* ================================================================== */
-  /* Three-Layer Token Architecture (.agents/skills/design-system)      */
-  /* ================================================================== */
-
-  /* Layer 1: Primitive Tokens */
-  --primitive-cream: #eee6d7;
-  --primitive-taupe: #c7b8ae;
-  --primitive-mocha: #5f493c;
-  --primitive-espresso: #472f1d;
-
-  /* Layer 2: Semantic Tokens */
-  --bg-canvas: var(--primitive-cream);
-  --bg-surface: var(--primitive-mocha);
-  --bg-deep: var(--primitive-espresso);
-  --fg-text: var(--primitive-espresso);
-  --fg-text-on-surface: var(--primitive-cream);
-  --fg-muted: var(--primitive-mocha);
-  --action-accent: var(--primitive-taupe);
-  --action-hover: var(--primitive-espresso);
-  --border-divider: var(--primitive-taupe);
-  --border-surface: var(--primitive-espresso);
-  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
-
-  /* Layer 3: Component Tokens */
-  --card-bg: var(--bg-surface);
-  --card-fg: var(--fg-text-on-surface);
-  --card-border: var(--border-surface);
-  --menu-bg: var(--bg-surface);
-  --button-bg: var(--action-accent);
-  --button-fg: var(--primitive-espresso);
-  --button-hover: var(--action-hover);
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --header-h: 4.5rem;
+  --banner-h: 0rem;
 }
 
 *,
@@ -69,10 +59,11 @@
 /* Full screen without visible scrollbar (Universal cross-browser)     */
 /* ------------------------------------------------------------------ */
 html {
-  background-color: var(--bg-canvas);
-  color: var(--fg-text);
+  background-color: var(--color-cream);
+  color: var(--color-coffee);
   font-family: var(--font-sans);
   scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
   -webkit-text-size-adjust: 100%;
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE & Edge */
@@ -80,10 +71,11 @@ html {
 }
 
 body {
-  background-color: var(--bg-canvas);
-  color: var(--fg-text);
+  background-color: var(--color-cream);
+  color: var(--color-coffee);
   font-family: var(--font-sans);
-  font-weight: 300;
+  font-weight: 400;
+  font-size: 1.0625rem;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -111,74 +103,187 @@ body {
   height: 0px !important;
 }
 
-/* ------------------------------------------------------------------ */
-/* Latte Taupe (#C7B8AE) Highlight for Selection                      */
-/* ------------------------------------------------------------------ */
 ::selection {
-  background-color: #c7b8ae !important;
-  color: #472f1d !important;
+  background-color: var(--color-sunshine) !important;
+  color: var(--color-coffee) !important;
 }
 
 ::-moz-selection {
-  background-color: #c7b8ae !important;
-  color: #472f1d !important;
+  background-color: var(--color-sunshine) !important;
+  color: var(--color-coffee) !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-earth);
+  outline-offset: 2px;
 }
 
 /* ------------------------------------------------------------------ */
-/* Tactile Noise Overlay (Subtle warm 3.5% grain)                     */
+/* Typography                                                          */
 /* ------------------------------------------------------------------ */
-.grain-overlay {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 40;
-  pointer-events: none;
-  mix-blend-mode: multiply;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+.font-display {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-stretch: 52%;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.eyebrow {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero Warm Ambient Glow Tint                                        */
+/* Buttons — uppercase, 0.2rem radius, sunshine by default             */
 /* ------------------------------------------------------------------ */
-.hero-radial-tint {
-  background: radial-gradient(
-    ellipse at center,
-    rgba(199, 184, 174, 0.22) 0%,
-    rgba(95, 73, 60, 0.12) 50%,
-    rgba(238, 230, 215, 0.98) 100%
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.2rem;
+  background-color: var(--color-sunshine);
+  color: var(--color-coffee);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.25s var(--ease-out-expo),
+    color 0.25s var(--ease-out-expo),
+    border-color 0.25s var(--ease-out-expo);
+}
+
+.btn:hover {
+  background-color: var(--color-coffee);
+  color: var(--color-sunshine);
+}
+
+.btn-sm {
+  padding: 0.5rem 0.8rem;
+  font-size: 0.875rem;
+}
+
+.btn-earth {
+  background-color: var(--color-earth);
+  color: var(--color-coffee);
+}
+.btn-earth:hover {
+  background-color: var(--color-coffee);
+  color: var(--color-earth);
+}
+
+.btn-coffee {
+  background-color: var(--color-coffee);
+  color: var(--color-sunshine);
+}
+.btn-coffee:hover {
+  background-color: var(--color-cream);
+  color: var(--color-coffee);
+}
+
+.btn-outline {
+  border-color: var(--color-coffee);
+  background-color: transparent;
+  color: var(--color-coffee);
+}
+.btn-outline:hover {
+  background-color: var(--color-coffee);
+  color: var(--color-sunshine);
+}
+
+.btn-outline-sun {
+  border-color: var(--color-sunshine);
+  background-color: transparent;
+  color: var(--color-sunshine);
+}
+.btn-outline-sun:hover {
+  background-color: var(--color-sunshine);
+  color: var(--color-coffee);
+}
+
+.btn-outline-cream {
+  border-color: var(--color-cream);
+  background-color: transparent;
+  color: var(--color-cream);
+}
+.btn-outline-cream:hover {
+  border-color: var(--color-sunshine);
+  background-color: var(--color-sunshine);
+  color: var(--color-coffee);
+}
+
+/* ------------------------------------------------------------------ */
+/* Tags (outlined label chips on cards)                                */
+/* ------------------------------------------------------------------ */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  border: 2px solid var(--color-coffee);
+  border-radius: 0.25rem;
+  background-color: var(--color-cream);
+  color: var(--color-coffee);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Dashed divider rule used inside cards */
+.rule-dashed {
+  height: 2px;
+  width: 100%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    currentColor 0 7px,
+    transparent 7px 19px
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Architectural Sharp Edges                                          */
-/* ------------------------------------------------------------------ */
-.sharp-edges {
-  border-radius: 0px !important;
+/* Subtle paper halftone used on sticker tiles */
+.halftone {
+  background-image: radial-gradient(rgba(44, 28, 15, 0.16) 1px, transparent 1.3px);
+  background-size: 4px 4px;
 }
 
 /* ------------------------------------------------------------------ */
-/* Wavy Underline for Interactive Social Links                        */
+/* Tilted sticker ribbon (infinite marquee)                            */
 /* ------------------------------------------------------------------ */
-.wavy-hover {
-  text-decoration: none;
-  text-underline-offset: 6px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+@keyframes marquee-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
-.wavy-hover:hover {
-  text-decoration: underline wavy #c7b8ae;
-  text-underline-offset: 6px;
-  color: #c7b8ae;
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x 38s linear infinite;
+}
+
+.marquee-ribbon:hover .marquee-track {
+  animation-play-state: paused;
 }
 
 /* ------------------------------------------------------------------ */
-/* Smooth GPU transform utilities                                     */
+/* Stacked sticky cards ("Kenapa Kontrakan?")                          */
 /* ------------------------------------------------------------------ */
-.gpu-accel {
-  transform-style: preserve-3d;
-  will-change: transform;
+.stack-card {
+  position: sticky;
+  top: calc(var(--header-h) + 1.5rem + var(--i, 0) * 1.1rem);
 }
 
 /* ------------------------------------------------------------------ */
@@ -227,34 +332,12 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Pinned Stage 1: Multiply-Blended Photographic Hero (300svh)        */
+/* Legacy pinned-stage helpers (used by the standalone Manifesto block) */
 /* ------------------------------------------------------------------ */
-.stage-hero-pin {
-  --p: 0;
-  --p-smooth: 0;
-  --p-hero-opacity: 1;
+.sharp-edges {
+  border-radius: 0px !important;
 }
 
-.stage-hero-photo {
-  mix-blend-mode: multiply;
-  object-fit: cover;
-  transform: translate3d(0, calc(var(--p-smooth, 0) * -2.8%), 0)
-    scale(calc(1.03 + var(--p-smooth, 0) * 0.065));
-  backface-visibility: hidden;
-  will-change: transform;
-}
-
-.stage-hero-type {
-  transform: translate3d(0, calc(var(--p-smooth, 0) * -40px), 0)
-    scale(calc(1 - var(--p-smooth, 0) * 0.03));
-  opacity: var(--p-hero-opacity, 1);
-  backface-visibility: hidden;
-  will-change: transform, opacity;
-}
-
-/* ------------------------------------------------------------------ */
-/* Pinned Stage 2: Smooth Top-Down Image Reveal + Difference Headline */
-/* ------------------------------------------------------------------ */
 .stage-reveal-pin {
   --p: 0;
   --p-smooth: 0;
@@ -276,7 +359,7 @@ body {
 
 .stage-reveal-headline {
   mix-blend-mode: difference;
-  color: #eee6d7;
+  color: var(--color-cream);
   opacity: calc(1 - clamp(0, (var(--p-smooth, 0) - 0.56) / 0.38, 1));
   transform: translate3d(0, calc(var(--p-smooth, 0) * 24px), 0);
   backface-visibility: hidden;
@@ -284,33 +367,11 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Ruled Price Table (Menu List without Images)                       */
-/* Collapses to 2 columns under 700px as specified in prompt          */
-/* ------------------------------------------------------------------ */
-.menu-ruled-row {
-  display: grid;
-  grid-template-columns: 52px minmax(200px, 1.3fr) minmax(240px, 2fr) auto;
-  align-items: baseline;
-  gap: 1.25rem;
-}
-
-@media (max-width: 700px) {
-  .menu-ruled-row {
-    grid-template-columns: 1fr auto;
-    gap: 0.4rem 1rem;
-  }
-}
-
-/* ------------------------------------------------------------------ */
-/* Reduced Motion Safeguards                                          */
+/* Reduced Motion Safeguards                                           */
 /* ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  .stage-hero-photo {
-    transform: scale(1.04) !important;
-  }
-  .stage-hero-type {
-    transform: none !important;
-    opacity: 1 !important;
+  .marquee-track {
+    animation: none;
   }
   .stage-reveal-photo-wrap {
     clip-path: none !important;
@@ -320,8 +381,8 @@ body {
   }
   .stage-reveal-headline {
     mix-blend-mode: normal !important;
-    color: #eee6d7 !important;
-    background-color: rgba(71, 47, 29, 0.85);
+    color: var(--color-cream) !important;
+    background-color: rgba(44, 28, 15, 0.85);
     padding: 1rem 1.5rem;
     opacity: 1 !important;
     transform: none !important;

@@ -13,6 +13,7 @@ import {
   getRecommendedMenu,
   getRelatedMenu,
   getStoreStatus,
+  getWhyData,
 } from "../lib/content.js";
 
 export const apiRouter = Router();
@@ -185,6 +186,17 @@ apiRouter.get("/status-toko", (_req, res) => {
   try {
     const info = getInfoToko();
     const data = getStoreStatus(info);
+    res.json({ success: true, data });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal error";
+    res.status(500).json({ success: false, error: message });
+  }
+});
+
+// Section Why / Fasilitas (Kenapa Kontrakan)
+apiRouter.get("/why", (_req, res) => {
+  try {
+    const data = getWhyData();
     res.json({ success: true, data });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal error";

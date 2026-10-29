@@ -30,7 +30,7 @@ export interface CafePromoItem {
   judul: string;
   deskripsi: string;
   tipe: "promo" | "kegiatan";
-  tanggal_mulai: string;
+  tanggal_mulai?: string;
   tanggal_selesai: string;
   gambar: string;
   aktif: boolean;
@@ -59,6 +59,9 @@ export interface CafeInfo {
   instagramHandle: string;
   tiktok?: string;
   email: string;
+  judulKenapa?: string;
+  deskripsiKenapa?: string;
+  fotoKenapa?: string;
   jamBuka: CafeJamBuka[];
   fasilitas: { icon: string; title: string; desc: string }[];
 }
@@ -66,6 +69,7 @@ export interface CafeInfo {
 export const CAFE_INFO: CafeInfo = {
   nama: "Kontrakan Coffee",
   tagline: "Spatial Botanical & Warm Monochrome Atelier",
+  judulKenapa: "Betah Berjam-jam. Kenapa Kontrakan?",
   alamat: "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229",
   patokan: "Kawasan Sekaran, Gunungpati — dekat kampus Universitas Negeri Semarang (UNNES).",
   koordinat: "7.0505° S, 110.3920° E",
@@ -206,7 +210,7 @@ export const MENU_ITEMS: CafeMenuItem[] = [
     harga: 20000,
     deskripsi:
       "Kentang goreng shoestring renyah berbalut aroma minyak white truffle mewah, ditaburi parutan keju parmesan gurih dan peterseli cincang. Disajikan dengan cocolan saus tartar homemade.",
-    foto: "https://images.unsplash.com/photo-1576107232684-1279f3908594?q=80&w=1200&auto=format&fit=crop",
+    foto: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=1200&auto=format&fit=crop",
     ukuran: ["Porsi Sharing"],
     rasa: ["Truffle Parmesan", "Sea Salt Classic"],
     rekomendasi: true,
@@ -399,7 +403,7 @@ export const GALLERY_ITEMS: CafeGalleryItem[] = [
     deskripsi:
       "Sudut sofa empuk dengan pencahayaan temaram amber gold 2700K. Spot paling nyaman untuk membaca buku atau menikmati secangkir pour-over hangat.",
     gambar: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
-    sudut_favorit: true,
+    sudut_favorit: false,
     tag: "COZY CORNER",
   },
 ];

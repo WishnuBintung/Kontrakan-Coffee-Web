@@ -54,8 +54,22 @@ export type JamBuka = {
   libur: boolean;
 };
 
+export type WhyItem = {
+  icon: string;
+  title: string;
+  desc: string;
+};
+
+export type WhySectionData = {
+  judul: string;
+  deskripsi?: string;
+  foto_backdrop?: string;
+  items: WhyItem[];
+};
+
 export type InfoToko = {
   nama_toko: string;
+  judul_kenapa?: string;
   alamat: string;
   patokan?: string;
   link_peta: string;
@@ -64,6 +78,7 @@ export type InfoToko = {
   tiktok?: string;
   whatsapp?: string;
   jam_buka: JamBuka[];
+  fasilitas?: WhyItem[];
 };
 
 export type StatusToko = {
@@ -78,7 +93,7 @@ export type Promo = {
   id: string;
   judul: string;
   deskripsi: string;
-  tanggal_mulai: string;
+  tanggal_mulai?: string;
   tanggal_selesai: string;
   gambar?: string;
   tipe: "promo" | "kegiatan";

@@ -24,86 +24,134 @@ export function ContactFooter() {
     CAFE_INFO.alamat ||
     "Jl. Nyai Ketrik, Sekaran, Kec. Gn. Pati, Kota Semarang, Jawa Tengah 50229";
 
+  const navLinks = [
+    { label: "Promo", href: "#promo" },
+    { label: "Menu", href: "#menu" },
+    { label: "Fasilitas", href: "#fasilitas" },
+    { label: "Galeri", href: "#galeri" },
+    { label: "Jam Buka & Lokasi", href: "#lokasi" },
+  ];
+
+  const socialLinks = [
+    { label: `Instagram (${igHandle})`, href: igUrl },
+    { label: "WhatsApp Direct Chat", href: waUrl },
+    { label: "TikTok (@kontrakancoffee)", href: tiktokUrl },
+  ];
+
+  const linkClass =
+    "group inline-flex items-center gap-1.5 text-[17px] font-medium transition-colors hover:text-earth-dark";
+  const arrowClass =
+    "h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5";
+
   return (
     <footer
       id="contact"
-      className="w-full bg-[#5F493C] text-[#EEE6D7] py-16 sm:py-20 px-6 relative sharp-edges border-t border-[#472F1D]"
+      className="relative w-full bg-sunshine px-4 pb-8 pt-16 text-coffee sm:px-6 sm:pt-24"
     >
-      <div className="max-w-7xl mx-auto">
-        {/* 2-Column Balanced Flank Layout (.agents §5) */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-10 lg:gap-16">
-          {/* Kolom Kiri: Link Media Sosial Dinamis dari CMS (Instagram, WhatsApp, TikTok) */}
+      <div className="mx-auto max-w-[90rem]">
+        {/* Navigation & Contact Columns */}
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 pb-12 border-b border-coffee/25">
+          {/* Brand Bio */}
+          <div data-rev style={{ "--d": "30ms" } as React.CSSProperties}>
+            <span className="font-display block text-3xl mb-3 text-coffee">
+              Kontrakan Coffee
+            </span>
+            <p className="text-[16px] leading-relaxed text-coffee/85">
+              Ruang seduh, nongkrong, dan kerja produktif di kawasan Sekaran, Gunungpati, Semarang. Kopi enak, Wi-Fi 100 Mbps, dan suasana tenang.
+            </p>
+          </div>
+
+          {/* Jelajahi */}
           <div
             data-rev
-            style={{ "--d": "40ms" } as React.CSSProperties}
-            className="flex flex-col space-y-3"
+            style={{ "--d": "60ms" } as React.CSSProperties}
           >
-            <span className="font-mono text-[11px] uppercase tracking-widest text-[#C7B8AE] font-semibold">
-              MEDIA SOSIAL
-            </span>
-            <ul className="space-y-2.5 font-sans">
-              <li>
-                <a
-                  href={igUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-1.5 text-[16px] sm:text-[17px] font-medium tracking-tight text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors"
-                >
-                  <span>Instagram ({igHandle})</span>
-                  <ArrowUpRight className="w-4 h-4 text-[#C7B8AE] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </a>
-              </li>
-              <li>
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-1.5 text-[16px] sm:text-[17px] font-medium tracking-tight text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors"
-                >
-                  <span>WhatsApp Direct Chat</span>
-                  <ArrowUpRight className="w-4 h-4 text-[#C7B8AE] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </a>
-              </li>
-              <li>
-                <a
-                  href={tiktokUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-1.5 text-[16px] sm:text-[17px] font-medium tracking-tight text-[#EEE6D7] hover:text-[#C7B8AE] transition-colors"
-                >
-                  <span>TikTok (@kontrakancoffee)</span>
-                  <ArrowUpRight className="w-4 h-4 text-[#C7B8AE] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </a>
-              </li>
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-widest text-coffee">
+              Jelajahi
+            </h3>
+            <ul className="space-y-3">
+              {navLinks.map((l) => (
+                <li key={l.label}>
+                  <a href={l.href} className={linkClass}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Kolom Kanan (Desktop: Kanan): Alamat Lengkap Dinamis & Kalimat © 2026 KONTRAKAN COFFEE */}
+          {/* Media sosial */}
           <div
             data-rev
             style={{ "--d": "90ms" } as React.CSSProperties}
-            className="flex flex-col md:text-right md:items-end space-y-4"
           >
-            <div className="space-y-1.5">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-[#C7B8AE] font-semibold block">
-                ALAMAT LENGKAP
-              </span>
-              <a
-                href={mapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="group block font-sans text-[15px] sm:text-[16px] text-[#EEE6D7]/90 hover:text-[#C7B8AE] transition-colors leading-relaxed max-w-sm md:ml-auto"
-                title="Buka lokasi di Google Maps"
-              >
-                <span>{addressText}</span>
-                <ArrowUpRight className="w-3.5 h-3.5 inline-block ml-1 text-[#C7B8AE] opacity-80 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </a>
-            </div>
-
-            <div className="font-mono text-[12px] sm:text-[13px] text-[#EEE6D7]/65 tracking-wider pt-3 border-t border-[#472F1D] md:border-t-0 md:pt-0">
-              © 2026 KONTRAKAN COFFEE
-            </div>
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-widest text-coffee">
+              Media Sosial
+            </h3>
+            <ul className="space-y-3">
+              {socialLinks.map((l) => (
+                <li key={l.label}>
+                  <a href={l.href} target="_blank" rel="noreferrer" className={linkClass}>
+                    <span>{l.label}</span>
+                    <ArrowUpRight className={arrowClass} />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
+
+          {/* Alamat */}
+          <div
+            data-rev
+            style={{ "--d": "120ms" } as React.CSSProperties}
+          >
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-widest text-coffee">
+              Alamat Lengkap
+            </h3>
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noreferrer"
+              title="Buka lokasi di Google Maps"
+              className="group block text-[16px] leading-relaxed transition-colors hover:text-earth-dark text-coffee"
+            >
+              <span>{addressText}</span>
+              <ArrowUpRight className={`ml-1 inline-block ${arrowClass}`} />
+            </a>
+          </div>
+        </div>
+
+        {/* Monumental Brand Display Wordmark */}
+        <div
+          data-rev
+          style={{ "--d": "160ms" } as React.CSSProperties}
+          className="pt-10 pb-6 overflow-hidden"
+        >
+          <a
+            href="#"
+            aria-label="Kembali ke atas"
+            className="group block w-full text-center no-underline"
+          >
+            <span className="font-display block text-[clamp(3.8rem,14.5vw,13rem)] uppercase leading-none tracking-tight text-coffee transition-colors duration-300 group-hover:text-roast">
+              Kontrakan
+            </span>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-base font-bold uppercase tracking-[0.35em] text-coffee/80">
+              <span>Kopi Spesialti</span>
+              <span className="hidden sm:inline">•</span>
+              <span>Sekaran, Gn. Pati</span>
+              <span className="hidden sm:inline">•</span>
+              <span>Kota Semarang</span>
+            </div>
+          </a>
+        </div>
+
+        <div className="rule-dashed mt-6 text-coffee" aria-hidden="true" />
+
+        <div className="mt-6 flex flex-col items-start justify-between gap-3 text-[15px] sm:flex-row sm:items-center">
+          <span>© 2026 Kontrakan Coffee. Seluruh hak cipta dilindungi.</span>
+          <a href="#" className="btn btn-coffee btn-sm">
+            Kembali ke atas
+          </a>
         </div>
       </div>
     </footer>

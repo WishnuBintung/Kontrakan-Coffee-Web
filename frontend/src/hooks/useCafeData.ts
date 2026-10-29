@@ -1,11 +1,9 @@
 // frontend/src/hooks/useCafeData.ts
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
-  MENU_ITEMS,
   GALLERY_ITEMS,
-  PROMO_ITEMS,
   CAFE_INFO,
   CafeMenuItem,
   CafeGalleryItem,
@@ -15,46 +13,75 @@ import {
 } from "@/lib/cafeData";
 import {
   getClientMenuItems,
+  getClientMenuResult,
   getClientStatusToko,
   getClientInfoToko,
   getClientGaleri,
   getClientPromo,
+  getClientPromoResult,
+  getClientWhyData,
   ApiStatusToko,
+  WhySectionData,
 } from "@/lib/clientApi";
 
+export type MenuStatus = "loading" | "success" | "empty" | "error";
+
+export type MenuDataHookResult = {
+  items: CafeMenuItem[];
+  allItems: CafeMenuItem[];
+  status: MenuStatus;
+  error: string | null;
+  refetch: () => Promise<void>;
+  isLoading: boolean;
+};
+
 /**
- * Hook untuk mengelola daftar menu dari backend dengan fallback instan ke MENU_ITEMS lokal
+ * Hook untuk mengelola daftar menu dari CMS:
+ * - Tidak menggunakan template/data statis jika kosong atau gagal terhubung
+ * - "empty": Belum ada menu yang dimasukkan ke dalam CMS
+ * - "error": Sistem tidak dapat terhubung ke server CMS
+ * - "success": Terdapat menu yang aktif dari CMS
  */
 export function useMenuData(
   activeCategory = "semua",
   searchQuery = "",
   sortBy: "default" | "price-asc" | "price-desc" | "name-asc" = "default"
-) {
-  const [items, setItems] = useState<CafeMenuItem[]>(MENU_ITEMS);
-  const [isLoading, setIsLoading] = useState(false);
+): MenuDataHookResult {
+  const [allItems, setAllItems] = useState<CafeMenuItem[]>([]);
+  const [status, setStatus] = useState<MenuStatus>("loading");
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
+  const fetchMenu = useCallback(async () => {
+    setStatus("loading");
+    setError(null);
 
-    getClientMenuItems()
-      .then((data) => {
-        if (isMounted && data && data.length > 0) {
-          setItems(data);
-        }
-      })
-      .catch(() => {})
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
+    const result = await getClientMenuResult();
 
-    return () => {
-      isMounted = false;
-    };
+    if (result.status === "success") {
+      setAllItems(result.data);
+      setStatus("success");
+      setError(null);
+    } else if (result.status === "empty") {
+      setAllItems([]);
+      setStatus("empty");
+      setError(null);
+    } else {
+      setAllItems([]);
+      setStatus("error");
+      setError(result.error || "Sistem tidak dapat terhubung ke CMS");
+    }
   }, []);
 
+  useEffect(() => {
+    fetchMenu();
+  }, [fetchMenu]);
+
   const filteredItems = useMemo(() => {
-    let result = [...items];
+    if (status !== "success" || allItems.length === 0) {
+      return [];
+    }
+
+    let result = [...allItems];
 
     // Filter by Category or Recommended
     if (activeCategory === "rekomendasi") {
@@ -85,12 +112,15 @@ export function useMenuData(
     }
 
     return result;
-  }, [items, activeCategory, searchQuery, sortBy]);
+  }, [allItems, activeCategory, searchQuery, sortBy, status]);
 
   return {
     items: filteredItems,
-    allItems: items,
-    isLoading,
+    allItems,
+    status,
+    error,
+    refetch: fetchMenu,
+    isLoading: status === "loading",
   };
 }
 
@@ -177,16 +207,21 @@ export function useGalleryData() {
 }
 
 /**
- * Hook untuk mendapatkan data promo & kegiatan kafe dari backend
+ * Hook untuk mendapatkan data section Why / Kenapa Kontrakan dari CMS / backend
  */
-export function usePromoData() {
-  const [promos, setPromos] = useState<CafePromoItem[]>(PROMO_ITEMS);
+export function useWhyData(): WhySectionData {
+  const [whyData, setWhyData] = useState<WhySectionData>({
+    judul: CAFE_INFO.judulKenapa || "Betah Berjam-jam. Kenapa Kontrakan?",
+    deskripsi: "Fasilitas lengkap dan suasana nyaman yang dirancang untuk produktivitas dan momen santai Anda.",
+    foto_backdrop: "",
+    items: CAFE_INFO.fasilitas,
+  });
 
   useEffect(() => {
     let isMounted = true;
-    getClientPromo().then((data) => {
-      if (isMounted && data && data.length > 0) {
-        setPromos(data);
+    getClientWhyData().then((data) => {
+      if (isMounted && data && Array.isArray(data.items) && data.items.length > 0) {
+        setWhyData(data);
       }
     });
 
@@ -195,5 +230,71 @@ export function usePromoData() {
     };
   }, []);
 
-  return promos;
+  return whyData;
+}
+
+export type PromoStatus = "loading" | "success" | "empty" | "error";
+
+export type PromoDataHookResult = CafePromoItem[] & {
+  promos: CafePromoItem[];
+  status: PromoStatus;
+  error: string | null;
+  refetch: () => Promise<void>;
+};
+
+/**
+ * Hook untuk mendapatkan data promo & kegiatan kafe dari backend:
+ * - Tidak menggunakan template statis jika data kosong (array === 0).
+ * - "empty": Promo memang tidak terdapat pada CMS (promo tidak tersedia).
+ * - "error": CMS tidak terhubung atau tidak tersambung (data tidak dapat ditemukan).
+ * - "success": Terdapat promo aktif.
+ */
+export function usePromoData(): PromoDataHookResult {
+  const [state, setState] = useState<{
+    promos: CafePromoItem[];
+    status: PromoStatus;
+    error: string | null;
+  }>({
+    promos: [],
+    status: "loading",
+    error: null,
+  });
+
+  const fetchPromos = useCallback(async () => {
+    setState((prev) => ({ ...prev, status: "loading", error: null }));
+    const result = await getClientPromoResult();
+
+    if (result.status === "success") {
+      setState({
+        promos: result.data,
+        status: "success",
+        error: null,
+      });
+    } else if (result.status === "empty") {
+      setState({
+        promos: [],
+        status: "empty",
+        error: null,
+      });
+    } else {
+      setState({
+        promos: [],
+        status: "error",
+        error: result.error || "Data tidak dapat ditemukan",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPromos();
+  }, [fetchPromos]);
+
+  // Buat hybrid result: Array dari items yang juga memiliki properti status, promos, error, refetch
+  const hybrid = [...state.promos] as PromoDataHookResult;
+  hybrid.promos = state.promos;
+  hybrid.status = state.status;
+  hybrid.error = state.error;
+  hybrid.refetch = fetchPromos;
+
+  return hybrid;
 }

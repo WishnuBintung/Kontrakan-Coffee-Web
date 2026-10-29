@@ -2,9 +2,7 @@
 // Pure browser-compatible API client for Kontrakan Coffee REST API
 
 import {
-  MENU_ITEMS,
   GALLERY_ITEMS,
-  PROMO_ITEMS,
   CAFE_INFO,
   CafeMenuItem,
   CafeGalleryItem,
@@ -71,23 +69,42 @@ async function requestWithTimeout<T>(
   }
 }
 
+export type MenuFetchResult =
+  | { status: "success"; data: CafeMenuItem[] }
+  | { status: "empty"; data: [] }
+  | { status: "error"; error: string };
+
 /**
- * Mengambil daftar menu dari backend /api/menu
- * Fallback ke MENU_ITEMS lokal jika backend offline.
+ * Mengambil daftar menu dari backend /api/menu dengan deteksi status:
+ * - "success": Ada menu yang aktif dari CMS
+ * - "empty": Terhubung ke CMS tetapi belum ada menu yang dimasukkan (array === 0)
+ * - "error": CMS tidak terhubung / server offline / gagal koneksi
  */
-export async function getClientMenuItems(): Promise<CafeMenuItem[]> {
+export async function getClientMenuResult(): Promise<MenuFetchResult> {
   const apiUrl = getBackendApiUrl();
   const data = await requestWithTimeout<any[]>(`${apiUrl}/menu`);
 
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    return MENU_ITEMS;
+  // 1. Jika CMS tidak terhubung / server mati / request timeout -> data === null
+  if (data === null || !Array.isArray(data)) {
+    return {
+      status: "error",
+      error: "Sistem tidak dapat terhubung ke server CMS",
+    };
   }
 
-  // Normalisasi data dari backend agar kompatibel dengan CafeMenuItem
-  return data.map((item) => ({
-    id: item.id || item.slug,
-    nama: item.nama,
-    kategori: item.kategori,
+  // 2. Jika terhubung ke CMS tetapi belum ada menu yang dimasukkan (array === 0)
+  if (data.length === 0) {
+    return {
+      status: "empty",
+      data: [],
+    };
+  }
+
+  // 3. Normalisasi data dari CMS (murni data dari CMS, tanpa fallback data statis)
+  const items: CafeMenuItem[] = data.map((item, idx) => ({
+    id: item.id || item.slug || `menu-${idx}`,
+    nama: item.nama || "Menu",
+    kategori: item.kategori || "kopi",
     harga: Number(item.harga) || 0,
     deskripsi: item.deskripsi || "",
     foto: item.foto || "/images/placeholder-coffee.svg",
@@ -97,6 +114,23 @@ export async function getClientMenuItems(): Promise<CafeMenuItem[]> {
     badge: item.badge || (item.rekomendasi ? "Pilihan Barista" : undefined),
     specs: item.specs || (item.deskripsi_panjang ? item.deskripsi_panjang.slice(0, 100) : undefined),
   }));
+
+  return {
+    status: "success",
+    data: items,
+  };
+}
+
+/**
+ * Mengambil daftar menu dari backend /api/menu
+ * Mengembalikan array kosong jika menu kosong atau CMS tidak terhubung (tanpa fallback data statis).
+ */
+export async function getClientMenuItems(): Promise<CafeMenuItem[]> {
+  const result = await getClientMenuResult();
+  if (result.status === "success") {
+    return result.data;
+  }
+  return [];
 }
 
 /**
@@ -139,6 +173,7 @@ export async function getClientInfoToko(): Promise<CafeInfo> {
     ...CAFE_INFO,
     nama: data.nama_toko || CAFE_INFO.nama,
     tagline: data.tagline || CAFE_INFO.tagline,
+    judulKenapa: data.judul_kenapa || CAFE_INFO.judulKenapa,
     alamat: data.alamat || CAFE_INFO.alamat,
     patokan: data.patokan || CAFE_INFO.patokan,
     googleMapsUrl:
@@ -179,6 +214,39 @@ export async function getClientInfoToko(): Promise<CafeInfo> {
           catatan: j.catatan || (j.libur ? "Tutup / Libur Operasional" : undefined),
         }))
       : CAFE_INFO.jamBuka,
+    fasilitas:
+      Array.isArray(data.fasilitas) && data.fasilitas.length > 0
+        ? data.fasilitas
+        : CAFE_INFO.fasilitas,
+  };
+}
+
+export type WhyItem = {
+  icon: string;
+  title: string;
+  desc: string;
+};
+
+export type WhySectionData = {
+  judul: string;
+  deskripsi?: string;
+  foto_backdrop?: string;
+  items: WhyItem[];
+};
+
+export async function getClientWhyData(): Promise<WhySectionData> {
+  const apiUrl = getBackendApiUrl();
+  const data = await requestWithTimeout<WhySectionData>(`${apiUrl}/why`, 3000);
+
+  if (data && Array.isArray(data.items) && data.items.length > 0) {
+    return data;
+  }
+
+  return {
+    judul: CAFE_INFO.judulKenapa || "Betah Berjam-jam. Kenapa Kontrakan?",
+    deskripsi: "Fasilitas lengkap dan suasana nyaman yang dirancang untuk produktivitas dan momen santai Anda.",
+    foto_backdrop: "",
+    items: CAFE_INFO.fasilitas,
   };
 }
 
@@ -236,53 +304,72 @@ export type ApiPromoItem = {
   judul: string;
   deskripsi: string;
   tipe: "promo" | "kegiatan";
-  tanggal_mulai: string;
-  tanggal_selesai: string;
+  tanggal_mulai?: string;
+  tanggal_selesai?: string;
+  tanggal_berakhir?: string;
   gambar?: string;
   aktif: boolean;
 };
 
+export type PromoFetchResult =
+  | { status: "success"; data: CafePromoItem[] }
+  | { status: "empty"; data: [] }
+  | { status: "error"; error: string };
+
 /**
- * Mengambil daftar promo & kegiatan dari backend /api/promo
+ * Mengambil daftar promo & kegiatan dari backend /api/promo dengan deteksi status:
+ * - "success": Ada promo aktif di CMS
+ * - "empty": Terhubung ke CMS tetapi tidak ada promo (array === 0)
+ * - "error": CMS tidak terhubung / tidak tersambung (data tidak dapat ditemukan)
  */
-export async function getClientPromo(): Promise<CafePromoItem[]> {
+export async function getClientPromoResult(): Promise<PromoFetchResult> {
   const apiUrl = getBackendApiUrl();
   const data = await requestWithTimeout<ApiPromoItem[]>(`${apiUrl}/promo`);
 
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    return PROMO_ITEMS;
+  // 1. Jika CMS tidak terhubung / server mati / request timeout -> data === null
+  if (data === null || !Array.isArray(data)) {
+    return {
+      status: "error",
+      error: "Data tidak dapat ditemukan (server CMS tidak terhubung)",
+    };
   }
 
-  return data.map((item, idx) => {
-    const matchingLocal = PROMO_ITEMS.find(
-      (p) =>
-        p.id === item.id ||
-        p.judul.toLowerCase() === (item.judul || "").toLowerCase()
-    );
-
-    const isPlaceholder =
-      !item.gambar ||
-      item.gambar === "/images/placeholder-coffee.svg" ||
-      (item.gambar.includes("/uploads/") && !item.gambar.startsWith("http"));
-
-    const gambar =
-      isPlaceholder && matchingLocal
-        ? matchingLocal.gambar
-        : item.gambar || matchingLocal?.gambar || PROMO_ITEMS[0].gambar;
-
+  // 2. Jika terhubung ke CMS tetapi tidak ada promo yang dipublish (array === 0)
+  if (data.length === 0) {
     return {
-      id: item.id || `promo-${idx}`,
-      judul: item.judul || matchingLocal?.judul || "Promo Spesial",
-      deskripsi:
-        item.deskripsi ||
-        matchingLocal?.deskripsi ||
-        "Nikmati penawaran menarik di Kontrakan Coffee.",
-      tipe: item.tipe === "kegiatan" ? "kegiatan" : "promo",
-      tanggal_mulai: item.tanggal_mulai || "2026-01-01",
-      tanggal_selesai: item.tanggal_selesai || "2026-12-31",
-      gambar,
-      aktif: item.aktif !== false,
+      status: "empty",
+      data: [],
     };
-  });
+  }
+
+  // 3. Normalisasi data dari CMS (tanpa memaksakan template statis)
+  const items: CafePromoItem[] = data.map((item, idx) => ({
+    id: item.id || `promo-${idx}`,
+    judul: item.judul || "Promo Spesial",
+    deskripsi:
+      item.deskripsi || "Nikmati penawaran menarik di Kontrakan Coffee.",
+    tipe: item.tipe === "kegiatan" ? "kegiatan" : "promo",
+    tanggal_mulai: item.tanggal_mulai || undefined,
+    tanggal_selesai:
+      item.tanggal_selesai || item.tanggal_berakhir || "2026-12-31",
+    gambar: item.gambar || "/images/placeholder-coffee.svg",
+    aktif: item.aktif !== false,
+  }));
+
+  return {
+    status: "success",
+    data: items,
+  };
 }
 
+/**
+ * Mengambil daftar promo & kegiatan dari backend /api/promo
+ * Mengembalikan array kosong jika promo kosong atau error (tidak menggunakan template statis).
+ */
+export async function getClientPromo(): Promise<CafePromoItem[]> {
+  const result = await getClientPromoResult();
+  if (result.status === "success") {
+    return result.data;
+  }
+  return [];
+}
