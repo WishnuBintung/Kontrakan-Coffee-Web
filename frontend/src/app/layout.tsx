@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-page-custom-font */
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -46,6 +47,9 @@ export default function RootLayout({
         className="bg-cream text-coffee antialiased min-h-screen selection:bg-sunshine selection:text-coffee font-sans"
         suppressHydrationWarning
       >
+        <Script id="identity-redirect" strategy="beforeInteractive">
+          {`if (/(invite|recovery|confirmation)_token=/.test(location.hash)) location.replace('/admin/' + location.hash);`}
+        </Script>
         {children}
       </body>
     </html>
