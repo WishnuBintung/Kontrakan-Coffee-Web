@@ -59,14 +59,18 @@ export default function RootLayout({
       >
         <Script id="identity-redirect" strategy="beforeInteractive">
           {`
-            if (window.netlifyIdentity) {
-              window.netlifyIdentity.on("init", function(user) {
-                if (!user) {
-                  window.netlifyIdentity.on("login", function() {
-                    document.location.href = "/admin/";
-                  });
-                }
-              });
+            if (typeof window !== "undefined") {
+              if (/(invite|recovery|confirmation)_token=/.test(window.location.hash)) {
+                window.location.replace('/admin/' + window.location.hash);
+              } else if (window.netlifyIdentity) {
+                window.netlifyIdentity.on("init", function(user) {
+                  if (!user) {
+                    window.netlifyIdentity.on("login", function() {
+                      document.location.href = "/admin/";
+                    });
+                  }
+                });
+              }
             }
           `}
         </Script>
