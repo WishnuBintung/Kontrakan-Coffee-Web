@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import {
   Search,
   X,
   Sparkles,
-  SlidersHorizontal,
   Filter,
   AlertCircle,
   Loader2,
@@ -13,6 +12,8 @@ import {
   Coffee,
   ChevronDown,
   ChevronUp,
+  Star,
+  Check,
 } from "lucide-react";
 import { CafeMenuItem } from "@/lib/cafeData";
 import { useMenuData } from "@/hooks/useCafeData";
@@ -23,14 +24,12 @@ import { SplitWords } from "./EditorialMotion";
 /** Fired by category picker or external cards to pre-select a filter. */
 export const CATEGORY_EVENT = "kc:select-category";
 
-type SortKey = "default" | "price-asc" | "price-desc" | "name-asc";
-
 const CATEGORIES = [
-  { id: "semua", label: "Semua Menu" },
+  { id: "semua", label: "Semua Kategori" },
   { id: "kopi", label: "Kopi Atelier" },
   { id: "non-kopi", label: "Non-Kopi" },
   { id: "camilan", label: "Camilan & Pastry" },
-  { id: "rekomendasi", label: "Andalan Kafe ★" },
+  { id: "rekomendasi", label: "Andalan Kafe" },
 ];
 
 const CMS_CATEGORY_NAMES: Record<string, string> = {
@@ -54,7 +53,8 @@ function formatBoardPrice(price: number): string {
 export function MenuSection() {
   const [activeCategory, setActiveCategory] = useState("semua");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortKey>("default");
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const categoryRef = useRef<HTMLDivElement>(null);
 
   // State card detail melayang (mengikuti kursor tanpa delay & tanpa backdrop gelap)
   const [hoveredItem, setHoveredItem] = useState<CafeMenuItem | null>(null);
@@ -69,8 +69,35 @@ export function MenuSection() {
   const { items: filteredItems, status, refetch } = useMenuData(
     activeCategory,
     searchQuery,
-    sortBy
+    "default"
   );
+
+  // Tutup dropdown kategori saat klik di luar atau tekan tombol Escape
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+        setIsCategoryOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsCategoryOpen(false);
+      }
+    }
+
+    if (isCategoryOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isCategoryOpen]);
 
   // Handler event navigasi kategori dari section lain
   useEffect(() => {
@@ -115,6 +142,12 @@ export function MenuSection() {
     return Object.values(groups).filter((g) => g.items.length > 0);
   }, [filteredItems]);
 
+  // Label kategori aktif saat ini
+  const currentCategoryLabel = useMemo(() => {
+    const found = CATEGORIES.find((c) => c.id === activeCategory);
+    return found ? found.label : "Semua Kategori";
+  }, [activeCategory]);
+
   // Cek apakah terdapat kolom yang memiliki lebih dari 5 item
   const hasLongList = useMemo(() => {
     return categorizedMenu.some((group) => group.items.length > 5);
@@ -140,7 +173,7 @@ export function MenuSection() {
       x = clientX - CARD_WIDTH - OFFSET;
     }
 
-    // Batas batas aman horizontal layar
+    // Batas aman horizontal layar
     if (x < 14) x = 14;
     if (x + CARD_WIDTH > viewportWidth - 14) {
       x = viewportWidth - CARD_WIDTH - 14;
@@ -217,7 +250,7 @@ export function MenuSection() {
               className="flex w-full flex-col items-center justify-center rounded-[0.25rem] border border-earth/25 bg-cream px-6 py-12 text-center text-coffee sm:px-10 sm:py-16"
             >
               <div className="mx-auto max-w-lg space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-earth/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-earth-dark">
+                <div data-ui="status-badge" className="inline-flex items-center gap-2 rounded-full bg-earth/15 px-4 py-1.5 text-sm font-semibold text-earth-dark">
                   <AlertCircle className="h-4 w-4" />
                   <span>Koneksi CMS Terputus</span>
                 </div>
@@ -248,7 +281,7 @@ export function MenuSection() {
               className="flex w-full flex-col items-center justify-center rounded-[0.25rem] border border-coffee/15 bg-latte/30 px-6 py-12 text-center text-coffee sm:px-10 sm:py-16"
             >
               <div className="mx-auto max-w-lg space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-coffee/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-coffee">
+                <div data-ui="status-badge" className="inline-flex items-center gap-2 rounded-full bg-coffee/10 px-4 py-1.5 text-sm font-semibold text-coffee">
                   <Coffee className="h-4 w-4" />
                   <span>Katalog Menu Digital</span>
                 </div>
@@ -275,15 +308,14 @@ export function MenuSection() {
           {/* State 4: Ada Menu Aktif dari CMS */}
           {status === "success" && (
             <>
-              {/* Kontrol Pencarian, Filter Kategori & Sort */}
+              {/* Kontrol Pencarian & Filter Kategori Simbol Dropdown */}
               <div
-                data-rev
-                style={{ "--d": "90ms" } as React.CSSProperties}
-                className="mb-8 space-y-4"
+                data-ui="menu-controls"
+                className="mb-10 sm:mb-14"
               >
-                <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
-                  {/* Input pencarian */}
-                  <div className="relative max-w-lg flex-1">
+                <div className="flex items-center gap-2.5 sm:justify-between sm:gap-4">
+                  {/* Input pencarian (fleksibel mengecil di mobile agar berdampingan dengan simbol kategori) */}
+                  <div className="relative flex-1 sm:max-w-lg">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-coffee/70">
                       <Search className="h-4 w-4" />
                     </div>
@@ -291,13 +323,14 @@ export function MenuSection() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Cari menu kopi, espresso, coklat, camilan..."
-                      className="w-full rounded-[0.2rem] border border-coffee/40 bg-cream py-3 pl-10 pr-10 text-[15px] text-coffee placeholder-coffee/55 transition-colors focus:border-coffee focus:outline-none focus:ring-2 focus:ring-sunshine"
+                      placeholder="Cari seduhan kopi, espresso, camilan..."
+                      className="h-[46px] w-full rounded-[0.25rem] border border-coffee/40 bg-cream pl-10 pr-10 text-[14px] text-coffee placeholder-coffee/55 transition-colors focus:border-coffee focus:outline-none focus:ring-2 focus:ring-sunshine sm:text-[15px]"
                       aria-label="Cari menu kafe"
                       suppressHydrationWarning
                     />
                     {searchQuery && (
                       <button
+                        type="button"
                         onClick={() => setSearchQuery("")}
                         className="absolute inset-y-0 right-0 flex items-center pr-3 text-coffee/70 hover:text-coffee"
                         aria-label="Bersihkan pencarian"
@@ -307,46 +340,90 @@ export function MenuSection() {
                     )}
                   </div>
 
-                  {/* Pengurutan */}
-                  <div className="flex shrink-0 items-center gap-2">
-                    <div className="flex items-center gap-1.5 text-sm font-medium uppercase text-coffee/70">
-                      <SlidersHorizontal className="h-3.5 w-3.5" />
-                      <span className="hidden sm:inline">Urutkan:</span>
-                    </div>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as SortKey)}
-                      className="cursor-pointer rounded-[0.2rem] border border-coffee bg-transparent px-3.5 py-3 text-sm font-medium uppercase text-coffee transition-colors hover:bg-coffee hover:text-sunshine focus:outline-none focus:ring-2 focus:ring-sunshine"
-                      aria-label="Urutkan menu berdasarkan"
+                  {/* Tombol Simbol Kategori (Mobile: Tombol Simbol Ikon, Desktop: Bilah Kanan dengan Label) */}
+                  <div ref={categoryRef} className="relative shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                      aria-expanded={isCategoryOpen}
+                      aria-haspopup="listbox"
+                      aria-label="Filter kategori menu"
+                      className={`relative flex h-[46px] cursor-pointer items-center justify-center rounded-[0.25rem] border transition-colors focus:outline-none focus:ring-2 focus:ring-sunshine ${
+                        activeCategory !== "semua"
+                          ? "border-coffee bg-coffee text-sunshine"
+                          : "border-coffee/40 bg-cream text-coffee hover:border-coffee"
+                      } w-[46px] sm:w-auto sm:justify-between sm:gap-2.5 sm:px-4`}
                     >
-                      <option value="default">Rekomendasi Kafe</option>
-                      <option value="price-asc">Harga Terendah</option>
-                      <option value="price-desc">Harga Tertinggi</option>
-                      <option value="name-asc">Nama Menu A-Z</option>
-                    </select>
-                  </div>
-                </div>
+                      <div className="flex items-center gap-2">
+                        <Filter className="h-4 w-4 shrink-0" />
+                        <span className="hidden text-sm font-medium text-coffee/75 sm:inline">
+                          Kategori:
+                        </span>
+                        <span
+                          className={`hidden text-sm font-semibold sm:inline ${
+                            activeCategory !== "semua" ? "text-sunshine" : "text-coffee"
+                          }`}
+                        >
+                          {currentCategoryLabel}
+                        </span>
+                      </div>
+                      <ChevronDown
+                        className={`hidden h-4 w-4 transition-transform duration-200 sm:inline-block ${
+                          isCategoryOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                      {/* Indikator dot aktif di ponsel jika kategori terfilter */}
+                      {activeCategory !== "semua" && (
+                        <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full border-2 border-cream-light bg-earth sm:hidden" />
+                      )}
+                    </button>
 
-                {/* Filter Kategori Chips */}
-                <div className="no-scrollbar -mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 pt-1 sm:mx-0 sm:px-0">
-                  {CATEGORIES.map((cat) => {
-                    const isActive = activeCategory === cat.id;
-                    return (
-                      <button
-                        key={cat.id}
-                        onClick={() => setActiveCategory(cat.id)}
-                        aria-pressed={isActive}
-                        className={`btn btn-sm shrink-0 ${isActive ? "btn-coffee" : "btn-outline"}`}
-                      >
-                        {cat.label}
-                      </button>
-                    );
-                  })}
+                    {/* UI Dropdown Kategori Kustom (Bukan Dropdown Bawaan Browser) */}
+                    {isCategoryOpen && (
+                      <div data-ui="category-popover" className="animate-in fade-in duration-150 absolute right-0 top-full z-30 mt-2 w-56 rounded-[0.35rem] border border-coffee/20 bg-cream p-1.5 shadow-[0_12px_32px_-8px_rgba(44,28,15,0.22)] sm:w-60" role="listbox" aria-label="Daftar kategori menu">
+                        <div data-ui="popover-header" className="mb-1 border-b border-coffee/10 px-3 py-1.5 text-xs font-medium text-coffee/60">
+                          Pilih Kategori Menu
+                        </div>
+                        <div className="space-y-0.5">
+                          {CATEGORIES.map((cat) => {
+                            const isSelected = activeCategory === cat.id;
+                            return (
+                              <button
+                                key={cat.id}
+                                type="button"
+                                onClick={() => {
+                                  setActiveCategory(cat.id);
+                                  setIsCategoryOpen(false);
+                                }}
+                                className={`flex w-full cursor-pointer items-center justify-between rounded-[0.25rem] px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+                                  isSelected
+                                    ? "bg-coffee font-semibold text-sunshine"
+                                    : "text-coffee hover:bg-coffee/10"
+                                }`}
+                                role="option"
+                                aria-selected={isSelected}
+                              >
+                                <span className="flex items-center gap-2">
+                                  {cat.id === "rekomendasi" && (
+                                    <Star className="h-3.5 w-3.5 fill-current text-current" />
+                                  )}
+                                  {cat.label}
+                                </span>
+                                {isSelected && (
+                                  <Check className="h-4 w-4 shrink-0 text-sunshine" />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Pemberitahuan Khusus Mobile */}
-              <div className="mb-4 flex items-center gap-2.5 rounded-[0.25rem] border border-earth/35 bg-earth/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-earth-dark sm:hidden">
+              <div data-ui="mobile-hint" className="mb-4 flex items-center gap-2.5 rounded-[0.25rem] border border-earth/35 bg-earth/10 px-4 py-2.5 text-sm font-medium text-earth-dark sm:hidden">
                 <Sparkles className="h-4 w-4 shrink-0 text-earth" />
                 <span>Tekan menu untuk melihat detail &amp; foto</span>
               </div>
@@ -354,21 +431,22 @@ export function MenuSection() {
               {/* DAFTAR MENU MURNI (Hanya List Menu, Tanpa Ornamen Poster/Dekorasi) */}
               {filteredItems.length > 0 ? (
                 <div
+                  data-ui="menu-board"
                   onMouseLeave={handleMenuContainerMouseLeave}
                   className="relative rounded-[0.5rem] border border-coffee/15 bg-cream p-6 sm:p-10 shadow-[0_4px_20px_-4px_rgba(44,28,15,0.08)]"
                 >
                   {/* Kolom Kategori Menu dengan Logika Truncation (5.5 Baris Terpotong Transparan) */}
                   <div
-                    className={`relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 transition-all duration-300 ease-out ${
+                    className={`relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 transition-[max-height] duration-300 ease-out ${
                       hasLongList && !isExpanded
-                        ? "max-h-[252px] overflow-hidden [mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)]"
+                        ? "max-h-[252px] overflow-hidden [mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)]" /* taste-skill-ignore: editorial fade mask for truncation */
                         : "max-h-none"
                     }`}
                   >
                     {categorizedMenu.map((group) => (
                       <div key={group.id} className="space-y-3">
                         {/* Judul Kategori Sesuai CMS */}
-                        <h3 className="font-display text-xl sm:text-2xl font-bold tracking-wider text-coffee uppercase border-b border-coffee/15 pb-2">
+                        <h3 data-ui="category-header" className="font-display text-xl sm:text-2xl font-bold tracking-wider text-coffee uppercase border-b border-coffee/15 pb-2">
                           {group.title}
                         </h3>
 
@@ -391,20 +469,18 @@ export function MenuSection() {
                               aria-label={`Lihat detail ${item.nama}`}
                               className="group relative flex items-baseline justify-between py-1.5 px-2 -mx-2 rounded-[0.2rem] transition-colors hover:bg-coffee/10 cursor-pointer select-none"
                             >
-                              <span className="font-medium text-[15px] sm:text-[16px] text-coffee group-hover:text-earth-dark transition-colors shrink-0">
+                              <span className="font-medium text-[15px] sm:text-[16px] text-coffee group-hover:text-earth-dark transition-colors shrink-0 flex items-center">
                                 {item.nama.toLowerCase()}
                                 {item.rekomendasi && (
-                                  <span className="ml-1 text-xs text-earth font-bold" title="Andalan Kafe">
-                                    ★
-                                  </span>
+                                  <Star
+                                    className="ml-1.5 inline h-3.5 w-3.5 fill-earth text-earth"
+                                    aria-label="Andalan Kafe"
+                                  />
                                 )}
                               </span>
 
                               {/* Garis titik-titik pemisah (dotted leader line) */}
-                              <span
-                                className="mx-2 flex-1 border-b border-dotted border-coffee/40 relative -top-1"
-                                aria-hidden="true"
-                              />
+                              <span data-ui="dotted-leader" className="mx-2 flex-1 border-b border-dotted border-coffee/40 relative -top-1" aria-hidden="true" />
 
                               {/* Harga nominal terformat */}
                               <span className="font-bold text-[15px] sm:text-[16px] text-coffee tabular-nums shrink-0">
@@ -419,11 +495,11 @@ export function MenuSection() {
 
                   {/* Tombol Lihat Semua Menu / Tampilkan Lebih Sedikit */}
                   {hasLongList && (
-                    <div className="mt-8 flex justify-center border-t border-coffee/10 pt-6">
+                    <div data-ui="expand-row" className="mt-8 flex justify-center border-t border-coffee/10 pt-6">
                       <button
                         type="button"
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="btn btn-earth inline-flex cursor-pointer items-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-semibold uppercase tracking-wider shadow-sm transition-transform active:scale-95"
+                        className="btn btn-earth inline-flex cursor-pointer items-center gap-2 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide transition-transform active:scale-95"
                       >
                         <span>
                           {isExpanded ? "Tampilkan Lebih Sedikit" : "Lihat Semua Menu"}
@@ -443,15 +519,16 @@ export function MenuSection() {
                   <Filter className="mx-auto mb-3 h-10 w-10 text-coffee/70" />
                   <h3 className="font-display mb-2 text-4xl">Menu Tidak Ditemukan</h3>
                   <p className="mx-auto mb-6 max-w-md text-[17px] text-coffee/80">
-                    Tidak ada menu yang cocok dengan kata kunci &ldquo;{searchQuery}&rdquo;.
-                    Silakan coba kata kunci lain atau reset filter.
+                    Tidak ada menu yang cocok dengan kriteria pencarian atau filter yang dipilih.
+                    Silakan coba kata kunci lain atau tampilkan seluruh menu.
                   </p>
                   <button
+                    type="button"
                     onClick={() => {
                       setSearchQuery("");
                       setActiveCategory("semua");
                     }}
-                    className="btn btn-coffee"
+                    className="btn btn-coffee cursor-pointer"
                   >
                     Tampilkan Semua Menu
                   </button>
