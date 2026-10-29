@@ -52,118 +52,117 @@ export function LocationSection() {
           </p>
         </div>
 
-        {/* 2-Column Layout: Left (Address & Jadwal Operasional), Right (Google Maps Embed) */}
+        {/* 2-Column Layout: Left (Address & Jadwal Operasional Unified), Right (Google Maps Embed) */}
         <div className="grid grid-cols-1 items-stretch gap-2 lg:grid-cols-12">
           {/* Left Column (6 cols) */}
-          <div className="flex flex-col gap-2 lg:col-span-6">
-            {/* Main Address Card */}
-            <div
-              data-rev
-              style={{ "--d": "60ms" } as React.CSSProperties}
-              className="flex-1 space-y-5 rounded-[0.5rem] bg-roast p-6 sm:p-8"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="tag">
-                  <MapPin className="h-4 w-4" />
-                  Alamat Lengkap
-                </span>
-                <span className="text-sm text-cream/60">{CAFE_INFO.koordinat}</span>
-              </div>
-
-              <div>
-                <h3 className="font-display text-4xl text-cream sm:text-5xl">
-                  {CAFE_INFO.nama}
-                </h3>
-                <p className="mt-3 text-lg text-cream/90">{CAFE_INFO.alamat}</p>
-                <p className="mt-2 text-[15px] text-sunshine">
-                  Patokan: {CAFE_INFO.patokan || "Dekat kampus UNNES"}
-                </p>
-              </div>
-            </div>
-
-            {/* Jadwal Operasional Mingguan - Dropdown Kompak */}
+          <div className="flex flex-col lg:col-span-6">
+            {/* Unified Address & Jadwal Card */}
             <div
               id="jam-buka"
               data-rev
-              style={{ "--d": "100ms" } as React.CSSProperties}
-              className="overflow-hidden rounded-[0.5rem] bg-roast"
+              style={{ "--d": "60ms" } as React.CSSProperties}
+              className="flex h-full flex-col justify-between overflow-hidden rounded-[0.5rem] bg-roast"
             >
-              {/* Header Jadwal (Dropdown Toggle Button) */}
-              <button
-                type="button"
-                onClick={() => setIsScheduleDropdownOpen(!isScheduleDropdownOpen)}
-                aria-expanded={isScheduleDropdownOpen}
-                className="flex w-full cursor-pointer items-center justify-between border-b border-cream/15 p-4 sm:p-5 text-left transition-colors hover:bg-coffee/40"
-              >
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-sunshine" />
-                  <span className="text-[15px] font-medium uppercase tracking-wide text-sunshine">
-                    Jadwal Operasional
+              {/* Main Address Card Info */}
+              <div className="flex-1 space-y-5 p-6 sm:p-8">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="tag">
+                    <MapPin className="h-4 w-4" />
+                    Alamat Lengkap
                   </span>
+                  <span className="text-sm text-cream/60">{CAFE_INFO.koordinat}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs sm:text-sm uppercase text-cream/75">
-                  <span>{isScheduleDropdownOpen ? "Tutup Jadwal" : "Lihat Jadwal 7 Hari"}</span>
-                  <ChevronDown
-                    className={`h-4 w-4 text-sunshine transition-transform duration-300 ${
-                      isScheduleDropdownOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
-              </button>
 
-              {/* Status Bar Ringkas (div/div telah dihapus, space kosong dihilangkan) */}
-              <div className="border-b border-cream/15 bg-coffee/50 px-4 py-3 sm:px-5">
-                <p
-                  suppressHydrationWarning
-                  className="text-[14px] font-medium text-cream/90"
-                >
-                  {isMounted ? statusText : "Buka setiap hari"}
-                </p>
+                <div>
+                  <h3 className="font-display text-4xl text-cream sm:text-5xl">
+                    {CAFE_INFO.nama}
+                  </h3>
+                  <p className="mt-3 text-lg text-cream/90">{CAFE_INFO.alamat}</p>
+                  <p className="mt-2 text-[15px] text-sunshine">
+                    Patokan: {CAFE_INFO.patokan || "Dekat kampus UNNES"}
+                  </p>
+                </div>
               </div>
 
-              {/* 7-Day Schedule List (Tampil saat Dropdown Dibuka) */}
-              {isScheduleDropdownOpen && (
-                <div className="flex-1 divide-y divide-cream/10 animate-in fade-in duration-300">
-                  {CAFE_INFO.jamBuka.map((item) => {
-                    const isToday =
-                      isMounted && item.hari.toLowerCase() === currentDay.toLowerCase();
-                    return (
-                      <div
-                        key={item.hari}
-                        className={`flex items-center justify-between gap-2 px-4 py-2.5 transition-colors sm:px-5 sm:py-3 ${
-                          isToday ? "bg-sunshine text-coffee" : "hover:bg-coffee/40"
-                        }`}
-                      >
-                        {/* Hari & Badge Hari Ini */}
-                        <div className="flex items-center gap-2.5">
-                          <span className="w-20 text-base font-bold uppercase tracking-tight">
-                            {item.hari}
-                          </span>
-                          {isToday && (
-                            <span className="rounded-[0.2rem] bg-coffee px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sunshine">
-                              Hari Ini
-                            </span>
-                          )}
-                        </div>
+              {/* Jadwal Operasional Mingguan - Dropdown Kompak */}
+              <div className="border-t border-cream/15">
+                {/* Header Jadwal (Dropdown Toggle Button) */}
+                <button
+                  type="button"
+                  onClick={() => setIsScheduleDropdownOpen(!isScheduleDropdownOpen)}
+                  aria-expanded={isScheduleDropdownOpen}
+                  className="flex w-full cursor-pointer items-center justify-between border-b border-cream/15 p-4 sm:p-5 text-left transition-colors hover:bg-coffee/40"
+                >
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-sunshine" />
+                    <span className="text-[15px] font-medium uppercase tracking-wide text-sunshine">
+                      Jadwal Operasional
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs sm:text-sm uppercase text-cream/75">
+                    <span>{isScheduleDropdownOpen ? "Tutup Jadwal" : "Lihat Jadwal 7 Hari"}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 text-sunshine transition-transform duration-300 ${
+                        isScheduleDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
+                </button>
 
-                        {/* Jam Buka / Tutup */}
-                        <div className="text-right">
-                          <span className="text-[15px] font-bold">
-                            {item.libur ? "LIBUR" : `${item.buka} – ${item.tutup}`}
-                          </span>
-                          <span
-                            className={`mt-0.5 block text-[11px] leading-none ${
-                              isToday ? "text-coffee/70" : "text-cream/60"
-                            }`}
-                          >
-                            {item.libur ? "Tutup" : "WIB"}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
+                {/* Status Bar Ringkas */}
+                <div className="border-b border-cream/15 bg-coffee/50 px-4 py-3 sm:px-5">
+                  <p
+                    suppressHydrationWarning
+                    className="text-[14px] font-medium text-cream/90"
+                  >
+                    {isMounted ? statusText : "Buka setiap hari"}
+                  </p>
                 </div>
-              )}
+
+                {/* 7-Day Schedule List (Tampil saat Dropdown Dibuka) */}
+                {isScheduleDropdownOpen && (
+                  <div className="flex-1 divide-y divide-cream/10 animate-in fade-in duration-300">
+                    {CAFE_INFO.jamBuka.map((item) => {
+                      const isToday =
+                        isMounted && item.hari.toLowerCase() === currentDay.toLowerCase();
+                      return (
+                        <div
+                          key={item.hari}
+                          className={`flex items-center justify-between gap-2 px-4 py-2.5 transition-colors sm:px-5 sm:py-3 ${
+                            isToday ? "bg-sunshine text-coffee" : "hover:bg-coffee/40"
+                          }`}
+                        >
+                          {/* Hari & Badge Hari Ini */}
+                          <div className="flex items-center gap-2.5">
+                            <span className="w-20 text-base font-bold uppercase tracking-tight">
+                              {item.hari}
+                            </span>
+                            {isToday && (
+                              <span className="rounded-[0.2rem] bg-coffee px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sunshine">
+                                Hari Ini
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Jam Buka / Tutup */}
+                          <div className="text-right">
+                            <span className="text-[15px] font-bold">
+                              {item.libur ? "LIBUR" : `${item.buka} – ${item.tutup}`}
+                            </span>
+                            <span
+                              className={`mt-0.5 block text-[11px] leading-none ${
+                                isToday ? "text-coffee/70" : "text-cream/60"
+                              }`}
+                            >
+                              {item.libur ? "Tutup" : "WIB"}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
