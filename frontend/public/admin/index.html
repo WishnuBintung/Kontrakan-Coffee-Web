@@ -5,17 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Admin CMS — Kontrakan Coffee</title>
-    <!-- Netlify Identity Widget (Hanya dimuat di production/non-localhost) -->
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
-      if (
-        window.location.hostname !== "localhost" &&
-        window.location.hostname !== "127.0.0.1"
-      ) {
-        var s = document.createElement("script");
-        s.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
-        document.head.appendChild(s);
-      } else {
-        // Bersihkan cache Netlify Identity lama di browser saat berjalan di localhost
+      // Bersihkan cache Netlify Identity lama di browser saat berjalan di localhost
+      if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
         try {
           localStorage.removeItem("netlifySiteURL");
           localStorage.removeItem("gotrue.user");
