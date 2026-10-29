@@ -3,12 +3,9 @@
 
 import React from "react";
 import {
-  AlertCircle,
-  Calendar,
   Clock,
   Loader2,
   RefreshCw,
-  Tag,
 } from "lucide-react";
 import { usePromoData } from "@/hooks/useCafeData";
 
@@ -83,10 +80,6 @@ export function PromoSection() {
             className="flex w-full flex-col items-center justify-center rounded-[0.25rem] border border-earth/25 bg-cream-light px-6 py-12 text-center text-coffee sm:px-10 sm:py-16"
           >
             <div className="mx-auto max-w-lg space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full bg-earth/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-earth-dark">
-                <AlertCircle className="h-4 w-4" />
-                <span>Koneksi CMS Terputus</span>
-              </div>
               <h3 className="font-display text-[clamp(2rem,3.2vw,2.8rem)] text-coffee">
                 Data Tidak Dapat Ditemukan
               </h3>
@@ -120,10 +113,6 @@ export function PromoSection() {
             className="flex w-full flex-col items-center justify-center rounded-[0.25rem] border border-coffee/15 bg-latte/30 px-6 py-12 text-center text-coffee sm:px-10 sm:py-16"
           >
             <div className="mx-auto max-w-lg space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full bg-coffee/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-coffee">
-                <Tag className="h-4 w-4" />
-                <span>Informasi Promo</span>
-              </div>
               <h3 className="font-display text-[clamp(2rem,3.2vw,2.8rem)] text-coffee">
                 Promo Tidak Tersedia
               </h3>
@@ -165,19 +154,6 @@ export function PromoSection() {
                       {/* Kolom Kiri: Deskripsi & Rincian Promo */}
                       <div className="flex flex-col justify-between space-y-6 lg:order-1">
                         <div className="space-y-4">
-                          {/* Tags */}
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="tag">
-                              {isEvent ? (
-                                <Calendar className="h-4 w-4" />
-                              ) : (
-                                <Tag className="h-4 w-4" />
-                              )}
-                              {isEvent ? "Agenda Acara" : "Promo Hemat"}
-                            </span>
-                            <span className="tag">Berlaku Aktif</span>
-                          </div>
-
                           {/* Judul Promo */}
                           <h3 className="font-display text-[clamp(2.2rem,3.6vw,3.8rem)] leading-[1.05] text-coffee">
                             {item.judul}
@@ -244,19 +220,6 @@ export function PromoSection() {
                       style={{ "--d": `${idx * 70}ms` } as React.CSSProperties}
                       className={`group flex flex-col rounded-[0.25rem] p-4 sm:p-5 ${surface}`}
                     >
-                      {/* Tags */}
-                      <div className="mb-4 flex flex-wrap gap-2">
-                        <span className="tag">
-                          {isEvent ? (
-                            <Calendar className="h-4 w-4" />
-                          ) : (
-                            <Tag className="h-4 w-4" />
-                          )}
-                          {isEvent ? "Agenda Acara" : "Promo Hemat"}
-                        </span>
-                        <span className="tag">Berlaku Aktif</span>
-                      </div>
-
                       {/* Image */}
                       <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[0.25rem] bg-coffee/10">
                         <img

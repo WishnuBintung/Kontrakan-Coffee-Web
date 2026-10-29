@@ -2,7 +2,6 @@
 /* eslint-disable @next/next/no-img-element */
 
 import React from "react";
-import { Sparkles } from "lucide-react";
 import { useGalleryData } from "@/hooks/useCafeData";
 
 export function GallerySection() {
@@ -17,10 +16,6 @@ export function GallerySection() {
         {/* Section Header */}
         <div className="mb-10 flex flex-col justify-between gap-6 sm:mb-14 md:flex-row md:items-end">
           <div data-rev style={{ "--d": "40ms" } as React.CSSProperties}>
-            <span className="tag mb-4">
-              <Sparkles className="h-3.5 w-3.5" />
-              Sudut Favorit
-            </span>
             <h2 className="font-display text-[clamp(2.6rem,6vw,5.5rem)]">
               Intip Suasananya.
             </h2>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MapPin, Calendar, ChevronDown, ArrowUpRight } from "lucide-react";
+import { Calendar, ChevronDown } from "lucide-react";
 import { getOpenStatusWIB } from "@/lib/cafeData";
 import { useCafeInfo, useStoreStatus } from "@/hooks/useCafeData";
 
@@ -53,7 +53,7 @@ export function LocationSection() {
         </div>
 
         {/* 2-Column Layout: Left (Address & Jadwal Operasional Unified), Right (Google Maps Embed) */}
-        <div className="grid grid-cols-1 items-stretch gap-2 lg:grid-cols-12">
+        <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-12 lg:gap-6">
           {/* Left Column (6 cols) */}
           <div className="flex flex-col lg:col-span-6">
             {/* Unified Address & Jadwal Card */}
@@ -61,27 +61,17 @@ export function LocationSection() {
               id="jam-buka"
               data-rev
               style={{ "--d": "60ms" } as React.CSSProperties}
-              className="flex h-full flex-col justify-between overflow-hidden rounded-[0.5rem] bg-roast"
+              className="flex w-full flex-col overflow-hidden rounded-[0.5rem] bg-roast"
             >
               {/* Main Address Card Info */}
-              <div className="flex-1 space-y-5 p-6 sm:p-8">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="tag">
-                    <MapPin className="h-4 w-4" />
-                    Alamat Lengkap
-                  </span>
-                  <span className="text-sm text-cream/60">{CAFE_INFO.koordinat}</span>
-                </div>
-
-                <div>
-                  <h3 className="font-display text-4xl text-cream sm:text-5xl">
-                    {CAFE_INFO.nama}
-                  </h3>
-                  <p className="mt-3 text-lg text-cream/90">{CAFE_INFO.alamat}</p>
-                  <p className="mt-2 text-[15px] text-sunshine">
-                    Patokan: {CAFE_INFO.patokan || "Dekat kampus UNNES"}
-                  </p>
-                </div>
+              <div className="p-6 sm:p-8">
+                <h3 className="font-display text-4xl text-cream sm:text-5xl">
+                  {CAFE_INFO.nama}
+                </h3>
+                <p className="mt-3 text-lg text-cream/90">{CAFE_INFO.alamat}</p>
+                <p className="mt-2 text-[15px] text-sunshine">
+                  Patokan: {CAFE_INFO.patokan || "Dekat kampus UNNES"}
+                </p>
               </div>
 
               {/* Jadwal Operasional Mingguan - Dropdown Kompak */}
@@ -121,7 +111,7 @@ export function LocationSection() {
 
                 {/* 7-Day Schedule List (Tampil saat Dropdown Dibuka) */}
                 {isScheduleDropdownOpen && (
-                  <div className="flex-1 divide-y divide-cream/10 animate-in fade-in duration-300">
+                  <div className="divide-y divide-cream/10 animate-in fade-in duration-300">
                     {CAFE_INFO.jamBuka.map((item) => {
                       const isToday =
                         isMounted && item.hari.toLowerCase() === currentDay.toLowerCase();
@@ -170,7 +160,7 @@ export function LocationSection() {
           <div
             data-rev
             style={{ "--d": "120ms" } as React.CSSProperties}
-            className="flex min-h-[380px] flex-col sm:min-h-[460px] lg:col-span-6 lg:min-h-[580px]"
+            className="flex min-h-[380px] flex-col sm:min-h-[460px] lg:col-span-6 lg:min-h-[520px]"
           >
             <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] bg-roast">
               {/* Maps Frame Top Bar */}
@@ -205,3 +195,5 @@ export function LocationSection() {
     </section>
   );
 }
+
+export default LocationSection;

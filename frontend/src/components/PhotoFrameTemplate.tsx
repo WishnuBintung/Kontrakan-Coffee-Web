@@ -71,7 +71,7 @@ export function PhotoFrameTemplate({
 
       {/* Floating Badge */}
       {badge && (
-        <div className="tag absolute left-3 top-3 z-20">{badge}</div>
+        <div className="absolute left-3 top-3 z-20 rounded-[0.2rem] bg-sunshine px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-coffee">{badge}</div>
       )}
     </div>
   );

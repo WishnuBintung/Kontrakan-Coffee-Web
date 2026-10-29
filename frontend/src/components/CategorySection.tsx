@@ -85,7 +85,7 @@ export function CategorySection() {
               </div>
 
               <div className="mt-8 flex items-center justify-between border-t border-coffee/20 pt-4">
-                <span className="tag">
+                <span className="text-sm font-semibold uppercase tracking-wider text-coffee/75">
                   {card.count} menu
                 </span>
                 <span className="text-sm font-bold uppercase tracking-wider text-coffee transition-colors group-hover:text-roast">

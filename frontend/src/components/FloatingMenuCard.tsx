@@ -30,7 +30,7 @@ export function FloatingMenuCard({ item, x, y }: FloatingMenuCardProps) {
           aspectRatio="aspect-[16/10]"
         />
         {item.rekomendasi && (
-          <div className="tag absolute left-2.5 top-2.5 text-[10px] py-0.5 px-2 bg-sunshine text-coffee font-bold">
+          <div className="absolute left-2.5 top-2.5 text-[10px] py-0.5 px-2 rounded-[0.2rem] bg-sunshine text-coffee font-bold">
             <Sparkles className="h-3 w-3 inline mr-1" />
             Andalan
           </div>
