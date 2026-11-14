@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
     "192.168.1.8",
     "192.168.1.*",
   ],
+  ...(process.env.NODE_ENV === "development"
+    ? {
+        async rewrites() {
+          return [
+            { source: "/admin", destination: "/admin/index.html" },
+            { source: "/admin/", destination: "/admin/index.html" },
+          ];
+        },
+      }
+    : {}),
 };
 
 export default nextConfig;

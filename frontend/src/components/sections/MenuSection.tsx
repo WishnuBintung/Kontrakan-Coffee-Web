@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo, useRef } from "react";
+import dynamic from "next/dynamic";
 import {
   Search,
   X,
@@ -17,9 +18,13 @@ import {
 } from "lucide-react";
 import { CafeMenuItem } from "@/lib/cafeData";
 import { useMenuData } from "@/hooks/useCafeData";
-import { FloatingMenuCard } from "./FloatingMenuCard";
-import { MenuDetailModal } from "./MenuDetailModal";
-import { SplitWords } from "./EditorialMotion";
+import { FloatingMenuCard } from "@/components/ui/FloatingMenuCard";
+import { SplitWords } from "@/components/ui/EditorialMotion";
+
+const MenuDetailModal = dynamic(
+  () => import("@/components/ui/MenuDetailModal").then((m) => m.MenuDetailModal),
+  { ssr: false }
+);
 
 /** Fired by category picker or external cards to pre-select a filter. */
 export const CATEGORY_EVENT = "kc:select-category";
@@ -88,7 +93,7 @@ export function MenuSection() {
 
     if (isCategoryOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("touchstart", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside, { passive: true });
       document.addEventListener("keydown", handleKeyDown);
     }
 
@@ -546,12 +551,14 @@ export function MenuSection() {
         y={cursorPos.y}
       />
 
-      {/* Modal Detail Menu Terkunci: Dibuka saat pengguna klik/tap menu (misal di mobile) */}
-      <MenuDetailModal
-        item={selectedItem}
-        onClose={() => setSelectedItem(null)}
-        triggerMode="click"
-      />
+      {/* Modal Detail Menu Terkunci: Dimuat dinamis hanya saat pengguna membuka detail */}
+      {selectedItem ? (
+        <MenuDetailModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          triggerMode="click"
+        />
+      ) : null}
     </>
   );
 }

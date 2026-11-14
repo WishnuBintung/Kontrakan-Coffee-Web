@@ -28,9 +28,9 @@ app.use((req, _res, next) => {
 // Mount REST API
 app.use("/api", apiRouter);
 
-// Serve Decap CMS static admin & public images
-const adminDir = path.join(__dirname, "../public/admin");
-const imagesDir = path.join(__dirname, "../public/images");
+// Serve Decap CMS static admin & public images from frontend/public
+const adminDir = path.resolve(__dirname, "../../frontend/public/admin");
+const imagesDir = path.resolve(__dirname, "../../frontend/public/images");
 
 // Dynamic Decap config for LAN/IP access
 app.get("/admin/config.yml", (req, res) => {

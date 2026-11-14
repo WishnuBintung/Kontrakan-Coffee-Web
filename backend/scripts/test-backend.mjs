@@ -6,9 +6,7 @@ import YAML from "yaml";
 
 const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"));
 const BACKEND_ROOT = path.resolve(SCRIPT_DIR, "..");
-const CONTENT_DIR = fs.existsSync(path.join(BACKEND_ROOT, "content"))
-  ? path.join(BACKEND_ROOT, "content")
-  : path.join(process.cwd(), "content");
+const CONTENT_DIR = path.resolve(BACKEND_ROOT, "../content");
 const ROOT = BACKEND_ROOT;
 
 let totalTests = 0;
@@ -80,7 +78,9 @@ assert(countSudutFavorit >= 2, `Terdapat minimal 2 sudut favorit kafe (ditemukan
 // 4. Uji Koleksi Promo & Event Kegiatan
 console.log("\n4. Validasi Koleksi Promo & Kegiatan (content/promo/):");
 const promoDir = path.join(CONTENT_DIR, "promo");
-const promoFiles = fs.readdirSync(promoDir).filter((f) => f.endsWith(".md"));
+const promoFiles = fs.existsSync(promoDir)
+  ? fs.readdirSync(promoDir).filter((f) => f.endsWith(".md"))
+  : [];
 assert(promoFiles.length >= 1, `Terdapat promo/kegiatan (ditemukan: ${promoFiles.length})`);
 
 let hasEvent = false;
@@ -151,10 +151,11 @@ assert(resTutup.isOpen === false, `Simulasi Senin 02:00 WIB terdeteksi TUTUP (${
 
 // 7. Uji Decap CMS Files
 console.log("\n7. Validasi Konfigurasi Decap CMS:");
-const decapHtml = path.join(ROOT, "public/admin/index.html");
-const decapYml = path.join(ROOT, "public/admin/config.yml");
-assert(fs.existsSync(decapHtml), "Berkas public/admin/index.html tersedia");
-assert(fs.existsSync(decapYml), "Berkas public/admin/config.yml tersedia");
+const FRONTEND_ADMIN_DIR = path.resolve(BACKEND_ROOT, "../frontend/public/admin");
+const decapHtml = path.join(FRONTEND_ADMIN_DIR, "index.html");
+const decapYml = path.join(FRONTEND_ADMIN_DIR, "config.yml");
+assert(fs.existsSync(decapHtml), "Berkas frontend/public/admin/index.html tersedia");
+assert(fs.existsSync(decapYml), "Berkas frontend/public/admin/config.yml tersedia");
 
 // Ringkasan
 console.log("\n=================================================");

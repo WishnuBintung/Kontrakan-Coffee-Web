@@ -51,11 +51,11 @@ export function useMenuData(
   const [status, setStatus] = useState<MenuStatus>("loading");
   const [error, setError] = useState<string | null>(null);
 
-  const fetchMenu = useCallback(async () => {
+  const fetchMenu = useCallback(async (force = false) => {
     setStatus("loading");
     setError(null);
 
-    const result = await getClientMenuResult();
+    const result = await getClientMenuResult(force);
 
     if (result.status === "success") {
       setAllItems(result.data);
@@ -72,8 +72,10 @@ export function useMenuData(
     }
   }, []);
 
+  const refetch = useCallback(() => fetchMenu(true), [fetchMenu]);
+
   useEffect(() => {
-    fetchMenu();
+    fetchMenu(false);
   }, [fetchMenu]);
 
   const filteredItems = useMemo(() => {
@@ -119,7 +121,7 @@ export function useMenuData(
     allItems,
     status,
     error,
-    refetch: fetchMenu,
+    refetch,
     isLoading: status === "loading",
   };
 }
@@ -260,9 +262,9 @@ export function usePromoData(): PromoDataHookResult {
     error: null,
   });
 
-  const fetchPromos = useCallback(async () => {
+  const fetchPromos = useCallback(async (force = false) => {
     setState((prev) => ({ ...prev, status: "loading", error: null }));
-    const result = await getClientPromoResult();
+    const result = await getClientPromoResult(force);
 
     if (result.status === "success") {
       setState({
@@ -285,16 +287,19 @@ export function usePromoData(): PromoDataHookResult {
     }
   }, []);
 
+  const refetch = useCallback(() => fetchPromos(true), [fetchPromos]);
+
   useEffect(() => {
-    fetchPromos();
+    fetchPromos(false);
   }, [fetchPromos]);
 
   // Buat hybrid result: Array dari items yang juga memiliki properti status, promos, error, refetch
-  const hybrid = [...state.promos] as PromoDataHookResult;
-  hybrid.promos = state.promos;
-  hybrid.status = state.status;
-  hybrid.error = state.error;
-  hybrid.refetch = fetchPromos;
-
-  return hybrid;
+  return useMemo(() => {
+    const hybrid = [...state.promos] as PromoDataHookResult;
+    hybrid.promos = state.promos;
+    hybrid.status = state.status;
+    hybrid.error = state.error;
+    hybrid.refetch = refetch;
+    return hybrid;
+  }, [state, refetch]);
 }

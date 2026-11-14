@@ -1,7 +1,21 @@
-/* eslint-disable @next/next/no-page-custom-font */
 import type { Metadata, Viewport } from "next";
+import { Roboto, Roboto_Serif } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto",
+});
+
+const robotoSerif = Roboto_Serif({
+  subsets: ["latin"],
+  axes: ["wdth"],
+  display: "swap",
+  variable: "--font-roboto-serif",
+});
 
 export const metadata: Metadata = {
   title: "Kontrakan Coffee — Kopi Enak, Nongkrong Betah",
@@ -41,17 +55,11 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className="bg-cream text-coffee scroll-smooth"
+      className={`${roboto.variable} ${robotoSerif.variable} bg-cream text-coffee scroll-smooth`}
       suppressHydrationWarning
     >
       <head>
         <meta name="darkreader-lock" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Serif:wdth,wght@50..150,100..900&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body
         className="bg-cream text-coffee antialiased min-h-[100svh] selection:bg-sunshine selection:text-coffee font-sans"

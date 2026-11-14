@@ -41,16 +41,6 @@ export function Navbar() {
             src="/images/logo.png"
             alt="Logo Kontrakan Coffee"
             className="h-10 w-auto max-w-[190px] object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-11 md:h-12"
-            onError={(e) => {
-              const target = e.currentTarget;
-              if (!target.dataset.attempt) {
-                target.dataset.attempt = "1";
-                target.src = "/images/logo.jpeg";
-              } else if (target.dataset.attempt === "1") {
-                target.dataset.attempt = "2";
-                target.src = "/images/logo.svg";
-              }
-            }}
           />
         </a>
       }

@@ -162,30 +162,20 @@ export function useEditorialChoreography() {
       { threshold: 0.12, rootMargin: "0px 0px -4% 0px" }
     );
 
-    const observeTargets = (fromMutation = false) => {
-      const vh = window.innerHeight || 1;
+    const observeTargets = () => {
       const revEls = document.querySelectorAll<HTMLElement>(
         "[data-rev]:not(.is-revealed), [data-words]:not(.is-revealed)"
       );
       revEls.forEach((el) => {
-        if (fromMutation) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top < vh * 0.95 && rect.bottom > 0) {
-            window.requestAnimationFrame(() => {
-              el.classList.add("is-revealed");
-            });
-            return;
-          }
-        }
         io.observe(el);
       });
     };
 
-    observeTargets(false);
+    observeTargets();
 
     // MutationObserver in case menu or gallery filter changes add new [data-rev] rows
     const mo = new MutationObserver(() => {
-      observeTargets(true);
+      observeTargets();
     });
     mo.observe(document.body, { childList: true, subtree: true });
 
@@ -197,4 +187,9 @@ export function useEditorialChoreography() {
       mo.disconnect();
     };
   }, []);
+}
+
+export function EditorialChoreography() {
+  useEditorialChoreography();
+  return null;
 }

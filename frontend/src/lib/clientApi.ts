@@ -47,26 +47,52 @@ export function getBackendApiUrl(): string {
   return "http://localhost:5000/api";
 }
 
+const inFlightRequests = new Map<string, Promise<unknown>>();
+const responseCache = new Map<string, { data: unknown; expiresAt: number }>();
+const CACHE_TTL_MS = 15_000;
+
 async function requestWithTimeout<T>(
   url: string,
-  timeoutMs = 4000
+  timeoutMs = 4000,
+  force = false
 ): Promise<T | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: { Accept: "application/json" },
-    });
-    clearTimeout(timer);
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.data ?? null;
-  } catch {
-    clearTimeout(timer);
-    return null;
+  const now = Date.now();
+  if (!force) {
+    const cached = responseCache.get(url);
+    if (cached && cached.expiresAt > now) {
+      return cached.data as T | null;
+    }
+    const existing = inFlightRequests.get(url);
+    if (existing) {
+      return existing as Promise<T | null>;
+    }
   }
+
+  const promise = (async (): Promise<T | null> => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(url, {
+        signal: controller.signal,
+        headers: { Accept: "application/json" },
+      });
+      clearTimeout(timer);
+      if (!res.ok) return null;
+      const json = await res.json();
+      const data = (json.data ?? null) as T | null;
+      responseCache.set(url, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+      return data;
+    } catch {
+      clearTimeout(timer);
+      return null;
+    } finally {
+      inFlightRequests.delete(url);
+    }
+  })();
+
+  inFlightRequests.set(url, promise);
+  return promise;
 }
 
 export type MenuFetchResult =
@@ -80,9 +106,9 @@ export type MenuFetchResult =
  * - "empty": Terhubung ke CMS tetapi belum ada menu yang dimasukkan (array === 0)
  * - "error": CMS tidak terhubung / server offline / gagal koneksi
  */
-export async function getClientMenuResult(): Promise<MenuFetchResult> {
+export async function getClientMenuResult(force = false): Promise<MenuFetchResult> {
   const apiUrl = getBackendApiUrl();
-  const data = await requestWithTimeout<any[]>(`${apiUrl}/menu`);
+  const data = await requestWithTimeout<any[]>(`${apiUrl}/menu`, 4000, force);
 
   // 1. Jika CMS tidak terhubung / server mati / request timeout -> data === null
   if (data === null || !Array.isArray(data)) {
@@ -322,9 +348,9 @@ export type PromoFetchResult =
  * - "empty": Terhubung ke CMS tetapi tidak ada promo (array === 0)
  * - "error": CMS tidak terhubung / tidak tersambung (data tidak dapat ditemukan)
  */
-export async function getClientPromoResult(): Promise<PromoFetchResult> {
+export async function getClientPromoResult(force = false): Promise<PromoFetchResult> {
   const apiUrl = getBackendApiUrl();
-  const data = await requestWithTimeout<ApiPromoItem[]>(`${apiUrl}/promo`);
+  const data = await requestWithTimeout<ApiPromoItem[]>(`${apiUrl}/promo`, 4000, force);
 
   // 1. Jika CMS tidak terhubung / server mati / request timeout -> data === null
   if (data === null || !Array.isArray(data)) {

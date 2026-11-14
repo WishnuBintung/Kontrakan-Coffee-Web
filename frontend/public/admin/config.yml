@@ -7,7 +7,11 @@ local_backend:
   allowed_hosts: ['192.168.68.230', '192.168.68.*', '192.168.*', 'localhost', '127.0.0.1']
 publish_mode: editorial_workflow    # PRD §2 no.8: draft -> review/pratinjau -> publish
 
-media_folder: public/images/uploads
+logo:
+  src: /images/logo.png
+  show_in_header: true
+
+media_folder: frontend/public/images/uploads
 public_folder: /images/uploads
 
 collections:
