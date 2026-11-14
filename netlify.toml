@@ -1,8 +1,21 @@
+"$schema" = "https://open-api.netlify.com/netlify.schema.json"
+
 [build]
-  command = "cd frontend && npm ci && npm run build"
-  publish = "frontend/out"
+  base = "frontend"
+  command = "npm run build"
+  publish = "out"
 
 [build.environment]
   NODE_VERSION = "22"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
 

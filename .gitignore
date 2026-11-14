@@ -61,6 +61,8 @@ lerna-debug.log*
 # Vercel & Deployment
 .vercel/
 */.vercel/
+.netlify/
+*/.netlify/
 
 # IDE & Editor Local Configs
 .idea/
